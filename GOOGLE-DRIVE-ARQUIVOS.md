@@ -1,33 +1,33 @@
-# Arquivos da OS por links do Google Drive
+# Google Drive — documentos técnicos
 
-Esta atualização substitui o upload direto de arquivos na aba **Arquivos** por vínculos do Google Drive.
+A plataforma usa uma arquitetura híbrida:
 
-## O que muda
+- Supabase guarda os dados estruturados e o histórico.
+- Google Drive guarda os arquivos reais.
 
-- O arquivo permanece no Google Drive.
-- O Supabase salva apenas nome, categoria, versão, observação e URL.
-- Remover o vínculo no sistema não exclui o arquivo do Drive.
-- Links aceitos: `https://drive.google.com/...` e `https://docs.google.com/...`.
-
-## Aplicação
-
-1. Substitua `app/page.tsx` e `app/details.css`.
-2. Execute no SQL Editor do Supabase:
-   `supabase/migrations/20260715010000_google_drive_links.sql`
-3. Rode `pnpm dev`.
-4. Abra uma OS, entre na aba **Arquivos** e vincule um link do Drive.
-
-## Organização recomendada
+## Estrutura recomendada
 
 ```text
-Publicolor
-└── Clientes
-    └── Nome do cliente
-        └── OS 0000
-            ├── Arte
-            ├── Produção
-            ├── Fotos
-            └── Instalação
+Clientes/
+└── NOME DO CLIENTE/
+    └── CÓDIGO - NOME DO PROJETO/
+        ├── 01 Contrato/
+        ├── 02 Briefing/
+        ├── 03 Levantamento/
+        ├── 04 Estudos e criação/
+        ├── 05 Projeto executivo/
+        ├── 06 Renders/
+        ├── 07 RRT e documentos/
+        ├── 08 Obra e fotos/
+        └── 09 Entrega final/
 ```
 
-A migração mantém compatibilidade com registros antigos que já possuam `file_path` no Supabase Storage.
+## Uso no sistema
+
+1. Crie ou localize a pasta/arquivo no Google Drive.
+2. Copie o link de compartilhamento.
+3. Abra o projeto na plataforma.
+4. Em **Arquivos no Google Drive**, clique em **Adicionar link**.
+5. Informe nome, categoria, URL e observações.
+
+O sistema não envia nem duplica o arquivo. A permissão de acesso continua sendo controlada no próprio Google Drive.

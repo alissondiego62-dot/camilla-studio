@@ -1,11 +1,10 @@
 export type ProjectStage =
-  | "prospecting"
-  | "briefing"
-  | "survey"
+  | "briefing_preliminary"
   | "creation"
   | "adjustments"
-  | "executive"
   | "approval"
+  | "executive"
+  | "revision"
   | "construction"
   | "completed";
 
@@ -40,6 +39,7 @@ export type Project = {
   status: ProjectStatus;
   priority: ProjectPriority;
   responsible_name: string | null;
+  main_deadline: string | null;
   deadline_stage_1: string | null;
   deadline_stage_2: string | null;
   deadline_stage_3: string | null;
@@ -53,6 +53,49 @@ export type Project = {
   client?: Client | null;
 };
 
+
+export type ProjectFileCategory =
+  | "drive_folder"
+  | "contract"
+  | "briefing"
+  | "survey"
+  | "drawing"
+  | "executive"
+  | "render"
+  | "photo"
+  | "rrt"
+  | "memorial"
+  | "other";
+
+export type ProjectFile = {
+  id: string;
+  project_id: string;
+  name: string;
+  category: ProjectFileCategory;
+  drive_url: string;
+  drive_file_id: string | null;
+  mime_type: string | null;
+  notes: string | null;
+  created_at: string;
+};
+
+export type ProjectComment = {
+  id: string;
+  project_id: string;
+  author_id: string | null;
+  comment: string;
+  created_at: string;
+};
+
+export type ProjectHistory = {
+  id: number;
+  project_id: string;
+  action_type: string;
+  description: string;
+  author_id: string | null;
+  created_at: string;
+};
+
 export type CalendarEvent = {
   id: string;
   project_id: string | null;
@@ -62,6 +105,32 @@ export type CalendarEvent = {
   ends_at: string | null;
   location: string | null;
   notes: string | null;
+  completed_at: string | null;
+  created_at?: string;
 };
 
-export type ViewKey = "dashboard" | "projects" | "agenda" | "clients" | "finance" | "settings";
+export type ProjectFinancialEntry = {
+  id: string;
+  project_id: string | null;
+  entry_type: "income" | "expense";
+  description: string;
+  category: string;
+  amount: number;
+  received_on: string;
+  payment_method: string | null;
+  notes: string | null;
+  created_at: string;
+};
+
+export type ViewKey = "dashboard" | "projects" | "completed" | "agenda" | "clients" | "finance" | "settings";
+
+export type ProjectChecklistItem = {
+  id: string;
+  project_id: string;
+  stage: ProjectStage;
+  section: string;
+  title: string;
+  completed_at: string | null;
+  position: number;
+  created_at: string;
+};
