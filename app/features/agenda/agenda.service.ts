@@ -1,4 +1,2 @@
-import{ensureSupabase,assertNoError}from"@/app/services/supabase/base-service";import{supabase}from"@/lib/supabase";import type{AgendaActivityOption,CalendarRow,NewCalendarEvent}from"./types";
-export async function listCalendarEvents(){if(!ensureSupabase())return[];const r=await supabase.from("calendar_events").select("*,project:projects(name),activity:project_activities(title)").order("starts_at",{ascending:true});assertNoError(r);return(r.data??[])as unknown as CalendarRow[]}
-export async function listAgendaActivityOptions(){if(!ensureSupabase())return[];const r=await supabase.from("project_activities").select("id,title,project_id").is("deleted_at",null).is("archived_at",null).order("title");if(r.error&&/deleted_at|activity_id|schema cache/i.test(r.error.message))return[];assertNoError(r);return(r.data??[])as AgendaActivityOption[]}
-export async function createCalendarEvent(input:NewCalendarEvent){const r=await supabase.from("calendar_events").insert({...input,status:"scheduled"});assertNoError(r)}
+export { fetchAgendaItem as getAgendaItem, fetchAgendaItems as listAgendaItems, fetchAgendaOptions as listAgendaOptions } from "./agenda.repository";
+export { archiveCalendarEvent, createActivityFromAgenda, markAgendaItemViewed, saveCalendarEvent, setAgendaItemStatus, updateAgendaItem } from "./agenda.mutations";

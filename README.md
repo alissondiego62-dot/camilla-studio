@@ -1,6 +1,6 @@
-# Camilla Studio 3.0.6
+# Camilla Studio 3.0.7
 
-Base atual: **Etapa 05 — Atividades e Subatividades**.
+Base atual: **Etapa 06 — Calendário, Agenda e integração bidirecional com Atividades**.
 
 ## Executar localmente
 
@@ -21,38 +21,43 @@ pnpm build
 pnpm test
 ```
 
-## Banco — Etapa 05
+## Banco — Etapa 06
 
-As Etapas 02, 03 e 04 são pré-requisitos. Para aplicar a Etapa 05:
+As Etapas 02, 03, 04 e 05 são pré-requisitos. Para aplicar a Etapa 06:
 
 1. Faça backup do banco.
-2. Execute `supabase/validation/etapa-05-preflight.sql`.
-3. Execute **somente** `camilla-studio-etapa-05.sql`.
-4. Execute `supabase/validation/etapa-05-postflight.sql`.
-5. Execute `supabase/validation/etapa-05-data-integrity.sql`.
-6. Execute os testes de hierarquia e visualizações salvas em homologação.
-7. Execute `supabase/validation/etapa-05-rls-tests.sql` com usuários reais de teste.
+2. Execute `supabase/validation/etapa-06-preflight.sql`.
+3. Execute **somente** `camilla-studio-etapa-06.sql`.
+4. Execute `supabase/validation/etapa-06-postflight.sql`.
+5. Execute `supabase/validation/etapa-06-data-integrity.sql`.
+6. Execute os testes de sincronização e duplicidade em homologação.
+7. Execute `supabase/validation/etapa-06-rls-tests.sql` com usuários reais de teste.
+8. Publique a aplicação atualizada.
 
 Não execute o SQL consolidado e a migration equivalente em sequência.
 
-## Atividades
+## Agenda
 
-A rota `/activities` utiliza os mesmos registros nas visualizações:
+A rota `/agenda` possui as visualizações:
 
-- Tabela;
-- Lista;
-- Quadro;
-- Calendário;
-- Linha do tempo.
+- Dia;
+- Semana;
+- Mês.
 
-A página permite visualizações salvas, filtros, agrupamentos, propriedades configuráveis, ações em massa, subatividades, observações estruturadas, comentários, anexos e agenda relacionada.
+A Agenda une, sem duplicar registros:
+
+- eventos manuais de `calendar_events`;
+- atividades e subatividades datadas de `project_activities`;
+- prazos planejados de `project_dates` que ainda não foram convertidos em atividade ou evento.
+
+Arrastar ou redimensionar um item atualiza a tabela de origem. Atividades sem data não aparecem. Itens cancelados ficam ocultos por padrão e podem ser exibidos pelo filtro.
 
 ## Segurança
 
-- RLS permanece aplicada por escopo e vínculo.
-- Subatividades não são apagadas em cascata.
-- Ações em massa são transacionais.
-- Observações não aceitam HTML arbitrário.
-- Comentários e anexos são carregados somente ao abrir a atividade.
+- A view `agenda_items` usa `security_invoker=true`.
+- Alterações são feitas por RPCs com validação de usuário e permissão.
+- Eventos arquivados não aparecem na visão padrão.
+- O ator não recebe notificação redundante da própria alteração.
+- O fuso operacional permanece `America/Boa_Vista`.
 
 Não inclua `.env.local`, chaves, senha do banco ou `service_role` no repositório ou no ZIP.

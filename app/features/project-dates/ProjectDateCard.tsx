@@ -18,7 +18,7 @@ export function ProjectDateCard({ value, types, canEdit, canCreateActivity, canC
       {value.description && <p>{value.description}</p>}
       <div className="cs-date-links">
         <span>{value.activity_id ? "✓ Atividade vinculada" : "Sem atividade"}</span>
-        <span>{value.calendar_event_id ? "✓ Agenda vinculada" : "Sem evento"}</span>
+        <span>{value.calendar_event_id ? "✓ Evento relacionado" : "Visível automaticamente na Agenda"}</span>
       </div>
       <footer className="cs-row-actions">
         {canEdit && <Button variant="text" disabled={pending} onClick={onEdit}>Editar</Button>}
