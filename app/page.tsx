@@ -7,7 +7,7 @@ import { NotificationSettings } from "./components/NotificationSettings";
 import { registerAppServiceWorker } from "@/lib/push-notifications";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import { getChecklistTemplate, menuItems, priorityLabels, responsibleOptions, stageLabels, stages, statusLabels } from "./domain/architecture-config";
-import type { Client, Project, ProjectComment, ProjectFile, ProjectFileCategory, ProjectHistory, ProjectPriority, ProjectStage, ProjectStatus, ViewKey, CalendarEvent, ProjectFinancialEntry, ProjectChecklistItem } from "./domain/architecture-types";
+import type { Client, Project, ProjectComment, ProjectFile, ProjectFileCategory, ProjectHistory, ProjectPriority, ProjectStage, ProjectStatus, ViewKey, CalendarEvent, ProjectFinancialEntry, ProjectChecklistItem, UserProfile } from "./domain/architecture-types";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 const shortDate = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" });
@@ -46,6 +46,7 @@ const demoProjects: Project[] = [
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [authBusy, setAuthBusy] = useState(false);
   const [projects, setProjects] = useState<Project[]>(demoProjects);
@@ -103,7 +104,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!isSupabaseConfigured || !user) return;
+    if (!isSupabaseConfigured || !user) {
+      setProfile(null);
+      return;
+    }
+    void loadProfile(user.id);
     void loadData();
   }, [user]);
 
@@ -137,6 +142,28 @@ export default function Home() {
     }
     void Promise.all([loadProjectFiles(selectedProject.id), loadProjectComments(selectedProject.id), loadProjectHistory(selectedProject.id), loadProjectEvents(selectedProject.id), loadProjectFinancialEntries(selectedProject.id), loadProjectChecklist(selectedProject.id)]);
   }, [selectedProject, user]);
+
+
+  async function loadProfile(userId: string) {
+    const result = await supabase
+      .from("profiles")
+      .select("id,name,email,camilla_role,active")
+      .eq("id", userId)
+      .maybeSingle();
+    if (result.error) {
+      setError(`Não foi possível carregar as permissões do usuário: ${result.error.message}`);
+      return;
+    }
+    setProfile((result.data || null) as UserProfile | null);
+  }
+
+  const canViewFinance = !profile || profile.camilla_role === "admin" || profile.camilla_role === "project_manager";
+  const canManageProjects = !profile || profile.camilla_role === "admin" || profile.camilla_role === "project_manager";
+  const visibleMenuItems = useMemo(() => menuItems.filter((item) => {
+    if (item.key === "finance" || item.key === "clients" || item.key === "settings") return canViewFinance;
+    if (item.key === "dashboard" && profile?.camilla_role === "collaborator") return false;
+    return true;
+  }), [canViewFinance, profile?.camilla_role]);
 
   async function refreshProjects() {
     const result = await supabase
@@ -776,12 +803,12 @@ export default function Home() {
     <div className="studio-shell">
       <aside className={sidebarOpen ? "studio-sidebar open" : "studio-sidebar"}>
         <div className="studio-brand"><span>CA</span><div><b>Camilla Studio</b><small>Arquitetura & Interiores</small></div></div>
-        <nav>{menuItems.map((item) => <button key={item.key} className={activeView === item.key ? "active" : ""} onClick={() => { setActiveView(item.key); setSidebarOpen(false); }}><i>{item.icon}</i><span>{item.label}</span></button>)}</nav>
+        <nav>{visibleMenuItems.map((item) => <button key={item.key} className={activeView === item.key ? "active" : ""} onClick={() => { setActiveView(item.key); setSidebarOpen(false); }}><i>{item.icon}</i><span>{item.label}</span></button>)}</nav>
         <div className="sidebar-footer"><small>{isSupabaseConfigured ? "Supabase conectado" : "Modo demonstração"}</small><b>{user?.email || "Camilla Arquiteta"}</b>{user && <button onClick={() => void supabase.auth.signOut()}>Sair</button>}</div>
       </aside>
 
       <main className="studio-content">
-        <header className="topbar"><button className="mobile-menu" onClick={() => setSidebarOpen((value) => !value)}>☰</button><div><p className="eyebrow">CAMILLА STUDIO</p><h1>{menuItems.find((item) => item.key === activeView)?.label}</h1><p>Gestão clara para projetos bem conduzidos.</p></div>{activeView === "finance" ? <div className="topbar-actions"><button onClick={() => setGlobalFinanceForm("income")}>＋ Lançar receita</button><button className="primary" onClick={() => setGlobalFinanceForm("expense")}>− Lançar despesa</button></div> : activeView === "agenda" ? <button className="primary" onClick={() => setAgendaFormOpen((value) => !value)}>＋ Novo compromisso</button> : <button className="primary" onClick={() => setModalOpen(true)}>＋ Novo projeto</button>}</header>
+        <header className="topbar"><button className="mobile-menu" onClick={() => setSidebarOpen((value) => !value)}>☰</button><div><p className="eyebrow">CAMILLА STUDIO</p><h1>{visibleMenuItems.find((item) => item.key === activeView)?.label || "Camilla Studio"}</h1><p>Gestão clara para projetos bem conduzidos.</p></div>{activeView === "finance" ? <div className="topbar-actions"><button onClick={() => setGlobalFinanceForm("income")}>＋ Lançar receita</button><button className="primary" onClick={() => setGlobalFinanceForm("expense")}>− Lançar despesa</button></div> : activeView === "agenda" ? <button className="primary" onClick={() => setAgendaFormOpen((value) => !value)}>＋ Novo compromisso</button> : canManageProjects ? <button className="primary" onClick={() => setModalOpen(true)}>＋ Novo projeto</button> : null}</header>
         {notice && <div className="notice">{notice}<button onClick={() => setNotice("")}>×</button></div>}
         {error && <div className="error-banner">{error}<button onClick={() => setError("")}>×</button></div>}
 
@@ -828,7 +855,7 @@ export default function Home() {
 
         {activeView === "clients" && <section className="client-grid">{clients.map((client) => { const own = projects.filter((project) => project.client?.id === client.id || project.client_id === client.id); return <article key={client.id}><div className="client-avatar">{client.name.split(/\s+/).slice(0,2).map((part) => part[0]).join("")}</div><div><h3>{client.name}</h3><p>{client.email || "E-mail não informado"}</p><span>{own.length} projeto{own.length === 1 ? "" : "s"}</span></div></article>; })}</section>}
 
-        {activeView === "finance" && <section className="finance-page">
+        {activeView === "finance" && canViewFinance && <section className="finance-page">
           <section className="finance-period-panel"><div><p className="eyebrow">PERÍODO FINANCEIRO</p><h2>Resumo por competência</h2><span>O mês atual é selecionado automaticamente. Ajuste as datas para consultar outro período.</span></div><label>De<input type="date" value={financeStart} onChange={(event) => setFinanceStart(event.target.value)} /></label><label>Até<input type="date" value={financeEnd} min={financeStart} onChange={(event) => setFinanceEnd(event.target.value)} /></label><button type="button" onClick={() => { const range = monthRange(); setFinanceStart(range.start); setFinanceEnd(range.end); }}>Mês atual</button></section><section className="finance-metrics"><article><small>Contratos do período</small><strong>{money.format(totalContracted)}</strong><span>{periodProjects.length} projeto{periodProjects.length === 1 ? "" : "s"} cadastrado{periodProjects.length === 1 ? "" : "s"}</span></article><article><small>Recebido no período</small><strong>{money.format(totalReceived)}</strong><span>Recebimentos vinculados a projetos</span></article><article><small>Saldo dos contratos</small><strong>{money.format(periodBalance)}</strong><span>Pendente nos projetos cadastrados no período</span></article><article><small>Despesas do período</small><strong>{money.format(totalExpenses)}</strong><span>Custos gerais e por projeto</span></article><article><small>Receitas avulsas</small><strong>{money.format(standaloneIncome)}</strong><span>Sem projeto vinculado</span></article></section>
           {globalFinanceForm && <article className="panel finance-launch-panel"><div className="panel-head"><div><p className="eyebrow">NOVO LANÇAMENTO</p><h2>{globalFinanceForm === "income" ? "Lançar receita" : "Lançar despesa"}</h2></div><button onClick={() => setGlobalFinanceForm(null)}>Cancelar</button></div><form className="inline-module-form global-form" onSubmit={(event) => void addFinancialEntry(event, null)}><input type="hidden" name="entry_type" value={globalFinanceForm} /><label>Projeto<select name="project_id"><option value="">Lançamento avulso, sem projeto</option>{projects.map((project) => <option key={project.id} value={project.id}>{projectClient(project)} — {project.name}</option>)}</select></label><label>Descrição<input name="description" required placeholder={globalFinanceForm === "income" ? "Ex.: Consultoria avulsa" : "Ex.: Impressão de pranchas"} /></label><label>Categoria<select name="category">{globalFinanceForm === "income" ? <><option value="payment">Recebimento</option><option value="installment">Parcela</option><option value="consulting">Consultoria</option><option value="other_income">Outra receita</option></> : <><option value="printing">Impressão</option><option value="travel">Deslocamento</option><option value="supplier">Fornecedor</option><option value="taxes">Taxas</option><option value="operational">Operacional</option><option value="other_expense">Outra despesa</option></>}</select></label><label>Valor<input name="amount" type="number" min="0.01" step="0.01" required /></label><label>Data<input name="received_on" type="date" required defaultValue={new Date().toISOString().slice(0,10)} /></label><label>Forma<select name="payment_method"><option value="pix">PIX</option><option value="transfer">Transferência</option><option value="cash">Dinheiro</option><option value="card">Cartão</option><option value="boleto">Boleto</option><option value="other">Outro</option></select></label><label className="wide">Observações<textarea name="notes" rows={2} /></label><div className="wide form-submit"><button className="primary">Salvar {globalFinanceForm === "income" ? "receita" : "despesa"}</button></div></form></article>}
           <section className="finance-layout"><article className="panel finance-projects"><div className="panel-head"><div><p className="eyebrow">CONTAS A RECEBER</p><h2>Contratos por projeto</h2></div></div><div className="finance-project-list">{projects.filter((project) => project.contract_value > 0).sort((a,b) => b.balance_due - a.balance_due).map((project) => <button key={project.id} onClick={() => { setSelectedProject(project); setDetailTab("finance"); }}><div><b>{projectClient(project)}</b><span>{project.name}{project.stage === "completed" || project.status === "completed" ? " · Finalizado" : ""}</span></div><strong>{money.format(project.contract_value)}</strong><span>{money.format(project.amount_received)} recebido</span><em data-pending={project.balance_due > 0}>{money.format(project.balance_due)} pendente</em></button>)}</div></article><article className="panel finance-transactions"><div className="panel-head"><div><p className="eyebrow">MOVIMENTAÇÕES</p><h2>Receitas e despesas</h2></div></div><div className="transaction-list">{periodEntries.slice(0,50).map((entry) => { const project = entry.project_id ? projects.find((item) => item.id === entry.project_id) : null; return <article key={entry.id} data-type={entry.entry_type}><i>{entry.entry_type === "income" ? "+" : "−"}</i><div><b>{entry.description}</b><span>{project ? `${projectClient(project)} · ${project.name}` : "Lançamento avulso"}</span><small>{new Date(`${entry.received_on}T12:00:00`).toLocaleDateString("pt-BR")} · {entry.category.replaceAll("_", " ")}</small></div><strong>{entry.entry_type === "income" ? "+" : "−"} {money.format(Number(entry.amount))}</strong></article>})}{!periodEntries.length && <p className="empty-state">Nenhum lançamento financeiro neste período.</p>}</div></article></section>

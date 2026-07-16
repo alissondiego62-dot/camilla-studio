@@ -134,3 +134,14 @@ export type ProjectChecklistItem = {
   position: number;
   created_at: string;
 };
+
+
+export type CamillaRole = "admin" | "project_manager" | "collaborator" | "viewer";
+
+export type UserProfile = {
+  id: string;
+  name: string;
+  email: string;
+  camilla_role: CamillaRole;
+  active: boolean;
+};
