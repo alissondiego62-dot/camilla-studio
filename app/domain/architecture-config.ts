@@ -35,6 +35,7 @@ export const menuItems: Array<{ key: ViewKey; icon: string; label: string }> = [
   { key: "projects", icon: "▦", label: "Projetos" },
   { key: "completed", icon: "✓", label: "Finalizados" },
   { key: "agenda", icon: "◷", label: "Agenda" },
+  { key: "activities", icon: "☑", label: "Atividades" },
   { key: "clients", icon: "◉", label: "Clientes" },
   { key: "finance", icon: "R$", label: "Financeiro" },
   { key: "settings", icon: "⚙", label: "Configurações" },

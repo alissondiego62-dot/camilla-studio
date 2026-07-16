@@ -122,7 +122,7 @@ export type ProjectFinancialEntry = {
   created_at: string;
 };
 
-export type ViewKey = "dashboard" | "projects" | "completed" | "agenda" | "clients" | "finance" | "settings";
+export type ViewKey = "dashboard" | "projects" | "completed" | "agenda" | "activities" | "clients" | "finance" | "settings";
 
 export type ProjectChecklistItem = {
   id: string;
