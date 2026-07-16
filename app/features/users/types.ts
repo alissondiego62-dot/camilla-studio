@@ -1,0 +1,1 @@
+export type ProfileRow={id:string;name:string;email:string;camilla_role:string|null;role:string|null;active:boolean;last_access_at:string|null};

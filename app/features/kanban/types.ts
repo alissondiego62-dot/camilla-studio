@@ -1,0 +1,1 @@
+export type KanbanProject={id:string;code:string;name:string;stage:string;status:string;main_deadline:string|null;responsible_name:string|null;cover_url:string|null;client?:{name:string}|null};

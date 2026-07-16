@@ -1,0 +1,1 @@
+export type ActivityRow={id:string;title:string;status:string;priority:string;due_date:string|null;progress:number;project?:{name:string}|null};export type NewActivity={title:string;priority:string;due_date:string|null};

@@ -1,0 +1,817 @@
+[
+  {
+    "path": ".gitattributes",
+    "size": 66,
+    "sha256": "1a1dbe176bc233b499d35a57db7513f2941c99ab9759f177830c9149be99005b"
+  },
+  {
+    "path": ".gitignore",
+    "size": 546,
+    "sha256": "47a37b32b4db6d88d7767573c9bf38975d2cb937b6afd074ab83a0437d2cd39d"
+  },
+  {
+    "path": ".openai/hosting.json",
+    "size": 91,
+    "sha256": "6493fb9dcdb5f44dbbaa6e7a759ff66a523c14c9e5c12ec4220bfb37d3bb38f3"
+  },
+  {
+    "path": "ARCHITECTURE-REVIEW.md",
+    "size": 3883,
+    "sha256": "ad019050d5ebad9e92243c8d4f8e65db66a73b81010fb5dc9df52197c9347971"
+  },
+  {
+    "path": "ARQUITETURA.md",
+    "size": 1872,
+    "sha256": "b2d2be4476f65342b5eb73329719cca8a66653c7e40b4597112095a6a2b76f47"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-10.md",
+    "size": 455,
+    "sha256": "04ada2308d47cc9a22a80c62e516fb83464c8702ad2ad5e067ccccc18c7e1736"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-11.md",
+    "size": 555,
+    "sha256": "f6f6e93b5baa5ab8282ae325afe27a00244b564be9a5348daf0a3fdaca4f2ada"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-12.md",
+    "size": 572,
+    "sha256": "1dac6d8bc4e8bc5d71e8a13efa4d7e1a89fcf1152f3aa6e6b42e5c96b28e1c17"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-13.md",
+    "size": 1061,
+    "sha256": "6f7f56e6b224ca62d121ec7be7618dd8653169970b20ec9b4f7346ffdc3063f0"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-14.md",
+    "size": 436,
+    "sha256": "dce28a4b94df12edeada2d529334308399e61d987d3fc23b68c68821c479f1fa"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-15.md",
+    "size": 650,
+    "sha256": "a1630bcb46d3cc3a71a01f3fb8289c9d49798a594e33f9067d20eaf9bb826add"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-16.md",
+    "size": 898,
+    "sha256": "56f68e45fea973973fc037d12b217510b69a0196c9b70a230eb9340ade3a7d27"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-17.md",
+    "size": 480,
+    "sha256": "a5403fb5d6227ee4728a9e250e24dd99e71796dde11bb6b57fcca1aa54083369"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-18.md",
+    "size": 1905,
+    "sha256": "09ec17d88c44761c4c5701d3731737e3af0d89c7eb77b207ea676dba54a5f663"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-19.md",
+    "size": 983,
+    "sha256": "adfd35f22214cd73c50f591a28ea98f61bca978b36b52979ae40596b34d396f2"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-20.md",
+    "size": 1188,
+    "sha256": "d9eab166a1a61b618432b7df5ff19ae4907e3fcc5a335faa6145798e3f52fc07"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-4.md",
+    "size": 654,
+    "sha256": "cc3beef0884d5afbd9e0866f3488cdee92d0d08497d564cad0763bfac94225cb"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-5.md",
+    "size": 638,
+    "sha256": "aa6b549965866946bfe794e771bb53f957451245d42ee8eecf19984fb5c39c2d"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-6.md",
+    "size": 874,
+    "sha256": "617e62a74f7c441b169e153e786599c012a55bd7e4c829b811697c9975c96e3a"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-7.md",
+    "size": 824,
+    "sha256": "4983799b2a3fe0687cc80e83dc8716cfe759f9f4c7ade8991015c3f31e368e62"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-8.md",
+    "size": 466,
+    "sha256": "87dd84dccf085b4ecafada62d59dbe2b1ab4e4e20f5bf4be41db0c7a3561c04c"
+  },
+  {
+    "path": "ATUALIZACAO-FASE-9.md",
+    "size": 491,
+    "sha256": "83b87ad9b8f8a7ae19d5920d4e34b7a0b33408a75c470fdd77a420b006cbdc1d"
+  },
+  {
+    "path": "CAMILLA-STUDIO-3.0.md",
+    "size": 1243,
+    "sha256": "8b05b4641a0e58a763888abf3cbdb1ffefb7347cbae36c97c2ef656d9625491b"
+  },
+  {
+    "path": "DESIGN-SYSTEM-CAMILLA-STUDIO.md",
+    "size": 1076,
+    "sha256": "1accaf8735143bbdb28fab82d9c84eaec87bbbf01581448a6e19895ca163360b"
+  },
+  {
+    "path": "GOOGLE-DRIVE-ARQUIVOS.md",
+    "size": 996,
+    "sha256": "1ac0c1dff9109f2ef6859aea5f6fba00a157d0a07a217a725be4e64fb1e8099d"
+  },
+  {
+    "path": "LEIA-ME.txt",
+    "size": 338,
+    "sha256": "83d7e0961d1c60bd6d98e29fdaae764392c676c04be1d252d7c741b1a1e41ea9"
+  },
+  {
+    "path": "MODULO-1-ORDEM-DE-SERVICO.md",
+    "size": 732,
+    "sha256": "e83de2264265fcc566b92eefc39e2bd5bf45aaa74cf8e5c54eac1e119092df29"
+  },
+  {
+    "path": "PUBLICOLOR-V3-INSTALACAO.md",
+    "size": 1729,
+    "sha256": "676f59a9ccfd7ed053e47af189f887961775c959220afd98e50259b4b68329b3"
+  },
+  {
+    "path": "PWA-NOTIFICACOES.md",
+    "size": 2234,
+    "sha256": "19f26b6eb08f7a4108c6f7173748c1cf3d60da42a32b9f2f03b6293df59de8c6"
+  },
+  {
+    "path": "README.md",
+    "size": 3316,
+    "sha256": "1eb008b77133bc0992aab7a838809124d69e0d2ea621f960848c546334bc091f"
+  },
+  {
+    "path": "RELATORIO-FINAL-ATUALIZACAO-2026-07-16.md",
+    "size": 3851,
+    "sha256": "e5fc1efcebfee2934c287273df9225af1d293388f10373ab9232b7a2bed194a0"
+  },
+  {
+    "path": "RELATORIO-FINAL-CAMILLA-STUDIO-3.0.md",
+    "size": 2580,
+    "sha256": "4f4d05d68ad59678361f0d0ce03ac2da5b4227e2730dabbbec2114b23f465142"
+  },
+  {
+    "path": "REVISAO-TECNICA.md",
+    "size": 1745,
+    "sha256": "47f57444781de1c3f13c3dfbf24caee06cde0715abe5c6c1a52361f67e73bec8"
+  },
+  {
+    "path": "SQL-ATUALIZACAO-CAMILLA-FASE-18.sql",
+    "size": 15635,
+    "sha256": "93ce717941d8d967d840fe1e1f1ba6fe5576147acb21bf4795b64cc76e27a301"
+  },
+  {
+    "path": "app/activities/page.tsx",
+    "size": 129,
+    "sha256": "89f16c4ccf9439cb10a25625c0beb6fcd16378aa4b752e93bd10ddd5053df16f"
+  },
+  {
+    "path": "app/agenda/page.tsx",
+    "size": 117,
+    "sha256": "f7202b5e66624450212e66c8cd6e5cb77bd3060ce37ac740f16be99e65988f3d"
+  },
+  {
+    "path": "app/architecture.css",
+    "size": 56711,
+    "sha256": "11dc987be1afe538ce82f389301a13eeb6a0ee7f01599adfc881c8b3dd7f418c"
+  },
+  {
+    "path": "app/brand-overrides.css",
+    "size": 3102,
+    "sha256": "ed7c970713d16b935497c61acf7f6d4a7da8a7f5417f1caafe155ba909bb89df"
+  },
+  {
+    "path": "app/chatgpt-auth.ts",
+    "size": 2404,
+    "sha256": "17a965f8948b21510cdf8ecbd70c5fdf58100e10970463f6a8fd2cc4795f8044"
+  },
+  {
+    "path": "app/clients/page.tsx",
+    "size": 120,
+    "sha256": "42e5cb927cb9393da7625cf6de5ac6e28be3ed559ae3a30645bd42541a5f1632"
+  },
+  {
+    "path": "app/components/ActivitiesWorkspace.tsx",
+    "size": 9442,
+    "sha256": "ffb14d74eb0722d103230a73c68d7ea1df76574bd8885e34bdca4a674db0546f"
+  },
+  {
+    "path": "app/components/ArchitectureAgendaCalendar.tsx",
+    "size": 5968,
+    "sha256": "3db907d5e47fcedee6bce53d100cb928ea5170dd7929f62aa5c8dd1ed18ddb30"
+  },
+  {
+    "path": "app/components/CompletedOrdersView.tsx",
+    "size": 2965,
+    "sha256": "204c6e66a53ff65a8c57d7804a9152c9750f6d64291e5cd944eca5e551ccf2a0"
+  },
+  {
+    "path": "app/components/DriveIntegrationSettings.tsx",
+    "size": 2780,
+    "sha256": "e3e42184e9b273e8fa2021520c01cdf0a1657889f44fc7d2c15be9b6703ed648"
+  },
+  {
+    "path": "app/components/InstallationAgendaView.tsx",
+    "size": 7268,
+    "sha256": "a52950e3e0efe7d374fbeee3179f4663b110e2cfffd0d5cde9a10ea5828f5ad5"
+  },
+  {
+    "path": "app/components/NotificationSettings.tsx",
+    "size": 2732,
+    "sha256": "a3c277242969002cc3422e5d1cfe902e5f7786a7f461cb8f72ef8d9b9a36a022"
+  },
+  {
+    "path": "app/components/v3/ActivitiesModule.tsx",
+    "size": 4767,
+    "sha256": "e9fd6fab1fb07765aec32668fce1dae2827ff234ec0f6127bb1f597b2e63b79b"
+  },
+  {
+    "path": "app/components/v3/AgendaModule.tsx",
+    "size": 2858,
+    "sha256": "acf65d7d6f90c9ad37f1e113f304e94e24cc9e8292fe8d2ce7feae9e9202e1d3"
+  },
+  {
+    "path": "app/components/v3/AppShell.tsx",
+    "size": 4934,
+    "sha256": "6e7bed960e8a912d63f08b60c70d8051e9bbda267e776b44547dc3200363ecc1"
+  },
+  {
+    "path": "app/components/v3/ClientsModule.tsx",
+    "size": 2799,
+    "sha256": "9de8f45d3b85c76155086d3b218d716629f167bc518cb0d6dc9f836a12049256"
+  },
+  {
+    "path": "app/components/v3/DashboardModule.tsx",
+    "size": 2747,
+    "sha256": "7a4762dfbd96e3f1ae62904cf56bee4dd40c1ab8ac5803aa0ec03bdde869d086"
+  },
+  {
+    "path": "app/components/v3/DataState.tsx",
+    "size": 494,
+    "sha256": "ecabf057a44c0398ceef930e187b3c6c55bb713fbcadbbd54b2fc34947609ed6"
+  },
+  {
+    "path": "app/components/v3/FinanceModule.tsx",
+    "size": 4113,
+    "sha256": "6543d90d798a98f61b0ed908e2bec3eb40c4bcbff72075eff5013509bc03c620"
+  },
+  {
+    "path": "app/components/v3/GenericModules.tsx",
+    "size": 4248,
+    "sha256": "c1d5ace466a1c77688684a51ec04c6b5c974de7dae39971abd1595fee53416aa"
+  },
+  {
+    "path": "app/components/v3/KanbanModule.tsx",
+    "size": 2029,
+    "sha256": "29b4e71459562a7b3bf18b49c997eca0a1f6e9e98419466a2c0edaf63d85b394"
+  },
+  {
+    "path": "app/components/v3/Modal.tsx",
+    "size": 812,
+    "sha256": "88f225bf4cb9031881dfb2f85afc36a58902d44877bcbf4c31b8fbfd2a63cd34"
+  },
+  {
+    "path": "app/components/v3/ProjectsModule.tsx",
+    "size": 3070,
+    "sha256": "b2deffe9b49b46c719ddead42ac92ea7d1b04a932c997de7a2a7dc48969707ba"
+  },
+  {
+    "path": "app/components/v3/useSupabaseList.ts",
+    "size": 894,
+    "sha256": "712e2e426393546c873270ae3f5661cffe38a0eba3f06e80a50c03ff13ae8a51"
+  },
+  {
+    "path": "app/dashboard/page.tsx",
+    "size": 126,
+    "sha256": "7ce91cdb04b2cf1292d713c2fb6de2e1f3f95095cfbb9f92cca17ee56b36601d"
+  },
+  {
+    "path": "app/design-tokens.css",
+    "size": 1964,
+    "sha256": "e05bfdff11fb5cc45331448cd2fcca7b329adb662a4cf9ebac958b5db420ea02"
+  },
+  {
+    "path": "app/details.css",
+    "size": 9309,
+    "sha256": "5b0184bb6eb9d4c85a007f2057b345031f18a865f65db1b48c6b4bfdaaf145b2"
+  },
+  {
+    "path": "app/domain/architecture-config.ts",
+    "size": 4637,
+    "sha256": "8677cf3b21da980e1aea170de3c3fb02f9ae5ea10a2feff62b8e01c24fc39762"
+  },
+  {
+    "path": "app/domain/architecture-types.ts",
+    "size": 3010,
+    "sha256": "7d51e1a7fcf693ef5cb85fc85a749afaab148dc1027afa568bfc819da9a0f30e"
+  },
+  {
+    "path": "app/domain/constants.ts",
+    "size": 1024,
+    "sha256": "ac45c54bb9e225c5491f57643db6cfb437e0398ef250d05883dd2be202a045c6"
+  },
+  {
+    "path": "app/domain/formatters.ts",
+    "size": 1670,
+    "sha256": "497aeac1f6a98ac347fe0873a0a81797b6b30d8dfad241ad3ede6d1a031f9978"
+  },
+  {
+    "path": "app/domain/locale.ts",
+    "size": 628,
+    "sha256": "6e040e86efbbc28eafe2b0a9373b788d69224aeb13c8cf1eab1d387e08b44f1d"
+  },
+  {
+    "path": "app/domain/types.ts",
+    "size": 3586,
+    "sha256": "4da47f1866e4e0edbd024f371993f7a144743426b315d66f2dc93b36c7bab85b"
+  },
+  {
+    "path": "app/files/page.tsx",
+    "size": 117,
+    "sha256": "3a3c7fd3a62289165ed335cec6ee26428fc0ad3b30fc6d52e0cb1623fcce2b97"
+  },
+  {
+    "path": "app/finance/page.tsx",
+    "size": 120,
+    "sha256": "517a75a033e73f98cf6ddf4ec7e43e9d097596fe470be99a718f329a3d06e2d5"
+  },
+  {
+    "path": "app/globals.css",
+    "size": 11014,
+    "sha256": "23c77545ca02a884911d2b28f63f9e9ef257689cbbc9947bdb86b96e1e9ef961"
+  },
+  {
+    "path": "app/hooks/useSynchronizedKanbanScroll.ts",
+    "size": 1637,
+    "sha256": "9b2ff087610b35af82d3d95beffe7ff8601d033b2d51ffd8735d562edfecab0d"
+  },
+  {
+    "path": "app/kanban/page.tsx",
+    "size": 117,
+    "sha256": "f612f1f57e57800ab93f69a5b77993312ebc8e2a018e1af9919fd8ee551fff02"
+  },
+  {
+    "path": "app/kanban-cards.css",
+    "size": 12937,
+    "sha256": "7593a51cf5afb48e63e80a921a910a8f1791a9b5e308ab6a6e9d2f49a8228163"
+  },
+  {
+    "path": "app/layout.tsx",
+    "size": 1086,
+    "sha256": "7a0e97161f4d992bc14585566b8bac5de1569843f0b52b970dc124a5cf592e07"
+  },
+  {
+    "path": "app/legacy-page.tsx",
+    "size": 88007,
+    "sha256": "aa47d45d6c5fb6a63d01ebd68d6de358954935014920e47299206e03e47a292f"
+  },
+  {
+    "path": "app/navigation.css",
+    "size": 10252,
+    "sha256": "4d67f1b32f7760aea725c5bbdcdd34e97b57d9719a995b5fe49bf92bf84042d7"
+  },
+  {
+    "path": "app/page.tsx",
+    "size": 102,
+    "sha256": "cbce182e36aaee26688aa176fa9e52d88e30ec43464b0a0a1a566aa13d24917b"
+  },
+  {
+    "path": "app/pcp-v2.css",
+    "size": 28344,
+    "sha256": "0cb11d81e33bb4ad335cbd7d66d8bef0779d52789aa4d77b709d2bdc3b42953c"
+  },
+  {
+    "path": "app/projects/page.tsx",
+    "size": 123,
+    "sha256": "8594686465496ec683acbf1b72b1cd20c9d446e8e9500cba2eafe7ae5cc5e489"
+  },
+  {
+    "path": "app/publicolor-integration.css",
+    "size": 9325,
+    "sha256": "f72f491c54fd4056379e771f1593dcbcdfc2851ae51b5042e7b0ea68926d25e8"
+  },
+  {
+    "path": "app/recovery.css",
+    "size": 777,
+    "sha256": "1de320c2369b1481ce9ed14028dc3304a095f50946d9cbfbc8846dc8d24b78c3"
+  },
+  {
+    "path": "app/reports/page.tsx",
+    "size": 121,
+    "sha256": "b7ae55dc45d0062cbc793f83f1ea6561ff31159937031af18bf23b0ae3e26932"
+  },
+  {
+    "path": "app/results.css",
+    "size": 720,
+    "sha256": "113bdce5e8405e3753d3bc27df9b9fc226408283adcb67fa6895b175e6a7f33b"
+  },
+  {
+    "path": "app/search.css",
+    "size": 2853,
+    "sha256": "ae4018a0bc8e709a86c54b50a57b013d6099a32cf06cb18d2079bdc3609615f9"
+  },
+  {
+    "path": "app/settings/page.tsx",
+    "size": 123,
+    "sha256": "d8bd3c6a60b8f38111f17b4f2de16790a6f87020410b8fa2d05194877b248124"
+  },
+  {
+    "path": "app/supabase.css",
+    "size": 3049,
+    "sha256": "309edd7b19af83cd7f04272211f4866736486591b6bfd2d061ecf52cbb255ed5"
+  },
+  {
+    "path": "app/users/page.tsx",
+    "size": 117,
+    "sha256": "1366695ea2f910d984b38ae5f7ffa4787aefd31819e5b39e742147cc1ba773ab"
+  },
+  {
+    "path": "app/v3.css",
+    "size": 12690,
+    "sha256": "572a1692e36ffc9c29388ad22f630ef8b7069a8f8fbf94118cfde6afe36766d3"
+  },
+  {
+    "path": "components/CompletedOrdersView.tsx",
+    "size": 2786,
+    "sha256": "acb7705ee53893614f00ae85fedaf4a6e34a5c24fe9ce852c18147de8c386773"
+  },
+  {
+    "path": "db/index.ts",
+    "size": 423,
+    "sha256": "dc7610b00b918e0ffff1360a63626f16655ced3064b2eaf96095a4101fb14bcd"
+  },
+  {
+    "path": "db/schema.ts",
+    "size": 169,
+    "sha256": "13ddacbf0be50e054d450a6c642b7fdc1aa943fd6b99084711e07e58b600390d"
+  },
+  {
+    "path": "drizzle/meta/_journal.json",
+    "size": 61,
+    "sha256": "90cb374e093894d0efce6f1830d873a42aadd8ba49d2f024495e5cb2e1c8c303"
+  },
+  {
+    "path": "drizzle.config.ts",
+    "size": 148,
+    "sha256": "af081f7384aaeb0082cf422e29f139d137ca2f6a57c69b2c37b9fb1f8479867b"
+  },
+  {
+    "path": "eslint.config.mjs",
+    "size": 494,
+    "sha256": "581f467866f78e45cadb675db277b16dec431c10967b1fe25c72925e7a2be33d"
+  },
+  {
+    "path": "examples/d1/app/api/notes/route.ts",
+    "size": 1700,
+    "sha256": "a3d4a74fd53b7bf53e2df41f169d9d9d44a8b22aeb6d92f4e754956079af8909"
+  },
+  {
+    "path": "examples/d1/db/schema.ts",
+    "size": 370,
+    "sha256": "d89eabd95716ce404f5f7ca2a254220435be8ddce7c899d7ef461ff22ec80454"
+  },
+  {
+    "path": "lib/pcp-config.ts",
+    "size": 1032,
+    "sha256": "933e8e50595325c9b5feefb2b444a26ec26eed3d1d3596ccd01a22bef1187d8e"
+  },
+  {
+    "path": "lib/pcp-formatters.ts",
+    "size": 1641,
+    "sha256": "7ca044ba3a1de5623fca27b2a6204ed67026d41ff33aa428f5220914e52a4265"
+  },
+  {
+    "path": "lib/pcp-types.ts",
+    "size": 3463,
+    "sha256": "ecd6374f8859d6d8a029ac265813597f94a8b43d82f7865f13055240c86c624d"
+  },
+  {
+    "path": "lib/push-notifications.ts",
+    "size": 3550,
+    "sha256": "ecee6bb71e75538a29455cd9bb4bd863222eded264f58f5fead780eeef6c8ac5"
+  },
+  {
+    "path": "lib/supabase.ts",
+    "size": 589,
+    "sha256": "29a7b495c71f918b155bcf08438370f8d96763c66d4b814c1e9206810e3e1ae7"
+  },
+  {
+    "path": "next.config.ts",
+    "size": 133,
+    "sha256": "614bce25b089c3f19b1e17a6346c74b858034040154c6621e7d35303004767cc"
+  },
+  {
+    "path": "package.json",
+    "size": 1277,
+    "sha256": "26c9e6536d593de5597f24f1fed5bd656d1c69a3131c819416eb3b054d8bf73e"
+  },
+  {
+    "path": "pnpm-lock.yaml",
+    "size": 243905,
+    "sha256": "2ffe25c1271ea07ff704b1b297332e100a5f11c5d6bd0f4cae0f02dcc904299c"
+  },
+  {
+    "path": "pnpm-workspace.yaml",
+    "size": 81,
+    "sha256": "fb4cd1144091d2d15ef21d607c27abe15bc40a45e1b7828ae50e232eabde3e78"
+  },
+  {
+    "path": "postcss.config.mjs",
+    "size": 94,
+    "sha256": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde"
+  },
+  {
+    "path": "public/brand/camilla-studio-logo.png",
+    "size": 58114,
+    "sha256": "0f8f3258d5067db9d37cdaf2edd2559e5a9b0dfb223baa4b226fac6492db4e5c"
+  },
+  {
+    "path": "public/brand/camilla-studio-palette.png",
+    "size": 54968,
+    "sha256": "93dc65b0e1349ce2828757f5a0d517c99e0e625b8c742bc93cd84b289b3c78da"
+  },
+  {
+    "path": "public/camilla-studio-logo.png",
+    "size": 58114,
+    "sha256": "0f8f3258d5067db9d37cdaf2edd2559e5a9b0dfb223baa4b226fac6492db4e5c"
+  },
+  {
+    "path": "public/favicon.svg",
+    "size": 712,
+    "sha256": "e6d2e59b7b5bbb0342e0fb496dfc262decbfe4426bbb7b047aec8d467d1dc6f7"
+  },
+  {
+    "path": "public/file.svg",
+    "size": 391,
+    "sha256": "2b67812c325c199a02536cdbeea0c593a72f707d323b72ee3e08dbab06753bd4"
+  },
+  {
+    "path": "public/globe.svg",
+    "size": 1035,
+    "sha256": "b614b9bf183925957661ac851498fe1d8029fd43a62fbfed86f9e2624a57e7cf"
+  },
+  {
+    "path": "public/icons/apple-touch-icon.png",
+    "size": 860,
+    "sha256": "8ec31e352ee55f241adfce51971512ecef7a9abe83092902f3ae53c350736501"
+  },
+  {
+    "path": "public/icons/badge-96.png",
+    "size": 498,
+    "sha256": "4c93958086a50d74e1e6013920c63b9e67b2be002b894ca90ea39642ed150cba"
+  },
+  {
+    "path": "public/icons/icon-192.png",
+    "size": 854,
+    "sha256": "dc8fbc4a2587211025728ca1efe68f31f90ad286cd32cfb727faaccbd987b7f4"
+  },
+  {
+    "path": "public/icons/icon-512.png",
+    "size": 2392,
+    "sha256": "3c71b1b2ef2fbfcb07935bcf780018fb6e4acaf1585dde31980e7bafdd4eaa36"
+  },
+  {
+    "path": "public/manifest.webmanifest",
+    "size": 560,
+    "sha256": "d384f89c532ade20d3c67522f7dfaa1ebd18eb7d7abb33478d6160fa51551975"
+  },
+  {
+    "path": "public/publicolor-logo.png",
+    "size": 10890,
+    "sha256": "f649e39150e21e975ca42bbb4b15c7f0b113c989425f04a1f25ff61d52af36ee"
+  },
+  {
+    "path": "public/sw.js",
+    "size": 2196,
+    "sha256": "f0cbe4f0ea4d8e9b8e33197fcc6b7a27623050e5a1a674f123c9279fda85c105"
+  },
+  {
+    "path": "public/window.svg",
+    "size": 385,
+    "sha256": "644768c4aaeb4767bce293344eeb0c125fb804a94d801440424072202d85e3a1"
+  },
+  {
+    "path": "scripts/backup-before-migration.sh",
+    "size": 433,
+    "sha256": "ab17ad464d77a7fd962fcc2d3c010769e3ce10b3afd95e41c7fc60f65dd107e8"
+  },
+  {
+    "path": "supabase/.temp/gotrue-version",
+    "size": 8,
+    "sha256": "8712feff3bcd61881f85d0c96e18eee24bb5ac3f47a58c1ba8bc639b6a7965e5"
+  },
+  {
+    "path": "supabase/.temp/linked-project.json",
+    "size": 130,
+    "sha256": "acdf33d37878867b56641c2d994f7d2ef4b5df48ab6a0b22ed96592553dda4f4"
+  },
+  {
+    "path": "supabase/.temp/pooler-url",
+    "size": 92,
+    "sha256": "af04f6b8dac85f2077b951fb6657096512050934386ea7c4420858ce23a77f09"
+  },
+  {
+    "path": "supabase/.temp/postgres-version",
+    "size": 10,
+    "sha256": "eba23653f5f46f14c983c379dd897e7e8fd255fae9bbbd80e8b001aa7a0b6ed9"
+  },
+  {
+    "path": "supabase/.temp/project-ref",
+    "size": 20,
+    "sha256": "e393be90fb38e959629496ac8697fbf6a67425be6d6ab781f6b4641e2513025e"
+  },
+  {
+    "path": "supabase/.temp/rest-version",
+    "size": 5,
+    "sha256": "b25de4a023eef82d4780a9f7816c5685ca35437308a9d457585eece9945485dc"
+  },
+  {
+    "path": "supabase/.temp/storage-migration",
+    "size": 33,
+    "sha256": "5eefa09f2bf47edfbd65e0307f2ebf6eec935a663b45e36cbd9395c3f10695d0"
+  },
+  {
+    "path": "supabase/.temp/storage-version",
+    "size": 7,
+    "sha256": "2413c9aa419634fb971140ec25bd16439ce3586c45af662e8efb7c2f30611a84"
+  },
+  {
+    "path": "supabase/functions/admin-create-user/index.ts",
+    "size": 7007,
+    "sha256": "eb5046f2643fc05990bd0ea19c0a28013b0576b3929d119a3667a0b95054c163"
+  },
+  {
+    "path": "supabase/functions/send-agenda-notifications/index.ts",
+    "size": 7034,
+    "sha256": "72b9055190553dd56bad56d94df53defb69095bc9dcb9ef3f59d868849fbe6ce"
+  },
+  {
+    "path": "supabase/migrations/0001_initial.sql",
+    "size": 8479,
+    "sha256": "6f1baad56601ee19e1e0be83f35d0bbdbe730a7935318b7e19332aa79c503486"
+  },
+  {
+    "path": "supabase/migrations/20260712194040_production_sectors_and_order_controls.sql",
+    "size": 6757,
+    "sha256": "eb76e13356011aeb381f4a07577c103fde2829c43afa4bc7cdff5310328d493d"
+  },
+  {
+    "path": "supabase/migrations/20260712194210_harden_trigger_function_privileges.sql",
+    "size": 320,
+    "sha256": "bba63b4cfd9d6e9de236e26e9daefba9a871a314f0bfda789cedc24866a09766"
+  },
+  {
+    "path": "supabase/migrations/20260712195724_user_roles_and_installation_agenda.sql",
+    "size": 11032,
+    "sha256": "01f831c7ddf47f77c92de2ab98f22cc6fa07c55646c127c7b60dce890f8a1ee6"
+  },
+  {
+    "path": "supabase/migrations/20260712195908_harden_role_management_privileges.sql",
+    "size": 2608,
+    "sha256": "db8227efae6ebe7b073359be02069ddfaf4d229c5684c9f7a9ac5376221eac0b"
+  },
+  {
+    "path": "supabase/migrations/20260712200537_optimize_role_policies_and_foreign_keys.sql",
+    "size": 1753,
+    "sha256": "4731e42ac6768bc53900f010676c5fb956aee4ec2a887807915998944eef3ffe"
+  },
+  {
+    "path": "supabase/migrations/20260713010000_publicolor_v3_order_and_installation.sql",
+    "size": 1930,
+    "sha256": "f2c53b9e0d5bd097e2c506996dd2196902c06e32ba4d203acb0de30cb2f5aafc"
+  },
+  {
+    "path": "supabase/migrations/20260714010000_order_workspace_module.sql",
+    "size": 3666,
+    "sha256": "f91fc6fa6e3d8ecb0d479c994cdf2e1104e5bd3254dd8c2dc9baa3f69df85fae"
+  },
+  {
+    "path": "supabase/migrations/20260715010000_google_drive_links.sql",
+    "size": 1845,
+    "sha256": "86beca9fead0063aadc59ed645740e3e8f4cde974dfae085fa883b9ae12e3c3a"
+  },
+  {
+    "path": "supabase/migrations/20260715030000_reopen_completed_order.sql",
+    "size": 2401,
+    "sha256": "bf2599d5abe0cda488cbe6150fa5b9eba5bc0257d64ac76231e4e746b8168830"
+  },
+  {
+    "path": "supabase/migrations/20260716010000_architecture_platform.sql",
+    "size": 6479,
+    "sha256": "f526c1088c2b9cc53380fe83a8be9a02e240e63bdd8c2aaea9ebbb75df09e451"
+  },
+  {
+    "path": "supabase/migrations/20260717010000_hybrid_drive_documents.sql",
+    "size": 2440,
+    "sha256": "ed8220504e83a5f9fb4c39ca249a3a98d73e13a7ab998a61e9c897c20ef8165d"
+  },
+  {
+    "path": "supabase/migrations/20260718010000_project_revision_and_comments.sql",
+    "size": 481,
+    "sha256": "412dd3ff1858d3ed97b31095ac049e93b1459404f1a86dcb6b2f222d722d01ef"
+  },
+  {
+    "path": "supabase/migrations/20260719010000_project_agenda_and_financial_income.sql",
+    "size": 1401,
+    "sha256": "70dc6d7d4b9800eb64cb3ade5d493515388c47b6297c910319ed23fb07469f0b"
+  },
+  {
+    "path": "supabase/migrations/20260720010000_editable_project_overview_and_history.sql",
+    "size": 3803,
+    "sha256": "42e5c994693272cd223ca286b29c72371207cb04dbbd5d665d5d55573db3aebe"
+  },
+  {
+    "path": "supabase/migrations/20260721010000_completed_projects_and_full_finance.sql",
+    "size": 1283,
+    "sha256": "a516575f26848f0d055fbe51d8a86fa38264050d7988a1fb2c530091239a571a"
+  },
+  {
+    "path": "supabase/migrations/20260722010000_calendar_event_completion.sql",
+    "size": 400,
+    "sha256": "205854f85402b2614df50b7c92a18abf76fd28ea7633a6890c408b7c05742bf4"
+  },
+  {
+    "path": "supabase/migrations/20260723010000_briefing_checklists_finance_period.sql",
+    "size": 2550,
+    "sha256": "fb69d611ec8cb113302d3000a5a1307b4107b44fd39e99a9bc8ceef0cf7d1d6b"
+  },
+  {
+    "path": "supabase/migrations/20260724010000_pwa_push_notifications.sql",
+    "size": 3734,
+    "sha256": "eb7b44ac55d0afc1ad0a5c21528d7ff9a0bfe60121f4ffac316df4d27166ad1d"
+  },
+  {
+    "path": "supabase/migrations/20260726010000_camilla_project_access_drive_base.sql",
+    "size": 15635,
+    "sha256": "93ce717941d8d967d840fe1e1f1ba6fe5576147acb21bf4795b64cc76e27a301"
+  },
+  {
+    "path": "supabase/migrations/20260727010000_camilla_activities_drive_thumbnails.sql",
+    "size": 4050,
+    "sha256": "887c8b52388932f2f89f597f89bc9951f357e33d58d36a78ea3fd4f5aaeced9f"
+  },
+  {
+    "path": "supabase/migrations/20260728010000_camilla_studio_complete_core.sql",
+    "size": 16850,
+    "sha256": "836baf2a514ecc4346b31ee50ac73d165ed369426487a84784c5ad6ff90e147a"
+  },
+  {
+    "path": "supabase/migrations/20260729010000_camilla_studio_v3.sql",
+    "size": 9547,
+    "sha256": "1cd30a2845b9185eb6d58985b6c8787bcced2a21222c84a1031f5b8ab382d8e1"
+  },
+  {
+    "path": "supabase/rollback/20260728010000_camilla_studio_complete_core_rollback.sql",
+    "size": 1484,
+    "sha256": "c9784a1b5c751cebda57df23b227012909916bcd3fa7d4e53a59d2e86ced6b27"
+  },
+  {
+    "path": "supabase/seed-architecture-projects.sql",
+    "size": 3300,
+    "sha256": "1dc5e9eb9075614c97c6b466654f8b5040e2a69215ab964cafdbc7c555c0bfc9"
+  },
+  {
+    "path": "tests/rendered-html.test.mjs",
+    "size": 1034,
+    "sha256": "1ae062e4aa11978e86abc300f57d3f2c4f4871eb51e069aef824164e69f8ae0b"
+  },
+  {
+    "path": "tsconfig.json",
+    "size": 727,
+    "sha256": "a7d19036603bd6c3f9d4f31f2ff054cfb2f95bb3537b3e49c3b906e8c6b5b7af"
+  },
+  {
+    "path": "tsconfig.web.json",
+    "size": 270,
+    "sha256": "7b1674fd3dd603d0af12c940b305365b45c4900f8a6d93c902a40e5cf7fdd1ec"
+  },
+  {
+    "path": "types/nitro-vite.d.ts",
+    "size": 150,
+    "sha256": "b90c89317948d723fc137c1f49f197be3726429f51408667e46353977e2cc7d8"
+  },
+  {
+    "path": "vercel.json",
+    "size": 183,
+    "sha256": "aa763779a59071ca5cee47472d76ce92c33fea6a999a3260dee2e723462b4da9"
+  },
+  {
+    "path": "vite.config.ts",
+    "size": 181,
+    "sha256": "49f5f4ea7a6048a01d5ea1df5a7adba610dbcef074e995f935582e090013b543"
+  },
+  {
+    "path": "worker/index.ts",
+    "size": 1731,
+    "sha256": "2ed36d7fa996e946d9d7695c5925e7760246f6bf8fa35c06f1bc515c087dc450"
+  }
+]

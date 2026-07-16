@@ -23,14 +23,14 @@ export function installationDateTimeLabel(value: string) {
   return new Date(value).toLocaleString("pt-BR", {
     dateStyle: "short",
     timeStyle: "short",
-    timeZone: "America/Manaus",
+    timeZone: "America/Boa_Vista",
   });
 }
 
 export function toInstallationInputValue(value: string | null) {
   if (!value) return "";
   return new Date(value).toLocaleString("sv-SE", {
-    timeZone: "America/Manaus",
+    timeZone: "America/Boa_Vista",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

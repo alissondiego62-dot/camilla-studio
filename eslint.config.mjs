@@ -9,10 +9,20 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    ".output/**",
+    "dist/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
     "supabase/functions/**",
+    // Código histórico preservado somente para referência e reversão.
+    "app/legacy-page.tsx",
+    "app/components/ActivitiesWorkspace.tsx",
+    "app/components/ArchitectureAgendaCalendar.tsx",
+    "app/components/DriveIntegrationSettings.tsx",
+    "app/components/InstallationAgendaView.tsx",
+    "app/components/NotificationSettings.tsx",
+    "components/**",
   ]),
 ]);
 

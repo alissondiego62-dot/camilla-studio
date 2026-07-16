@@ -1,0 +1,1 @@
+export type FinanceRow={id:string;environment:string;entry_type:string;description:string;amount:number;competence_date:string;due_date:string|null;status:string};export type NewFinanceEntry={environment:string;entry_type:string;description:string;amount:number;competence_date:string;due_date:string|null};

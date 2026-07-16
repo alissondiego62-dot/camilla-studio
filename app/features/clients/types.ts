@@ -1,0 +1,1 @@
+export type ClientRow={id:string;name:string;person_type:string|null;cpf:string|null;cnpj:string|null;phone:string|null;email:string|null;city:string|null;state:string|null;relationship_status:string|null};export type NewClient=Omit<ClientRow,"id"|"relationship_status">;

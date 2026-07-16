@@ -3,7 +3,7 @@
 ## Implementado no código
 
 - Identidade oficial com logo em `public/brand/camilla-studio-logo.png`.
-- Paleta oficial e correção de R=293 para R=239.
+- Paleta oficial com a última cor confirmada em R=239, G=234 e B=231.
 - Design system responsivo em `app/v3.css` e tokens anteriores preservados.
 - Página inicial redirecionada para `/dashboard`.
 - 11 rotas independentes.

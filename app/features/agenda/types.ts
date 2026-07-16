@@ -1,0 +1,1 @@
+export type CalendarRow={id:string;title:string;starts_at:string;ends_at:string|null;event_type:string;status:string;location:string|null;project?:{name:string}|null};export type NewCalendarEvent={title:string;starts_at:string;ends_at:string|null;event_type:string;location:string|null};

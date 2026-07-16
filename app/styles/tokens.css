@@ -1,0 +1,13 @@
+:root{
+  --cs-primary:#5e3021;--cs-primary-hover:#4f281c;--cs-primary-pressed:#432117;
+  --cs-secondary:#9b6352;--cs-accent:#d3c0bd;--cs-background:#efeae7;
+  --cs-background-secondary:#f7f3f1;--cs-surface:#fffdfc;--cs-surface-elevated:#ffffff;
+  --cs-border:#ded1cc;--cs-divider:#e8dfdb;--cs-text:#34241f;--cs-text-secondary:#6f5b53;
+  --cs-text-muted:#8e7c75;--cs-icon:#74564b;--cs-selected:#eadbd6;--cs-hover:#f4ece9;
+  --cs-focus:#9b6352;--cs-disabled:#d9cfcb;--cs-success:#52705c;--cs-success-soft:#edf3ee;
+  --cs-warning:#8b6a3d;--cs-warning-soft:#f7f0e5;--cs-error:#8f4239;--cs-error-soft:#f8ece9;
+  --cs-info:#596c73;--cs-info-soft:#edf1f2;--cs-radius-sm:8px;--cs-radius-md:12px;
+  --cs-radius-lg:18px;--cs-shadow-sm:0 2px 10px rgba(67,33,23,.05);
+  --cs-shadow-md:0 12px 32px rgba(67,33,23,.08);--cs-font-sans:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --cs-sidebar-width:252px;--cs-transition:160ms ease;
+}

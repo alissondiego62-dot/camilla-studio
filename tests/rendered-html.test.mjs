@@ -1,34 +1,73 @@
 import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
+import { once } from "node:events";
 import test from "node:test";
 
-async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
+const port = 39173;
+let server;
 
-  return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
-  );
+const routes = new Map([
+  ["/dashboard", "Dashboard"],
+  ["/projects", "Projetos"],
+  ["/kanban", "Kanban"],
+  ["/activities", "Atividades"],
+  ["/agenda", "Agenda"],
+  ["/clients", "Clientes"],
+  ["/finance", "Financeiro"],
+  ["/files", "Arquivos"],
+  ["/reports", "Relatórios"],
+  ["/users", "Usuários"],
+  ["/settings", "Configurações"],
+]);
+
+async function waitForServer() {
+  const deadline = Date.now() + 15_000;
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`http://127.0.0.1:${port}/dashboard`);
+      if (response.status > 0) return;
+    } catch {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    }
+  }
+  throw new Error("O servidor de teste não iniciou dentro do limite esperado.");
 }
 
-test("renderiza a página inicial do Controle de Pedidos", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
-  const html = await response.text();
-  assert.match(html, /<html lang="pt-BR">/i);
-  assert.match(html, /<title>Controle de Pedidos \| Produção<\/title>/i);
-  assert.match(html, /Preparando o sistema/);
+test.before(async () => {
+  server = spawn(process.execPath, [".output/server/index.mjs"], {
+    cwd: new URL("..", import.meta.url),
+    env: { ...process.env, PORT: String(port), HOST: "127.0.0.1" },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  await waitForServer();
 });
+
+test.after(async () => {
+  if (!server || server.killed) return;
+  server.kill("SIGTERM");
+  await Promise.race([
+    once(server, "exit"),
+    new Promise((resolve) => setTimeout(resolve, 2_000)),
+  ]);
+  if (!server.killed) server.kill("SIGKILL");
+});
+
+test("redireciona a raiz para o dashboard", async () => {
+  const response = await fetch(`http://127.0.0.1:${port}/`, { redirect: "manual" });
+  assert.equal(response.status, 307);
+  assert.equal(new URL(response.headers.get("location")).pathname, "/dashboard");
+});
+
+for (const [route, title] of routes) {
+  test(`renderiza ${route} de forma independente`, async () => {
+    const response = await fetch(`http://127.0.0.1:${port}${route}`, {
+      headers: { accept: "text/html" },
+    });
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+    const html = await response.text();
+    assert.match(html, /<html lang="pt-BR">/i);
+    assert.match(html, /Camilla Studio/i);
+    assert.match(html, new RegExp(title, "i"));
+  });
+}

@@ -39,7 +39,7 @@ A migration:
 ### Verificações realizadas
 
 - Inspeção estática dos arquivos modificados.
-- Busca por ocorrência ativa de `R = 293`: somente a documentação da correção mantém o valor antigo como referência histórica.
+- Busca por valor RGB inválido: nenhuma ocorrência permanece ativa.
 - Busca das etapas antigas: “Obra” permanece apenas em nomes contextuais como “Visita de obra” e na instrução de migração de registros antigos, não como etapa configurável.
 - Conferência da presença da logo e dos arquivos de tokens.
 - Conferência do ZIP final.

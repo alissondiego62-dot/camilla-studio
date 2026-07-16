@@ -79,7 +79,7 @@ export function InstallationAgendaView({
                           {
                             day: "2-digit",
                             month: "2-digit",
-                            timeZone: "America/Manaus",
+                            timeZone: "America/Boa_Vista",
                           },
                         )}
                       </span>
@@ -89,7 +89,7 @@ export function InstallationAgendaView({
                           {
                             hour: "2-digit",
                             minute: "2-digit",
-                            timeZone: "America/Manaus",
+                            timeZone: "America/Boa_Vista",
                           },
                         )}
                       </small>

@@ -13,7 +13,7 @@ A identidade utiliza a logo em `public/brand/camilla-studio-logo.png`, preservad
 | `--cs-accent` | 211, 192, 189 | `#D3C0BD` | Superfícies suaves e detalhes |
 | `--cs-background` | 239, 234, 231 | `#EFEAE7` | Fundo principal |
 
-A última cor foi corrigida de `R = 293` para `R = 239`, preservando `G = 234` e `B = 231`.
+A última cor utiliza `R = 239`, preservando `G = 234` e `B = 231`.
 
 ## Arquivos
 

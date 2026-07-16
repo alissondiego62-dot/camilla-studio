@@ -1,0 +1,1 @@
+export type ProjectRow={id:string;code:string;name:string;project_type:string;stage:string;status:string;main_deadline:string|null;responsible_name:string|null;cover_url:string|null;client?:{name:string}|null}; export type NewProject={code:string;name:string;project_type:string;main_deadline:string|null};

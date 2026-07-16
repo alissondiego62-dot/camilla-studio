@@ -1,0 +1,1 @@
+export type ReportSummary={projects:number;activities:number;overdue:number;receivable:number;payable:number;net:number};

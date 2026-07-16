@@ -1,0 +1,1 @@
+export type DashboardStats={projects:number;late:number;activities:number;clients:number;income:number;expense:number};
