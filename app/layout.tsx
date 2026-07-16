@@ -4,6 +4,7 @@ import "./globals.css";
 import "./architecture.css";
 import "./publicolor-integration.css";
 import "./brand-overrides.css";
+import "./v3.css";
 
 export const viewport: Viewport = {
   width: "device-width",
