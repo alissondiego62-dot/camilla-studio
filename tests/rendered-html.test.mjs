@@ -9,6 +9,7 @@ let server;
 const routes = new Map([
   ["/dashboard", "Dashboard"],
   ["/projects", "Projetos"],
+  ["/projects/00000000-0000-4000-8000-000000000000", "Carregando projeto"],
   ["/kanban", "Kanban"],
   ["/activities", "Atividades"],
   ["/agenda", "Agenda"],

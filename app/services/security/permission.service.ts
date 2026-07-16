@@ -17,7 +17,7 @@ function fallbackPermissions(role?: string | null): EffectivePermission[] {
     ...all("dashboard", ["view"]), ...all("projects", ["view","create","edit","archive","reactivate","approve","export","change_status","change_stage","change_deadline"]),
     ...all("kanban", ["view","change_status","change_stage","change_deadline"]), ...all("activities", ["view","create","edit","delete","change_status","change_deadline"]),
     ...all("agenda", ["view","create","edit","delete","export"]), ...all("clients", ["view","create","edit","archive","reactivate","export"]),
-    ...all("files", ["view","add_file","remove_file","export"]), ...all("reports", ["view","export"]), ...all("checklists", ["view","create","edit"]),
+    ...all("files", ["view","add_file","remove_file","export"]), ...all("reports", ["view","export"]), ...all("checklists", ["view","create","edit","approve"]),
   ];
   if (code === "finance") return [...all("dashboard", ["view"]), ...all("finance_professional", ["view","create","edit","archive","view_values","settle_finance","cancel_entry","export"]), ...all("clients", ["view"], "all"), ...all("projects", ["view"], "all")];
   const assigned: PermissionScope = "assigned";

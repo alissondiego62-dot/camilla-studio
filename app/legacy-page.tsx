@@ -652,6 +652,7 @@ export default function Home() {
       stage: String(form.get("stage")) as ProjectStage,
       status: String(form.get("status")) as ProjectStatus,
       priority: String(form.get("priority")) as ProjectPriority,
+      responsible_user_id: null,
       responsible_name: String(form.get("responsible_name") || "Camilla"),
       main_deadline: String(form.get("deadline") || "") || null,
       deadline_stage_3: null,
@@ -686,11 +687,12 @@ export default function Home() {
 
   async function createChecklistFromTemplate(stage: ProjectStage) {
     if (!selectedProject) return;
+    if (stage === "construction") return setNotice("A etapa Obra foi removida do fluxo operacional.");
     const template = getChecklistTemplate(selectedProject.project_type, stage);
     if (!template.length) return setNotice("Não há itens padrão para esta etapa.");
     const existingTitles = new Set(projectChecklist.filter((item) => item.stage === stage).map((item) => item.title));
     const items = template.filter((item) => !existingTitles.has(item.title)).map((item, index) => ({
-      id: crypto.randomUUID(), project_id: selectedProject.id, stage, section: item.section, title: item.title, completed_at: null, position: projectChecklist.length + index, created_at: new Date().toISOString(),
+      id: crypto.randomUUID(), project_id: selectedProject.id, stage, section: item.section, title: item.title, required: false, completed_at: null, position: projectChecklist.length + index, created_at: new Date().toISOString(),
     }));
     if (!items.length) return setNotice("O checklist padrão desta etapa já foi criado.");
     if (!isSupabaseConfigured || !user || selectedProject.id.startsWith("demo-")) {
@@ -713,7 +715,7 @@ export default function Home() {
     const title = String(data.get("title") || "").trim();
     const section = String(data.get("section") || stageLabels[stage]).trim();
     if (!title) return;
-    const draft: ProjectChecklistItem = { id: crypto.randomUUID(), project_id: selectedProject.id, stage, section, title, completed_at: null, position: projectChecklist.length, created_at: new Date().toISOString() };
+    const draft: ProjectChecklistItem = { id: crypto.randomUUID(), project_id: selectedProject.id, stage, section, title, required: false, completed_at: null, position: projectChecklist.length, created_at: new Date().toISOString() };
     if (!isSupabaseConfigured || !user || selectedProject.id.startsWith("demo-")) { setProjectChecklist((current) => [...current, draft]); form.reset(); return; }
     const result = await supabase.from("project_checklist_items").insert({ project_id: draft.project_id, stage, section, title, position: draft.position }).select().single();
     if (result.error) return setError(result.error.message);
@@ -771,7 +773,7 @@ export default function Home() {
   const overdueProjects = activeProjects.filter((project) => deadlineLabel(project).includes("atrasado"));
   const allTotalContracted = projects.reduce((sum, project) => sum + Number(project.contract_value || 0), 0);
   const allTotalReceived = projects.reduce((sum, project) => sum + Number(project.amount_received || 0), 0);
-  const dateInFinanceRange = (value: string) => value.slice(0, 10) >= financeStart && value.slice(0, 10) <= financeEnd;
+  const dateInFinanceRange = (value?: string | null) => Boolean(value && value.slice(0, 10) >= financeStart && value.slice(0, 10) <= financeEnd);
   const periodProjects = projects.filter((project) => dateInFinanceRange(project.created_at));
   const periodProjectIds = new Set(periodProjects.map((project) => project.id));
   const periodEntries = financialEntries.filter((entry) => dateInFinanceRange(entry.received_on));

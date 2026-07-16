@@ -1,4 +1,4 @@
-import type { ProjectPriority, ProjectStage, ProjectStatus, ViewKey } from "./architecture-types";
+import type { ActiveProjectStage, ProjectPriority, ProjectStage, ProjectStatus, ViewKey } from "./architecture-types";
 
 export const stageLabels: Record<ProjectStage, string> = {
   prospecting: "Prospecção",
@@ -10,9 +10,30 @@ export const stageLabels: Record<ProjectStage, string> = {
   approval: "Aprovação",
   executive: "Executivo",
   revision: "Revisão",
-  construction: "Obra",
+  construction: "Etapa removida (histórico)",
   completed: "Finalizado",
 };
+
+export const activeStages: ActiveProjectStage[] = [
+  "prospecting",
+  "briefing",
+  "survey",
+  "briefing_preliminary",
+  "creation",
+  "adjustments",
+  "approval",
+  "executive",
+  "revision",
+  "completed",
+];
+
+/** Alias mantido para componentes anteriores; contém apenas etapas operacionais. */
+export const stages = activeStages;
+
+export function projectStageLabel(stage: string | null | undefined) {
+  if (!stage) return "Não definida";
+  return stageLabels[stage as ProjectStage] ?? stage;
+}
 
 export const statusLabels: Record<ProjectStatus, string> = {
   not_started: "Não iniciado",
@@ -31,8 +52,6 @@ export const priorityLabels: Record<ProjectPriority, string> = {
   urgent: "Urgente",
 };
 
-export const stages = Object.keys(stageLabels) as ProjectStage[];
-
 export const menuItems: Array<{ key: ViewKey; icon: string; label: string }> = [
   { key: "dashboard", icon: "⌂", label: "Dashboard" },
   { key: "projects", icon: "▦", label: "Projetos" },
@@ -44,14 +63,10 @@ export const menuItems: Array<{ key: ViewKey; icon: string; label: string }> = [
   { key: "settings", icon: "⚙", label: "Configurações" },
 ];
 
-export const responsibleOptions = [
-  "Camilla",
-  "Aldair",
-  "Silvia",
-] as const;
+export const responsibleOptions = ["Camilla", "Aldair", "Silvia"] as const;
 
-
-export const checklistTemplates: Record<string, Record<ProjectStage, Array<{ section: string; title: string }>>> = {
+type ChecklistSeed = { section: string; title: string };
+export const checklistTemplates: Record<string, Record<ActiveProjectStage, ChecklistSeed[]>> = {
   default: {
     prospecting: [
       { section: "Prospecção", title: "Registrar origem do contato e necessidade inicial" },
@@ -66,12 +81,9 @@ export const checklistTemplates: Record<string, Record<ProjectStage, Array<{ sec
       { section: "Levantamento", title: "Conferir documentos, restrições e condições do imóvel" },
     ],
     briefing_preliminary: [
-      { section: "Prospecção", title: "Registrar origem do contato e necessidade inicial" },
-      { section: "Prospecção", title: "Confirmar escopo e disponibilidade para atendimento" },
-      { section: "Estudo Preliminar", title: "Realizar reunião inicial de levantamento" },
-      { section: "Estudo Preliminar", title: "Registrar programa de necessidades e referências" },
-      { section: "Levantamento", title: "Realizar medição e registro fotográfico" },
-      { section: "Levantamento", title: "Conferir documentos, restrições e condições do imóvel" },
+      { section: "Estudo Preliminar", title: "Consolidar necessidades, referências e condicionantes" },
+      { section: "Estudo Preliminar", title: "Desenvolver alternativas iniciais e partido do projeto" },
+      { section: "Estudo Preliminar", title: "Apresentar e registrar a validação do estudo preliminar" },
     ],
     creation: [
       { section: "Criação", title: "Desenvolver conceito e partido do projeto" },
@@ -97,29 +109,31 @@ export const checklistTemplates: Record<string, Record<ProjectStage, Array<{ sec
       { section: "Revisão", title: "Atualizar numeração e identificação da revisão" },
       { section: "Revisão", title: "Liberar documentação revisada" },
     ],
-    construction: [
-      { section: "Obra", title: "Registrar acompanhamento e pendências da execução" },
-      { section: "Obra", title: "Atualizar registros fotográficos e decisões de campo" },
-    ],
     completed: [],
   },
 };
 
-export function getChecklistTemplate(projectType: string, stage: ProjectStage) {
+export function getChecklistTemplate(projectType: string, stage: ActiveProjectStage) {
   const normalized = projectType.trim().toLowerCase();
   const typeKey = normalized.includes("interior") ? "interiores" : normalized.includes("arquitet") ? "arquitetura" : "default";
   return checklistTemplates[typeKey]?.[stage] || checklistTemplates.default[stage] || [];
 }
 
-checklistTemplates.arquitetura = { ...checklistTemplates.default, executive: [
-  { section: "Executivo", title: "Concluir planta baixa, cortes e fachadas" },
-  { section: "Executivo", title: "Concluir implantação e cobertura" },
-  { section: "Executivo", title: "Compatibilizar estrutura e instalações complementares" },
-  { section: "Executivo", title: "Conferir RRT, memorial e pranchas finais" },
-] };
-checklistTemplates.interiores = { ...checklistTemplates.default, executive: [
-  { section: "Executivo", title: "Concluir layout e demolição/construção" },
-  { section: "Executivo", title: "Concluir paginação, forro e iluminação" },
-  { section: "Executivo", title: "Concluir marcenaria e detalhamentos" },
-  { section: "Executivo", title: "Conferir especificação de materiais e acabamentos" },
-] };
+checklistTemplates.arquitetura = {
+  ...checklistTemplates.default,
+  executive: [
+    { section: "Executivo", title: "Concluir planta baixa, cortes e fachadas" },
+    { section: "Executivo", title: "Concluir implantação e cobertura" },
+    { section: "Executivo", title: "Compatibilizar estrutura e instalações complementares" },
+    { section: "Executivo", title: "Conferir RRT, memorial e pranchas finais" },
+  ],
+};
+checklistTemplates.interiores = {
+  ...checklistTemplates.default,
+  executive: [
+    { section: "Executivo", title: "Concluir layout e demolição/construção" },
+    { section: "Executivo", title: "Concluir paginação, forro e iluminação" },
+    { section: "Executivo", title: "Concluir marcenaria e detalhamentos" },
+    { section: "Executivo", title: "Conferir especificação de materiais e acabamentos" },
+  ],
+};

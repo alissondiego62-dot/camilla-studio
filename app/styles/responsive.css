@@ -7,3 +7,8 @@
 
 @media(max-width:900px){.cs-permission-override-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.cs-section-heading{display:grid}.cs-section-heading .cs-button{width:100%}.cs-inline-form,.cs-permission-override-form{grid-template-columns:1fr}.cs-inline-form .cs-button{width:100%}}
+
+/* Etapa 03 — responsividade */
+@media(max-width:1180px){.cs-project-overview-grid{grid-template-columns:1fr}.cs-kanban-v3 .cs-kanban-column{flex-basis:310px}}
+@media(max-width:760px){.cs-project-detail-header{display:grid}.cs-project-header-status{justify-content:flex-start}.cs-date-grid{grid-template-columns:1fr}.cs-kanban-v3 .cs-kanban-column{flex-basis:min(88vw,310px);max-height:none}.cs-kanban-lane{overflow-y:visible}.cs-project-card-facts{grid-template-columns:1fr 1fr}.cs-kanban-card-controls{grid-template-columns:1fr}.cs-comment-form{grid-template-columns:1fr}.cs-comment-form .cs-button{width:100%}}
+@media(max-width:480px){.cs-project-card-v3{grid-template-columns:64px minmax(0,1fr)}.cs-project-card-image{width:64px;height:64px}.cs-project-card-body>header{display:grid}.cs-priority-pill{justify-self:start}.cs-project-card-facts{grid-template-columns:1fr}.cs-tabs{margin-inline:-4px}.cs-tabs button{padding-inline:9px}.cs-thumbnail-actions{display:grid}.cs-thumbnail-actions>*{width:100%}.cs-record-list article,.cs-comment-list article,.cs-history-list article,.cs-checklist-project article{grid-template-columns:1fr}.cs-history-list time{white-space:normal}}

@@ -22,7 +22,7 @@ const modules: Array<[PermissionModule, string, PermissionAction[]]> = [
   ["users", "Usuários", ["view", "create", "edit", "archive", "reactivate", "manage_users"]],
   ["teams", "Equipes", ["view", "create", "edit", "archive", "reactivate", "manage_users"]],
   ["settings", "Configurações", ["view", "manage_settings"]],
-  ["checklists", "Checklists", ["view", "create", "edit", "delete", "archive", "reactivate", "manage_settings"]],
+  ["checklists", "Checklists", ["view", "create", "edit", "delete", "archive", "reactivate", "approve", "manage_settings"]],
   ["notifications", "Notificações", ["view", "edit", "manage_settings"]],
   ["integrations", "Integrações", ["view", "edit", "manage_settings"]],
   ["versions", "Versões", ["view", "create", "manage_settings"]],

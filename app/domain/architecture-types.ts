@@ -1,4 +1,4 @@
-export type ProjectStage =
+export type ActiveProjectStage =
   | "prospecting"
   | "briefing"
   | "survey"
@@ -8,8 +8,10 @@ export type ProjectStage =
   | "approval"
   | "executive"
   | "revision"
-  | "construction"
   | "completed";
+
+/** Mantido somente para leitura de registros históricos anteriores à Etapa 03. */
+export type ProjectStage = ActiveProjectStage | "construction";
 
 export type ProjectStatus =
   | "not_started"
@@ -41,6 +43,7 @@ export type Project = {
   stage: ProjectStage;
   status: ProjectStatus;
   priority: ProjectPriority;
+  responsible_user_id: string | null;
   responsible_name: string | null;
   main_deadline: string | null;
   deadline_stage_1: string | null;
@@ -51,11 +54,11 @@ export type Project = {
   balance_due: number;
   cover_url: string | null;
   notes: string | null;
+  archived_at?: string | null;
   created_at: string;
   updated_at: string;
   client?: Client | null;
 };
-
 
 export type ProjectFileCategory =
   | "drive_folder"
@@ -74,7 +77,7 @@ export type ProjectFile = {
   id: string;
   project_id: string;
   name: string;
-  category: ProjectFileCategory;
+  category: ProjectFileCategory | string;
   drive_url: string;
   drive_file_id: string | null;
   mime_type: string | null;
@@ -95,6 +98,10 @@ export type ProjectHistory = {
   project_id: string;
   action_type: string;
   description: string;
+  field_name?: string | null;
+  old_value?: unknown;
+  new_value?: unknown;
+  metadata?: Record<string, unknown> | null;
   author_id: string | null;
   created_at: string;
 };
@@ -115,11 +122,14 @@ export type CalendarEvent = {
 export type ProjectFinancialEntry = {
   id: string;
   project_id: string | null;
-  entry_type: "income" | "expense";
+  entry_type: "income" | "expense" | string;
   description: string;
   category: string;
   amount: number;
-  received_on: string;
+  received_on?: string | null;
+  competence_date?: string | null;
+  due_date?: string | null;
+  status?: string | null;
   payment_method: string | null;
   notes: string | null;
   created_at: string;
@@ -133,11 +143,17 @@ export type ProjectChecklistItem = {
   stage: ProjectStage;
   section: string;
   title: string;
+  required: boolean;
+  responsible_user_id?: string | null;
+  started_at?: string | null;
   completed_at: string | null;
+  completed_by?: string | null;
+  waived_at?: string | null;
+  waived_by?: string | null;
+  waiver_reason?: string | null;
   position: number;
   created_at: string;
 };
-
 
 export type CamillaRole = "admin" | "owner" | "project_manager" | "finance" | "architect" | "collaborator" | "assistant" | "viewer";
 

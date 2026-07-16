@@ -1,4 +1,63 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
-import{useCallback,useState}from"react";import{stages,stageLabels,statusLabels}from"@/app/domain/architecture-config";import{dateOnly}from"@/app/config/regions";import{ModuleFrame}from"@/app/components/ui/ModuleFrame";import{Button}from"@/app/components/ui/Button";import{ErrorState,LoadingState,EmptyState}from"@/app/components/ui/DataState";import{FeedbackMessage}from"@/app/components/ui/FeedbackMessage";import{useModuleData}from"@/app/hooks/useModuleData";import{useAsyncAction}from"@/app/hooks/useAsyncAction";import{listKanbanProjects,updateProjectStage}from"./kanban.service";
-export function KanbanPage(){const loader=useCallback(()=>listKanbanProjects(),[]);const{data:items,setData:setItems,loading,error,reload}=useModuleData(loader,[]);const action=useAsyncAction();const[drag,setDrag]=useState<string|null>(null);async function move(stage:string){if(!drag)return;const before=items;setItems(items.map(p=>p.id===drag?{...p,stage}:p));const result=await action.run(()=>updateProjectStage(drag,stage),"Etapa atualizada.");if(!result.ok)setItems(before);setDrag(null)}return <ModuleFrame title="Kanban" subtitle="Fluxo visual dos projetos por etapa" actions={<Button onClick={()=>void reload()}>Atualizar</Button>}><FeedbackMessage error={action.error} success={action.success}/>{error&&<ErrorState message={error} onRetry={()=>void reload()}/>} {loading?<LoadingState/>:items.length===0?<EmptyState title="Nenhum projeto no Kanban" description="Os projetos cadastrados aparecerão organizados por etapa."/>:<div className="cs-kanban" aria-label="Kanban de projetos">{stages.filter(s=>s!=="completed").map(stage=><section key={stage} className="cs-kanban-column" onDragOver={e=>e.preventDefault()} onDrop={()=>void move(stage)}><header><h2>{stageLabels[stage]}</h2><span>{items.filter(p=>p.stage===stage).length}</span></header><div>{items.filter(p=>p.stage===stage).map(p=><article key={p.id} className="cs-project-card" draggable onDragStart={()=>setDrag(p.id)} onDragEnd={()=>setDrag(null)}><div className="cs-thumb">{p.cover_url?<img src={p.cover_url} alt=""/>:<span>{p.code.slice(0,2).toUpperCase()}</span>}</div><div><small>{p.code}</small><h3>{p.name}</h3><p>{p.client?.name??"Cliente não informado"}</p><div className="cs-card-meta"><span>{statusLabels[p.status as keyof typeof statusLabels]??p.status}</span><span>{p.responsible_name??"Sem responsável"}</span></div><footer>{dateOnly(p.main_deadline)}</footer></div></article>)}</div></section>)}</div>}</ModuleFrame>}
+
+import { useCallback, useMemo, useState } from "react";
+import { ModuleFrame } from "@/app/components/ui/ModuleFrame";
+import { Button } from "@/app/components/ui/Button";
+import { ErrorState, LoadingState, EmptyState } from "@/app/components/ui/DataState";
+import { FeedbackMessage } from "@/app/components/ui/FeedbackMessage";
+import { useModuleData } from "@/app/hooks/useModuleData";
+import { useAsyncAction } from "@/app/hooks/useAsyncAction";
+import { usePermissions } from "@/app/hooks/usePermissions";
+import { KanbanBoard } from "./KanbanBoard";
+import { getKanbanProject, listAssignableUsers, listKanbanProjects, updateProjectWorkflow } from "./kanban.service";
+import type { KanbanProject, WorkflowPatch } from "./types";
+
+export function KanbanPage() {
+  const loader = useCallback(() => listKanbanProjects(), []);
+  const usersLoader = useCallback(() => listAssignableUsers(), []);
+  const { data: projects, setData: setProjects, loading, error, reload } = useModuleData(loader, []);
+  const { data: users } = useModuleData(usersLoader, []);
+  const action = useAsyncAction();
+  const { can } = usePermissions();
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dropStage, setDropStage] = useState<string | null>(null);
+  const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
+
+  const canStage = can("kanban", "change_stage") || can("projects", "change_stage");
+  const canStatus = can("kanban", "change_status") || can("projects", "change_status");
+  const canResponsible = can("projects", "edit");
+  const sorted = useMemo(() => [...projects].sort((a, b) => a.name.localeCompare(b.name, "pt-BR")), [projects]);
+
+  async function patchProject(project: KanbanProject, patch: WorkflowPatch) {
+    if (pendingIds.has(project.id)) return;
+    const before = projects;
+    const next = { ...project, ...patch };
+    setPendingIds((current) => new Set(current).add(project.id));
+    setProjects((current) => current.map((item) => item.id === project.id ? next : item));
+    const result = await action.run(async () => {
+      await updateProjectWorkflow(project.id, patch);
+      return getKanbanProject(project.id);
+    }, "Projeto atualizado.");
+    if (!result.ok) setProjects(before);
+    else setProjects((current) => current.map((item) => item.id === project.id ? result.data : item));
+    setPendingIds((current) => { const copy = new Set(current); copy.delete(project.id); return copy; });
+  }
+
+  function dropProject(projectId: string, stage: string) {
+    const project = projects.find((item) => item.id === projectId);
+    if (!project || project.stage === stage || !canStage) return;
+    void patchProject(project, { stage });
+    setDragId(null);
+  }
+
+  return (
+    <ModuleFrame title="Kanban" subtitle="Projetos organizados por etapa, com prazos, checklist e atalhos operacionais" actions={<Button onClick={() => void reload()}>Atualizar</Button>}>
+      <FeedbackMessage error={action.error} success={action.success} />
+      {error && <ErrorState message={error} onRetry={() => void reload()} />}
+      {loading ? <LoadingState /> : sorted.length === 0 ? <EmptyState title="Nenhum projeto no Kanban" description="Os projetos cadastrados aparecerão organizados por etapa." /> : (
+        <KanbanBoard projects={sorted} users={users} canStage={canStage} canStatus={canStatus} canResponsible={canResponsible} pendingIds={pendingIds} dropStage={dropStage} onDropStage={dropProject} onDropTarget={setDropStage} onPatch={(project, patch) => void patchProject(project, patch)} onDragStart={setDragId} onDragEnd={() => { setDragId(null); setDropStage(null); }} />
+      )}
+      {dragId && <div className="cs-drag-announcement" role="status">Arraste para a etapa desejada ou use o seletor de etapa no card.</div>}
+    </ModuleFrame>
+  );
+}
