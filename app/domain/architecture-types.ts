@@ -1,10 +1,14 @@
 export type ProjectStage =
+  | "prospecting"
+  | "briefing"
+  | "survey"
   | "briefing_preliminary"
   | "creation"
   | "adjustments"
   | "approval"
   | "executive"
   | "revision"
+  | "construction"
   | "completed";
 
 export type ProjectStatus =

@@ -18,6 +18,20 @@ const routes = new Map([
   ["/reports", "Relatórios"],
   ["/users", "Usuários"],
   ["/settings", "Configurações"],
+  ["/settings/general", "Configurações gerais"],
+  ["/settings/system", "Informações do sistema"],
+  ["/settings/permissions", "Perfis e permissões"],
+  ["/settings/workflows", "Etapas e status"],
+  ["/settings/checklists", "Checklists"],
+  ["/settings/notifications", "Notificações"],
+  ["/settings/agenda", "Agenda"],
+  ["/settings/finance", "Financeiro"],
+  ["/settings/categories", "Categorias"],
+  ["/settings/files", "Arquivos e miniaturas"],
+  ["/settings/security", "Segurança"],
+  ["/settings/integrations", "Integrações"],
+  ["/settings/google-drive", "Google Drive"],
+  ["/settings/versions", "Histórico de versões"],
 ]);
 
 async function waitForServer() {

@@ -1,12 +1,16 @@
 import type { ProjectPriority, ProjectStage, ProjectStatus, ViewKey } from "./architecture-types";
 
 export const stageLabels: Record<ProjectStage, string> = {
+  prospecting: "Prospecção",
+  briefing: "Briefing",
+  survey: "Levantamento",
   briefing_preliminary: "Estudo Preliminar",
   creation: "Criação",
   adjustments: "Ajustes",
   approval: "Aprovação",
   executive: "Executivo",
   revision: "Revisão",
+  construction: "Obra",
   completed: "Finalizado",
 };
 
@@ -49,6 +53,18 @@ export const responsibleOptions = [
 
 export const checklistTemplates: Record<string, Record<ProjectStage, Array<{ section: string; title: string }>>> = {
   default: {
+    prospecting: [
+      { section: "Prospecção", title: "Registrar origem do contato e necessidade inicial" },
+      { section: "Prospecção", title: "Confirmar escopo e disponibilidade para atendimento" },
+    ],
+    briefing: [
+      { section: "Briefing", title: "Realizar reunião inicial de levantamento" },
+      { section: "Briefing", title: "Registrar programa de necessidades e referências" },
+    ],
+    survey: [
+      { section: "Levantamento", title: "Realizar medição e registro fotográfico" },
+      { section: "Levantamento", title: "Conferir documentos, restrições e condições do imóvel" },
+    ],
     briefing_preliminary: [
       { section: "Prospecção", title: "Registrar origem do contato e necessidade inicial" },
       { section: "Prospecção", title: "Confirmar escopo e disponibilidade para atendimento" },
@@ -80,6 +96,10 @@ export const checklistTemplates: Record<string, Record<ProjectStage, Array<{ sec
       { section: "Revisão", title: "Conferir revisão final dos arquivos" },
       { section: "Revisão", title: "Atualizar numeração e identificação da revisão" },
       { section: "Revisão", title: "Liberar documentação revisada" },
+    ],
+    construction: [
+      { section: "Obra", title: "Registrar acompanhamento e pendências da execução" },
+      { section: "Obra", title: "Atualizar registros fotográficos e decisões de campo" },
     ],
     completed: [],
   },

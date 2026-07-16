@@ -1,26 +1,17 @@
-# Camilla Studio 3.0
+# Camilla Studio 3.0.2
 
-Sistema de gestão para arquitetura e interiores, organizado por módulos independentes.
+Base atual: **Etapa 02 — Configurações, Usuários, Permissões, Segurança e Checklists**.
 
-## Requisitos
-- Node.js 22.13 ou superior
-- pnpm 11.12.0
+## Executar localmente
 
-## Configuração
-Copie `.env.example` para `.env.local` e preencha somente no ambiente local:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-```
-
-## Execução
 ```bash
 pnpm install --frozen-lockfile
+cp .env.example .env.local
 pnpm dev
 ```
 
-## Validação
+## Validar
+
 ```bash
 pnpm typecheck
 pnpm lint
@@ -28,8 +19,13 @@ pnpm build
 pnpm test
 ```
 
-## Rotas
-Dashboard, Projetos, Kanban, Atividades, Agenda, Clientes, Financeiro, Arquivos, Relatórios, Usuários e Configurações possuem páginas e carregamentos independentes.
-
 ## Banco
-Nenhum SQL foi necessário na Etapa 01.
+
+Leia, nesta ordem:
+
+1. `docs/ETAPA-02-APLICACAO-SQL.md`
+2. `supabase/validation/etapa-02-preflight.sql`
+3. `camilla-studio-etapa-02.sql`
+4. `supabase/validation/etapa-02-postflight.sql`
+
+Não inclua `.env.local`, chaves ou service role no repositório ou no ZIP.

@@ -9,12 +9,15 @@ import { CAMILLA_BRAND } from "@/app/config/brand";
 import { navigationItems } from "@/app/config/navigation";
 import { useBodyScrollLock } from "@/app/hooks/useBodyScrollLock";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { usePermissions } from "@/app/hooks/usePermissions";
 import { LoadingState } from "@/app/components/ui/DataState";
+import { AccessDenied } from "@/app/components/security/PermissionGate";
 import { LoginPage } from "./LoginPage";
 
 export function StudioShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { ready, configured, user, profile, signOut } = useAuth();
+  const { ready, configured, user, profile, access, signOut } = useAuth();
+  const { can } = usePermissions();
   const [menuOpen, setMenuOpen] = useState(false);
   const [signOutError, setSignOutError] = useState("");
 
@@ -33,6 +36,10 @@ export function StudioShell({ children }: { children: ReactNode }) {
   }
 
   if (configured && !user) return <LoginPage />;
+
+  const currentNavigation = navigationItems.find((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`));
+  const navigationAllowed = (item: (typeof navigationItems)[number]) => item.permissions.some((permission) => can(permission.module, permission.action));
+  const routeAllowed = !configured || !currentNavigation || navigationAllowed(currentNavigation);
 
   async function exit() {
     setSignOutError("");
@@ -54,7 +61,7 @@ export function StudioShell({ children }: { children: ReactNode }) {
           </div>
         </div>
         <nav aria-label="Navegação principal">
-          {navigationItems.map((item) => (
+          {navigationItems.filter((item) => !configured || navigationAllowed(item)).map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -69,7 +76,7 @@ export function StudioShell({ children }: { children: ReactNode }) {
         <footer>
           <div>
             <strong>{profile?.name || user?.email?.split("@")[0] || "Ambiente local"}</strong>
-            <span>{profile?.camilla_role || profile?.role || "Camilla Studio 3.0"}</span>
+            <span>{access.profileName || profile?.camilla_role || profile?.role || "Camilla Studio 3.0"}</span>
           </div>
           {configured && user && <button type="button" onClick={() => void exit()}>Sair</button>}
           {signOutError && <small>{signOutError}</small>}
@@ -94,7 +101,7 @@ export function StudioShell({ children }: { children: ReactNode }) {
             Supabase não configurado. As páginas serão exibidas sem registros até que as variáveis públicas sejam definidas.
           </div>
         )}
-        <main className="cs-content">{children}</main>
+        <main className="cs-content">{routeAllowed ? children : <AccessDenied />}</main>
       </div>
 
       {menuOpen && <button className="cs-overlay" aria-label="Fechar menu" onClick={() => setMenuOpen(false)} />}

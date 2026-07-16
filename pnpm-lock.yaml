@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@supabase/supabase-js':
-        specifier: ^2.110.2
+        specifier: 2.110.2
         version: 2.110.2
       drizzle-orm:
         specifier: 0.45.2

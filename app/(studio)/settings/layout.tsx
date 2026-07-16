@@ -1,0 +1,1 @@
+import type{ReactNode}from"react";import{SettingsNavigation}from"@/app/features/settings/SettingsNavigation";export default function SettingsLayout({children}:{children:ReactNode}){return <div className="cs-settings-layout"><SettingsNavigation/><div className="cs-settings-content">{children}</div></div>}
