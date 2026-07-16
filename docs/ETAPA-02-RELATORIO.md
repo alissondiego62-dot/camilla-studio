@@ -10,7 +10,7 @@ Foram criados a central administrativa, gestão de usuários/equipes, perfis per
 
 ### Configurações
 
-Rotas próprias para configurações gerais, informações do sistema, perfis, fluxos, checklists, notificações, agenda, financeiro, categorias, arquivos, segurança, integrações, Google Drive e versões. `/settings/users` redireciona para `/users`.
+Rotas próprias para configurações gerais, informações do sistema, perfis, fluxos, checklists, notificações, agenda, financeiro, categorias, arquivos, segurança, integrações, Google Drive e versões. A gestão de usuários permanece exclusivamente em `/users`.
 
 ### Usuários e equipes
 

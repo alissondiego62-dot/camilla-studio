@@ -13,7 +13,6 @@
     "app/(studio)/settings/permissions/page.tsx",
     "app/(studio)/settings/security/page.tsx",
     "app/(studio)/settings/system/page.tsx",
-    "app/(studio)/settings/users/page.tsx",
     "app/(studio)/settings/versions/page.tsx",
     "app/(studio)/settings/workflows/page.tsx",
     "app/components/security/PermissionGate.tsx",
