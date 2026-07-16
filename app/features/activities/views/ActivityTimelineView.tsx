@@ -1,0 +1,10 @@
+"use client";
+import { useMemo, useState } from "react";
+import type { ActivityRow, ActivityWorkspaceOptions } from "../types";
+import { statusLabel } from "../activity-display";
+function dateValue(value:string|null|undefined){return value?new Date(value.length===10?`${value}T12:00:00-04:00`:value).getTime():null}
+export function ActivityTimelineView({items,options,onOpen}:{items:ActivityRow[];options:ActivityWorkspaceOptions;onOpen:(id:string)=>void}){
+ const[fallbackNow]=useState(()=>Date.now());const dated=items.filter((item)=>item.starts_at||item.due_at||item.due_date);const undated=items.filter((item)=>!item.starts_at&&!item.due_at&&!item.due_date);
+ const bounds=useMemo(()=>{const values=dated.flatMap((item)=>[dateValue(item.starts_at),dateValue(item.due_at??item.due_date)].filter((v):v is number=>v!==null));const min=values.length?Math.min(...values):fallbackNow;const max=values.length?Math.max(...values):min+86400000;return{min,max:max===min?min+86400000:max}},[dated,fallbackNow]);
+ return <div className="cs-activity-timeline"><div className="cs-timeline-scale"><span>{new Date(bounds.min).toLocaleDateString("pt-BR")}</span><span>{new Date(bounds.max).toLocaleDateString("pt-BR")}</span></div>{dated.map((item)=>{const start=dateValue(item.starts_at)??dateValue(item.due_at??item.due_date)??bounds.min;const end=dateValue(item.due_at??item.due_date)??start+86400000;const left=Math.max(0,(start-bounds.min)/(bounds.max-bounds.min)*100);const width=Math.max(2,(Math.max(end,start+3600000)-start)/(bounds.max-bounds.min)*100);return <article key={item.id}><button type="button" onClick={()=>onOpen(item.id)}><strong>{item.title}</strong><small>{item.project?.name??"Sem projeto"}</small></button><div className="cs-timeline-track"><span style={{left:`${left}%`,width:`${Math.min(width,100-left)}%`}} title={statusLabel(item.status,options.statuses)} /></div></article>})}{undated.length>0&&<section className="cs-timeline-undated"><h3>Sem período definido</h3>{undated.map((item)=><button type="button" key={item.id} onClick={()=>onOpen(item.id)}>{item.title}</button>)}</section>}</div>
+}

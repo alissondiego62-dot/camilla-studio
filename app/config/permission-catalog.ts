@@ -12,7 +12,7 @@ const modules: Array<[PermissionModule, string, PermissionAction[]]> = [
   ["dashboard", "Dashboard", ["view"]],
   ["projects", "Projetos", ["view", "create", "edit", "delete", "archive", "reactivate", "approve", "export", "change_status", "change_stage", "change_deadline"]],
   ["kanban", "Kanban", ["view", "change_status", "change_stage", "change_deadline"]],
-  ["activities", "Atividades", ["view", "create", "edit", "delete", "change_status", "change_deadline"]],
+  ["activities", "Atividades", ["view", "create", "edit", "delete", "archive", "reactivate", "change_status", "change_deadline"]],
   ["agenda", "Agenda", ["view", "create", "edit", "delete", "export"]],
   ["clients", "Clientes", ["view", "create", "edit", "delete", "archive", "reactivate", "export"]],
   ["files", "Arquivos", ["view", "add_file", "remove_file", "archive", "export", "download", "view_versions"]],

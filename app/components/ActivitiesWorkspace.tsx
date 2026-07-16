@@ -16,11 +16,7 @@ type Activity = {
   parent_id: string | null;
 };
 
-const initialActivities: Activity[] = [
-  { id: "task-demo-1", project_id: null, title: "Revisar agenda semanal do escritório", group_name: "Administrativo", responsible_name: "Camilla", priority: "normal", due_date: new Date().toISOString().slice(0, 10), completed_at: null, parent_id: null },
-  { id: "task-demo-2", project_id: "demo-1", title: "Conferir levantamento e fotos", group_name: "Projetos", responsible_name: "Camilla", priority: "high", due_date: "2026-07-18", completed_at: null, parent_id: null },
-  { id: "task-demo-3", project_id: "demo-1", title: "Organizar arquivos do levantamento", group_name: "Projetos", responsible_name: "Silvia", priority: "normal", due_date: "2026-07-19", completed_at: null, parent_id: "task-demo-2" },
-];
+const initialActivities: Activity[] = [];
 
 const priorityLabel: Record<Activity["priority"], string> = { low: "Baixa", normal: "Normal", high: "Alta", urgent: "Urgente" };
 

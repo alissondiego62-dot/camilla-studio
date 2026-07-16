@@ -1,6 +1,6 @@
-# Camilla Studio 3.0.5
+# Camilla Studio 3.0.6
 
-Base atual: **Etapa 04 — Notificações, Histórico, Arquivos e Comentários**.
+Base atual: **Etapa 05 — Atividades e Subatividades**.
 
 ## Executar localmente
 
@@ -10,7 +10,7 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-Configure em `.env.local` somente as variáveis públicas do Supabase e `NEXT_PUBLIC_VAPID_PUBLIC_KEY` quando o push for habilitado. Não coloque `service_role`, senha do banco, VAPID privada ou segredos de cron no frontend.
+Configure em `.env.local` somente as variáveis públicas do Supabase. Não coloque `service_role`, senha do banco, VAPID privada ou segredos de cron no frontend.
 
 ## Validar
 
@@ -21,36 +21,38 @@ pnpm build
 pnpm test
 ```
 
-## Banco — Etapa 04
+## Banco — Etapa 05
 
-As Etapas 02 e 03 são pré-requisitos. Para aplicar a Etapa 04, siga esta ordem:
+As Etapas 02, 03 e 04 são pré-requisitos. Para aplicar a Etapa 05:
 
-1. `docs/ETAPA-04-APLICACAO-SQL.md`
-2. `supabase/validation/etapa-04-preflight.sql`
-3. `camilla-studio-etapa-04.sql`
-4. `supabase/validation/etapa-04-postflight.sql`
-5. `supabase/validation/etapa-04-data-integrity.sql`
-6. `supabase/validation/etapa-04-notification-tests.sql`
-7. `supabase/validation/etapa-04-rls-tests.sql` em homologação
+1. Faça backup do banco.
+2. Execute `supabase/validation/etapa-05-preflight.sql`.
+3. Execute **somente** `camilla-studio-etapa-05.sql`.
+4. Execute `supabase/validation/etapa-05-postflight.sql`.
+5. Execute `supabase/validation/etapa-05-data-integrity.sql`.
+6. Execute os testes de hierarquia e visualizações salvas em homologação.
+7. Execute `supabase/validation/etapa-05-rls-tests.sql` com usuários reais de teste.
 
 Não execute o SQL consolidado e a migration equivalente em sequência.
 
-## Edge Functions
+## Atividades
 
-Depois do SQL, implante:
+A rota `/activities` utiliza os mesmos registros nas visualizações:
 
-1. `generate-deadline-notifications`
-2. `dispatch-notifications`
-3. a versão atualizada de `send-agenda-notifications`
+- Tabela;
+- Lista;
+- Quadro;
+- Calendário;
+- Linha do tempo.
 
-Configure os segredos somente no Supabase: `CRON_SECRET`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` e `VAPID_SUBJECT`.
+A página permite visualizações salvas, filtros, agrupamentos, propriedades configuráveis, ações em massa, subatividades, observações estruturadas, comentários, anexos e agenda relacionada.
 
 ## Segurança
 
-- Buckets de miniaturas e arquivos vinculados são privados.
-- A aplicação usa URLs assinadas para abrir ou baixar arquivos.
-- Histórico é somente leitura para usuários comuns.
-- Notificações e contadores são individuais por usuário.
-- O Google Drive fornece somente links e metadados nesta etapa.
+- RLS permanece aplicada por escopo e vínculo.
+- Subatividades não são apagadas em cascata.
+- Ações em massa são transacionais.
+- Observações não aceitam HTML arbitrário.
+- Comentários e anexos são carregados somente ao abrir a atividade.
 
 Não inclua `.env.local`, chaves, senha do banco ou `service_role` no repositório ou no ZIP.

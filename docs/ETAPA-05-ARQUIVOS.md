@@ -1,0 +1,77 @@
+# Etapa 05 — Arquivos
+
+Base: `camilla-studio-etapa-04-final-corrigido.zip`
+
+- Criados: **42**
+- Modificados: **18**
+- Removidos: **0**
+
+## Criados
+
+- `app/features/activities/ActivitiesToolbar.tsx`
+- `app/features/activities/ActivitiesWorkspace.tsx`
+- `app/features/activities/ActivityAgendaPanel.tsx`
+- `app/features/activities/ActivityBulkActions.tsx`
+- `app/features/activities/ActivityCommentsPanel.tsx`
+- `app/features/activities/ActivityDrawer.tsx`
+- `app/features/activities/ActivityFilesPanel.tsx`
+- `app/features/activities/ActivityForm.tsx`
+- `app/features/activities/activities.filters.ts`
+- `app/features/activities/activities.reducer.ts`
+- `app/features/activities/activity-display.ts`
+- `app/features/activities/subactivities/SubactivityList.tsx`
+- `app/features/activities/subactivities/SubactivityProgress.tsx`
+- `app/features/activities/useActivitiesWorkspace.ts`
+- `app/features/activities/views/ActivityBoardView.tsx`
+- `app/features/activities/views/ActivityCalendarView.tsx`
+- `app/features/activities/views/ActivityListView.tsx`
+- `app/features/activities/views/ActivityTableView.tsx`
+- `app/features/activities/views/ActivityTimelineView.tsx`
+- `app/features/activity-notes/ActivityNotesEditor.tsx`
+- `app/features/clients/ClientActivitiesPanel.tsx`
+- `app/styles/activities.css`
+- `camilla-studio-etapa-05.sql`
+- `docs/ETAPA-05-APLICACAO-SQL.md`
+- `docs/ETAPA-05-ARQUIVOS.json`
+- `docs/ETAPA-05-ARQUIVOS.md`
+- `docs/ETAPA-05-ESTRUTURA-ATIVIDADES.md`
+- `docs/ETAPA-05-POLITICAS-RLS.md`
+- `docs/ETAPA-05-RELATORIO.md`
+- `docs/ETAPA-05-REVERSAO.md`
+- `docs/ETAPA-05-SUBATIVIDADES.md`
+- `docs/ETAPA-05-TESTES.md`
+- `docs/ETAPA-05-VISUALIZACOES.md`
+- `supabase/migrations/20260716210000_camilla_stage05_activities_workspace.sql`
+- `supabase/rollback/camilla-stage05-activities-workspace-rollback.sql`
+- `supabase/validation/etapa-05-data-integrity.sql`
+- `supabase/validation/etapa-05-hierarchy-tests.sql`
+- `supabase/validation/etapa-05-postflight.sql`
+- `supabase/validation/etapa-05-preflight.sql`
+- `supabase/validation/etapa-05-rls-tests.sql`
+- `supabase/validation/etapa-05-saved-views-tests.sql`
+- `tests/stage05-structure.test.mjs`
+
+## Modificados
+
+- `README.md`
+- `app/components/ActivitiesWorkspace.tsx`
+- `app/config/permission-catalog.ts`
+- `app/features/activities/ActivitiesPage.tsx`
+- `app/features/activities/activities.service.ts`
+- `app/features/activities/types.ts`
+- `app/features/agenda/AgendaPage.tsx`
+- `app/features/agenda/agenda.service.ts`
+- `app/features/agenda/types.ts`
+- `app/features/clients/ClientsPage.tsx`
+- `app/features/clients/clients.service.ts`
+- `app/features/clients/types.ts`
+- `app/features/project-detail/ProjectActivitiesPanel.tsx`
+- `app/features/project-detail/project-detail.service.ts`
+- `app/features/project-detail/types.ts`
+- `app/layout.tsx`
+- `app/styles/responsive.css`
+- `package.json`
+
+## Removidos
+
+Nenhum arquivo da base foi removido.

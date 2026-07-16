@@ -5,11 +5,14 @@ import type { LinkedFile } from "@/app/features/file-manager/types";
 export type ProjectActivity = {
   id: string;
   project_id: string;
+  parent_id: string | null;
   title: string;
   description: string | null;
   status: string;
   priority: string;
   due_date: string | null;
+  due_at: string | null;
+  progress: number;
   responsible_user_id: string | null;
   responsible_name: string | null;
   completed_at: string | null;

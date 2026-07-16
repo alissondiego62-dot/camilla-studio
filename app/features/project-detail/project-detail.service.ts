@@ -29,7 +29,7 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
     optionalRows<DateTypeOption>(supabase.from("system_categories").select("code,name,color").eq("module", "project_date_type").eq("active", true).is("archived_at", null).order("position")),
     optionalRows<ProjectDate>(supabase.from("project_dates").select("*").eq("project_id", projectId).is("archived_at", null).order("starts_at")),
     optionalRows<ProjectThumbnail>(supabase.from("project_thumbnails").select("*").eq("project_id", projectId).eq("active", true).is("removed_at", null).order("version", { ascending: false }).limit(1)),
-    optionalRows<ProjectActivity>(supabase.from("project_activities").select("id,project_id,title,description,status,priority,due_date,responsible_user_id,responsible_name,completed_at,created_at").eq("project_id", projectId).is("archived_at", null).order("created_at", { ascending: false })),
+    optionalRows<ProjectActivity>(supabase.from("project_activities").select("id,project_id,parent_id,title,description,status,priority,due_date,due_at,progress,responsible_user_id,responsible_name,completed_at,created_at").eq("project_id", projectId).is("archived_at", null).order("created_at", { ascending: false })),
     optionalRows(supabase.from("calendar_events").select("id,project_id,title,event_type,starts_at,ends_at,location,notes,completed_at,created_at").eq("project_id", projectId).order("starts_at")),
     optionalRows<LinkedFile>(supabase.from("project_files").select("*").eq("project_id", projectId).is("archived_at", null).order("created_at", { ascending: false })),
     optionalRows<ProjectCommentItem>(supabase.from("project_comments").select("id,project_id,parent_comment_id,author_id,comment,comment_kind,important,edited_at,updated_at,deleted_at,created_at,mentions:comment_mentions(user_id)").eq("project_id", projectId).order("created_at", { ascending: true })),
@@ -111,8 +111,13 @@ export async function updateChecklistItem(itemId: string, action: "complete" | "
 }
 
 export async function updateProjectActivityStatus(activityId: string, completed: boolean) {
-  const result = await supabase.from("project_activities").update({ status: completed ? "completed" : "in_progress", completed_at: completed ? new Date().toISOString() : null }).eq("id", activityId);
-  if (result.error) throw new Error(result.error.message);
+  const response = await supabase.rpc("set_activity_status", { p_activity_id: activityId, p_status: completed ? "completed" : "in_progress", p_force: false, p_reason: null });
+  if (response.error && /function .* does not exist|schema cache/i.test(response.error.message)) {
+    const fallback = await supabase.from("project_activities").update({ status: completed ? "completed" : "in_progress", completed_at: completed ? new Date().toISOString() : null }).eq("id", activityId);
+    if (fallback.error) throw new Error(fallback.error.message);
+    return;
+  }
+  if (response.error) throw new Error(response.error.message);
 }
 
 export async function updateProjectEventStatus(eventId: string, completed: boolean) {
