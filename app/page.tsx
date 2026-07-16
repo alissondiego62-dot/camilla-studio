@@ -41,11 +41,7 @@ function projectClient(project: Project) {
   return project.client?.name || "Cliente não informado";
 }
 
-const demoProjects: Project[] = [
-  { id: "demo-1", code: "ARQ-001", client_id: null, name: "Residência Victor Bisneto", project_type: "Arquitetura", subtype: "Reforma", stage: "creation", status: "in_progress", priority: "high", responsible_name: "Camilla", main_deadline: "2026-07-22", deadline_stage_1: "2026-07-14", deadline_stage_2: "2026-07-17", deadline_stage_3: "2026-07-22", contract_value: 0, amount_received: 0, balance_due: 0, cover_url: null, notes: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), client: { id: "c1", name: "Victor Bisneto", phone: null, email: null, notes: null, created_at: new Date().toISOString() } },
-  { id: "demo-2", code: "INT-002", client_id: null, name: "Interiores Marciano", project_type: "Interiores", subtype: "Novo", stage: "creation", status: "in_progress", priority: "normal", responsible_name: "Camilla", main_deadline: "2026-07-30", deadline_stage_1: null, deadline_stage_2: "2026-07-15", deadline_stage_3: "2026-07-30", contract_value: 9850, amount_received: 4925, balance_due: 4925, cover_url: null, notes: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), client: { id: "c2", name: "Marciano", phone: null, email: null, notes: null, created_at: new Date().toISOString() } },
-  { id: "demo-3", code: "ARQ-003", client_id: null, name: "Projeto Horacio", project_type: "Arquitetura", subtype: "Reforma", stage: "executive", status: "not_started", priority: "normal", responsible_name: "Camilla", main_deadline: "2026-07-20", deadline_stage_1: null, deadline_stage_2: null, deadline_stage_3: "2026-07-20", contract_value: 3700, amount_received: 1850, balance_due: 1850, cover_url: null, notes: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), client: { id: "c3", name: "Horacio", phone: null, email: null, notes: null, created_at: new Date().toISOString() } },
-];
+const demoProjects: Project[] = [];
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -160,8 +156,8 @@ export default function Home() {
     setProfile((result.data || null) as UserProfile | null);
   }
 
-  const canViewFinance = !profile || profile.camilla_role === "admin" || profile.camilla_role === "project_manager";
-  const canManageProjects = !profile || profile.camilla_role === "admin" || profile.camilla_role === "project_manager";
+  const canViewFinance = !profile || ["admin", "owner", "project_manager", "finance"].includes(profile.camilla_role);
+  const canManageProjects = !profile || ["admin", "owner", "project_manager", "architect"].includes(profile.camilla_role);
   const visibleMenuItems = useMemo(() => menuItems.filter((item) => {
     if (item.key === "finance" || item.key === "clients" || item.key === "settings") return canViewFinance;
     if (item.key === "dashboard" && profile?.camilla_role === "collaborator") return false;
@@ -794,7 +790,7 @@ export default function Home() {
   if (isSupabaseConfigured && !user) return (
     <main className="auth-screen">
       <section className="auth-panel">
-        <div className="auth-brand"><span>CA</span><div><b>Camilla Studio</b><small>Gestão de projetos de arquitetura</small></div></div>
+        <div className="auth-brand"><img src="/brand/camilla-studio-logo.png" alt="Camilla Studio — Arquitetura & Interiores" /><div><b>Camilla Studio</b><small>Gestão de projetos de arquitetura</small></div></div>
         <p className="eyebrow">ACESSO RESTRITO</p><h1>Organize projetos, prazos e clientes em um só lugar.</h1>
         <form onSubmit={login}><label>E-mail<input name="email" type="email" required /></label><label>Senha<input name="password" type="password" required /></label>{error && <p className="form-error">{error}</p>}<button className="primary" disabled={authBusy}>{authBusy ? "Entrando…" : "Entrar"}</button></form>
       </section>
@@ -805,13 +801,13 @@ export default function Home() {
   return (
     <div className="studio-shell">
       <aside className={sidebarOpen ? "studio-sidebar open" : "studio-sidebar"}>
-        <div className="studio-brand"><span>CA</span><div><b>Camilla Studio</b><small>Arquitetura & Interiores</small></div></div>
+        <div className="studio-brand"><img src="/brand/camilla-studio-logo.png" alt="Camilla Studio — Arquitetura & Interiores" /><div><b>Camilla Studio</b><small>Arquitetura & Interiores</small></div></div>
         <nav>{visibleMenuItems.map((item) => <button key={item.key} className={activeView === item.key ? "active" : ""} onClick={() => { setActiveView(item.key); setSidebarOpen(false); }}><i>{item.icon}</i><span>{item.label}</span></button>)}</nav>
         <div className="sidebar-footer"><small>{isSupabaseConfigured ? "Supabase conectado" : "Modo demonstração"}</small><b>{user?.email || "Camilla Arquiteta"}</b>{user && <button onClick={() => void supabase.auth.signOut()}>Sair</button>}</div>
       </aside>
 
       <main className="studio-content">
-        <header className="topbar"><button className="mobile-menu" onClick={() => setSidebarOpen((value) => !value)}>☰</button><div><p className="eyebrow">CAMILLА STUDIO</p><h1>{visibleMenuItems.find((item) => item.key === activeView)?.label || "Camilla Studio"}</h1><p>Gestão clara para projetos bem conduzidos.</p></div>{activeView === "finance" ? <div className="topbar-actions"><button onClick={() => setGlobalFinanceForm("income")}>＋ Lançar receita</button><button className="primary" onClick={() => setGlobalFinanceForm("expense")}>− Lançar despesa</button></div> : activeView === "agenda" ? <button className="primary" onClick={() => setAgendaFormOpen((value) => !value)}>＋ Novo compromisso</button> : activeView === "projects" && canManageProjects ? <button className="primary" onClick={() => setModalOpen(true)}>＋ Novo projeto</button> : null}</header>
+        <header className="topbar"><button className="mobile-menu" onClick={() => setSidebarOpen((value) => !value)}>☰</button><div><p className="eyebrow">CAMILLA STUDIO</p><h1>{visibleMenuItems.find((item) => item.key === activeView)?.label || "Camilla Studio"}</h1><p>Gestão clara para projetos bem conduzidos.</p></div>{activeView === "finance" ? <div className="topbar-actions"><button onClick={() => setGlobalFinanceForm("income")}>＋ Lançar receita</button><button className="primary" onClick={() => setGlobalFinanceForm("expense")}>− Lançar despesa</button></div> : activeView === "agenda" ? <button className="primary" onClick={() => setAgendaFormOpen((value) => !value)}>＋ Novo compromisso</button> : activeView === "projects" && canManageProjects ? <button className="primary" onClick={() => setModalOpen(true)}>＋ Novo projeto</button> : null}</header>
         <div className="ops-status-strip"><span><i /> Sistema online</span><span><i /> Supabase {isSupabaseConfigured ? "conectado" : "demonstração"}</span><span><i /> {activeProjects.length} projetos ativos</span><span><i /> {calendarEvents.length} compromissos</span></div>
         {notice && <div className="notice">{notice}<button onClick={() => setNotice("")}>×</button></div>}
         {error && <div className="error-banner">{error}<button onClick={() => setError("")}>×</button></div>}

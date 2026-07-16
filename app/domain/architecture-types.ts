@@ -5,7 +5,6 @@ export type ProjectStage =
   | "approval"
   | "executive"
   | "revision"
-  | "construction"
   | "completed";
 
 export type ProjectStatus =
@@ -136,7 +135,7 @@ export type ProjectChecklistItem = {
 };
 
 
-export type CamillaRole = "admin" | "project_manager" | "collaborator" | "viewer";
+export type CamillaRole = "admin" | "owner" | "project_manager" | "finance" | "architect" | "collaborator" | "assistant" | "viewer";
 
 export type UserProfile = {
   id: string;

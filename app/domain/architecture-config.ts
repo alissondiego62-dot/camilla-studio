@@ -1,13 +1,12 @@
 import type { ProjectPriority, ProjectStage, ProjectStatus, ViewKey } from "./architecture-types";
 
 export const stageLabels: Record<ProjectStage, string> = {
-  briefing_preliminary: "Briefing preliminar",
+  briefing_preliminary: "Estudo Preliminar",
   creation: "Criação",
   adjustments: "Ajustes",
   approval: "Aprovação",
   executive: "Executivo",
   revision: "Revisão",
-  construction: "Obra",
   completed: "Finalizado",
 };
 
@@ -53,8 +52,8 @@ export const checklistTemplates: Record<string, Record<ProjectStage, Array<{ sec
     briefing_preliminary: [
       { section: "Prospecção", title: "Registrar origem do contato e necessidade inicial" },
       { section: "Prospecção", title: "Confirmar escopo e disponibilidade para atendimento" },
-      { section: "Briefing", title: "Realizar reunião de briefing" },
-      { section: "Briefing", title: "Registrar programa de necessidades e referências" },
+      { section: "Estudo Preliminar", title: "Realizar reunião inicial de levantamento" },
+      { section: "Estudo Preliminar", title: "Registrar programa de necessidades e referências" },
       { section: "Levantamento", title: "Realizar medição e registro fotográfico" },
       { section: "Levantamento", title: "Conferir documentos, restrições e condições do imóvel" },
     ],
@@ -81,11 +80,6 @@ export const checklistTemplates: Record<string, Record<ProjectStage, Array<{ sec
       { section: "Revisão", title: "Conferir revisão final dos arquivos" },
       { section: "Revisão", title: "Atualizar numeração e identificação da revisão" },
       { section: "Revisão", title: "Liberar documentação revisada" },
-    ],
-    construction: [
-      { section: "Obra", title: "Planejar visitas e acompanhamento" },
-      { section: "Obra", title: "Registrar pendências e orientações" },
-      { section: "Obra", title: "Realizar conferência final" },
     ],
     completed: [],
   },

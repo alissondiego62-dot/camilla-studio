@@ -20,7 +20,7 @@ export function DriveIntegrationSettings() {
       <label className="switch-line"><input type="checkbox" checked={thumbs} onChange={(event) => setThumbs(event.target.checked)} /><span>Gerar e exibir miniaturas de PDFs e imagens</span></label>
       <label className="switch-line"><input type="checkbox" checked={recursiveSync} onChange={(event) => setRecursiveSync(event.target.checked)} /><span>Sincronizar subpastas recursivamente</span></label>
     </div>
-    <div className="drive-folder-preview"><b>Estrutura padrão</b><code>{rootFolder}/Cliente/Projeto/01-Contrato · 02-Briefing · 03-Levantamento · 04-Criação · 05-Aprovações · 06-Executivo · 07-Revisões · 08-Renders · 09-Obra</code></div>
+    <div className="drive-folder-preview"><b>Estrutura padrão</b><code>{rootFolder}/Cliente/Projeto/01-Contrato · 02-Estudo-Preliminar · 03-Levantamento · 04-Criação · 05-Aprovações · 06-Executivo · 07-Revisões · 08-Renders</code></div>
     <div className="drive-action-row"><button disabled>Conectar conta Google</button><button disabled>Testar conexão</button><button disabled>Sincronizar estrutura</button></div>
     <p className="settings-note">Próxima etapa: criar as rotas OAuth, persistir tokens de forma segura e adaptar o upload retomável da Publicolor para a tabela project_files.</p>
   </section>;

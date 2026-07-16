@@ -1,13 +1,15 @@
 import type { Metadata, Viewport } from "next";
+import "./design-tokens.css";
 import "./globals.css";
 import "./architecture.css";
 import "./publicolor-integration.css";
+import "./brand-overrides.css";
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#b76d55",
+  themeColor: "#5E3021",
 };
 
 export const metadata: Metadata = {
@@ -16,7 +18,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "Camilla Studio", statusBarStyle: "default" },
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }, { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
+    icon: [{ url: "/brand/camilla-studio-logo.png", type: "image/png" }, { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
 };
