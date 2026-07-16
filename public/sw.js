@@ -1,4 +1,4 @@
-const CACHE_NAME = "camilla-studio-v17";
+const CACHE_NAME = "camilla-studio-v18";
 const APP_SHELL = ["/", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {
@@ -18,16 +18,16 @@ self.addEventListener("fetch", (event) => {
 
 self.addEventListener("push", (event) => {
   let payload = {};
-  try { payload = event.data ? event.data.json() : {}; } catch { payload = { body: event.data?.text() || "Novo lembrete da agenda." }; }
+  try { payload = event.data ? event.data.json() : {}; } catch { payload = { body: event.data?.text() || "Nova notificação do Camilla Studio." }; }
   const title = payload.title || "Camilla Studio";
   const options = {
-    body: payload.body || "Você tem um compromisso na agenda.",
+    body: payload.body || "Você tem uma nova notificação.",
     icon: "/icons/icon-192.png",
     badge: "/icons/badge-96.png",
-    tag: payload.tag || "camilla-studio-agenda",
+    tag: payload.tag || "camilla-studio-notification",
     renotify: Boolean(payload.renotify),
-    data: { url: payload.url || "/?view=agenda", eventId: payload.eventId || null },
-    actions: [{ action: "open", title: "Abrir agenda" }],
+    data: { url: payload.url || "/notifications", eventId: payload.eventId || null },
+    actions: [{ action: "open", title: "Abrir" }],
   };
   event.waitUntil(self.registration.showNotification(title, options).then(() => {
     if ("setAppBadge" in self.navigator && Number.isFinite(payload.badgeCount)) return self.navigator.setAppBadge(payload.badgeCount);
@@ -36,7 +36,7 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const target = new URL(event.notification.data?.url || "/?view=agenda", self.location.origin).href;
+  const target = new URL(event.notification.data?.url || "/notifications", self.location.origin).href;
   event.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(async (clients) => {
     for (const client of clients) {
       if ("focus" in client) {

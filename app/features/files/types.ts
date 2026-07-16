@@ -1,3 +1,3 @@
-export type FileRow={id:string;project_id:string;name:string;category:string;drive_url:string;created_at:string;project?:{name:string}|null};
-export type ProjectOption={id:string;code:string;name:string};
-export type NewFileLink={project_id:string;name:string;category:string;drive_url:string};
+import type { LinkedFile, RelationOption } from "@/app/features/file-manager/types";
+export type FileRow = LinkedFile & { project?: { name?: string | null } | null; client?: { name?: string | null } | null; activity?: { title?: string | null } | null; financial?: { description?: string | null } | null };
+export type FileRelations = { projects: RelationOption[]; clients: RelationOption[]; activities: RelationOption[]; financial: RelationOption[] };

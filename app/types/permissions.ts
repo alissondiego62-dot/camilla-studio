@@ -4,14 +4,14 @@ export type PermissionScope = (typeof permissionScopes)[number];
 export const permissionModules = [
   "dashboard", "projects", "kanban", "activities", "agenda", "clients", "files", "reports",
   "finance_professional", "finance_personal", "users", "teams", "settings", "checklists",
-  "notifications", "integrations", "versions", "security",
+  "notifications", "history", "comments", "integrations", "versions", "security",
 ] as const;
 export type PermissionModule = (typeof permissionModules)[number];
 
 export const permissionActions = [
   "view", "create", "edit", "delete", "archive", "reactivate", "approve", "export",
   "change_status", "change_stage", "change_deadline", "add_file", "remove_file", "view_values",
-  "settle_finance", "cancel_entry", "manage_users", "manage_settings",
+  "settle_finance", "cancel_entry", "manage_users", "manage_settings", "download", "view_versions", "view_internal", "create_internal",
 ] as const;
 export type PermissionAction = (typeof permissionActions)[number];
 

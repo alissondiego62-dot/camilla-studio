@@ -33,6 +33,10 @@ export type KanbanProject = {
   comments_count: number;
   agenda_count: number;
   history_count: number;
+  unread_files_count: number;
+  unread_comments_count: number;
+  unread_agenda_count: number;
+  unread_history_count: number;
   latest_file_at: string | null;
   latest_comment_at: string | null;
   latest_agenda_at: string | null;

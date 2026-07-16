@@ -2,27 +2,15 @@
 
 import Link from "next/link";
 
-function recent(value: string | null) {
-  return Boolean(value && Date.now() - new Date(value).getTime() <= 7 * 86_400_000);
-}
-
-export function KanbanCardShortcuts({ projectId, history, files, agenda, comments, latestHistory, latestFile, latestAgenda, latestComment }: {
+export function KanbanCardShortcuts({ projectId, history, files, agenda, comments, unreadHistory, unreadFiles, unreadAgenda, unreadComments }: {
   projectId: string; history: number; files: number; agenda: number; comments: number;
-  latestHistory: string | null; latestFile: string | null; latestAgenda: string | null; latestComment: string | null;
+  unreadHistory: number; unreadFiles: number; unreadAgenda: number; unreadComments: number;
 }) {
   const items = [
-    { section: "history", icon: "↺", label: "Histórico", count: history, fresh: recent(latestHistory) },
-    { section: "files", icon: "↗", label: "Arquivos", count: files, fresh: recent(latestFile) },
-    { section: "agenda", icon: "◷", label: "Agenda", count: agenda, fresh: recent(latestAgenda) },
-    { section: "comments", icon: "◌", label: "Comentários", count: comments, fresh: recent(latestComment) },
+    { section: "history", icon: "↺", label: "Histórico", count: history, unread: unreadHistory },
+    { section: "files", icon: "↗", label: "Arquivos", count: files, unread: unreadFiles },
+    { section: "agenda", icon: "◷", label: "Agenda", count: agenda, unread: unreadAgenda },
+    { section: "comments", icon: "◌", label: "Comentários", count: comments, unread: unreadComments },
   ];
-  return (
-    <nav className="cs-kanban-shortcuts" aria-label="Atalhos do projeto">
-      {items.map((item) => (
-        <Link key={item.section} href={`/projects/${projectId}?section=${item.section}`} aria-label={`${item.label}: ${item.count}`} title={item.label}>
-          <span aria-hidden="true">{item.icon}</span><b>{item.count}</b>{item.fresh && <i aria-label="Atualização recente" />}
-        </Link>
-      ))}
-    </nav>
-  );
+  return <nav className="cs-kanban-shortcuts" aria-label="Atalhos do projeto">{items.map((item) => <Link key={item.section} href={`/projects/${projectId}?section=${item.section}`} aria-label={`${item.label}: ${item.count}; ${item.unread} não visualizados`} title={item.label}><span aria-hidden="true">{item.icon}</span><b>{item.count}</b>{item.unread > 0 && <em>{item.unread > 99 ? "99+" : item.unread}</em>}</Link>)}</nav>;
 }

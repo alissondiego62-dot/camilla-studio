@@ -75,22 +75,43 @@ export type ProjectFileCategory =
 
 export type ProjectFile = {
   id: string;
-  project_id: string;
+  project_id: string | null;
+  client_id?: string | null;
+  activity_id?: string | null;
+  financial_entry_id?: string | null;
   name: string;
   category: ProjectFileCategory | string;
   drive_url: string;
   drive_file_id: string | null;
   mime_type: string | null;
+  file_size?: number | null;
   notes: string | null;
+  origin?: "supabase_storage" | "google_drive" | "external_link";
+  storage_bucket?: string | null;
+  storage_path?: string | null;
+  version?: number;
+  replaces_file_id?: string | null;
+  download_allowed?: boolean;
+  archived_at?: string | null;
+  created_by?: string | null;
   created_at: string;
+  updated_at?: string;
 };
 
 export type ProjectComment = {
   id: string;
   project_id: string;
+  parent_comment_id?: string | null;
   author_id: string | null;
   comment: string;
+  comment_kind?: "comment" | "internal_note";
+  important?: boolean;
+  edited_at?: string | null;
+  updated_at?: string;
+  deleted_at?: string | null;
   created_at: string;
+  author?: { id?: string; name?: string | null; email?: string | null } | null;
+  mentions?: Array<{ user_id: string }>;
 };
 
 export type ProjectHistory = {

@@ -13,6 +13,7 @@ import { usePermissions } from "@/app/hooks/usePermissions";
 import { LoadingState } from "@/app/components/ui/DataState";
 import { AccessDenied } from "@/app/components/security/PermissionGate";
 import { LoginPage } from "./LoginPage";
+import { NotificationBell } from "@/app/features/notifications/NotificationBell";
 
 export function StudioShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -94,14 +95,14 @@ export function StudioShell({ children }: { children: ReactNode }) {
           >
             ☰
           </button>
-          <span>{CAMILLA_BRAND.productName}</span>
+          <span>{CAMILLA_BRAND.productName}</span><NotificationBell />
         </div>
         {!configured && (
           <div className="cs-alert cs-alert-warning">
             Supabase não configurado. As páginas serão exibidas sem registros até que as variáveis públicas sejam definidas.
           </div>
         )}
-        <main className="cs-content">{routeAllowed ? children : <AccessDenied />}</main>
+        <div className="cs-desktop-tools"><NotificationBell /></div><main className="cs-content">{routeAllowed ? children : <AccessDenied />}</main>
       </div>
 
       {menuOpen && <button className="cs-overlay" aria-label="Fechar menu" onClick={() => setMenuOpen(false)} />}

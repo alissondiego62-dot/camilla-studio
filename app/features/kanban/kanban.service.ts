@@ -35,6 +35,7 @@ async function mapViewRows(rows: Array<Record<string, unknown>>): Promise<Kanban
       planned_dates: planned,
       checklist_total: numberValue(row.checklist_total), checklist_completed: numberValue(row.checklist_completed),
       files_count: numberValue(row.files_count), comments_count: numberValue(row.comments_count), agenda_count: numberValue(row.agenda_count), history_count: numberValue(row.history_count),
+      unread_files_count: numberValue(row.unread_files_count), unread_comments_count: numberValue(row.unread_comments_count), unread_agenda_count: numberValue(row.unread_agenda_count), unread_history_count: numberValue(row.unread_history_count),
       latest_file_at: typeof row.latest_file_at === "string" ? row.latest_file_at : null,
       latest_comment_at: typeof row.latest_comment_at === "string" ? row.latest_comment_at : null,
       latest_agenda_at: typeof row.latest_agenda_at === "string" ? row.latest_agenda_at : null,
@@ -69,6 +70,7 @@ export async function listKanbanProjects(): Promise<KanbanProject[]> {
       client_name: row.client?.name ?? null,
       thumbnail_bucket: null, thumbnail_path: null, thumbnail_url: null, planned_dates: [],
       checklist_total: 0, checklist_completed: 0, files_count: 0, comments_count: 0, agenda_count: 0, history_count: 0,
+      unread_files_count: 0, unread_comments_count: 0, unread_agenda_count: 0, unread_history_count: 0,
       latest_file_at: null, latest_comment_at: null, latest_agenda_at: null, latest_history_at: null,
       updated_at: String(row.updated_at),
     };

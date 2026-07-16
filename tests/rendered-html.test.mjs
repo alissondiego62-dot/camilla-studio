@@ -16,6 +16,8 @@ const routes = new Map([
   ["/clients", "Clientes"],
   ["/finance", "Financeiro"],
   ["/files", "Arquivos"],
+  ["/notifications", "Notificações"],
+  ["/history", "Histórico"],
   ["/reports", "Relatórios"],
   ["/users", "Usuários"],
   ["/settings", "Configurações"],

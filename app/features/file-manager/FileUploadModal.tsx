@@ -1,0 +1,19 @@
+"use client";
+import { useState } from "react";
+import type { FormEvent } from "react";
+import { Modal } from "@/app/components/ui/Modal";
+import { Button } from "@/app/components/ui/Button";
+import { FormField } from "@/app/components/ui/FormField";
+import { FeedbackMessage } from "@/app/components/ui/FeedbackMessage";
+import { useAsyncAction } from "@/app/hooks/useAsyncAction";
+import { addDriveLink, uploadLinkedFile } from "./file-manager.service";
+import type { LinkedFile } from "./types";
+
+export function FileUploadModal({ relation, replaces = null, onClose, onSaved }: { relation: { project_id?: string | null; client_id?: string | null; activity_id?: string | null; financial_entry_id?: string | null }; replaces?: LinkedFile | null; onClose: () => void; onSaved: () => Promise<void> }) {
+  const action = useAsyncAction(); const [mode, setMode] = useState<"upload" | "drive">(replaces ? "upload" : "upload"); const [preview, setPreview] = useState("");
+  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); const form = new FormData(event.currentTarget); const file = form.get("file"); const result = await action.run(async () => {
+    if (mode === "upload") { if (!(file instanceof File) || !file.size) throw new Error("Selecione um arquivo."); await uploadLinkedFile(file, { ...relation, replaces, category: String(form.get("category") || "other"), name: String(form.get("name") || ""), notes: String(form.get("notes") || "") || null }); }
+    else await addDriveLink({ ...relation, name: String(form.get("name") || "").trim(), category: String(form.get("category") || "other"), url: String(form.get("url") || "").trim(), notes: String(form.get("notes") || "") || null });
+  }, replaces ? "Nova versão enviada." : "Arquivo adicionado."); if (result.ok) { await onSaved(); onClose(); } }
+  return <Modal title={replaces ? "Substituir arquivo" : "Adicionar arquivo"} onClose={onClose}><form className="cs-form-grid" onSubmit={submit}><FeedbackMessage error={action.error} success={action.success} />{!replaces && <div className="cs-segmented cs-span-2"><button type="button" className={mode === "upload" ? "active" : ""} onClick={() => setMode("upload")}>Enviar arquivo</button><button type="button" className={mode === "drive" ? "active" : ""} onClick={() => setMode("drive")}>Link do Google Drive</button></div>}<FormField className="cs-span-2" label="Nome" name="name" defaultValue={replaces?.name ?? ""} required={mode === "drive"} /><FormField label="Categoria" name="category" defaultValue={replaces?.category ?? "other"} />{mode === "upload" ? <label className="cs-span-2"><span>Arquivo</span><input name="file" type="file" required accept="*/*" onChange={(e) => { const f = e.target.files?.[0]; setPreview(f ? `${f.name} · ${(f.size / 1024 / 1024).toFixed(2)} MB` : ""); }} />{preview && <small>{preview}</small>}</label> : <FormField className="cs-span-2" label="Link do Google Drive" name="url" type="url" required pattern="https://(drive|docs)\.google\.com/.*" />}<label className="cs-span-2"><span>Observações</span><textarea name="notes" rows={3} defaultValue={replaces?.notes ?? ""} /></label><div className="cs-form-actions"><Button type="button" onClick={onClose}>Cancelar</Button><Button variant="primary" loading={action.pending}>Salvar</Button></div></form></Modal>;
+}

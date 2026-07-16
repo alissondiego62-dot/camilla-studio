@@ -19,6 +19,7 @@ import { ProjectHistoryPanel } from "./ProjectHistoryPanel";
 import { ProjectFinancialPanel } from "./ProjectFinancialPanel";
 import { ProjectDatesPanel } from "@/app/features/project-dates/ProjectDatesPanel";
 import { ProjectThumbnailPanel } from "@/app/features/project-thumbnail/ProjectThumbnailPanel";
+import { markRecordView } from "@/app/features/notifications/record-views.service";
 import { loadProjectWorkspace, updateProjectGeneral } from "./project-detail.service";
 import type { ProjectWorkspace } from "./types";
 
@@ -40,6 +41,7 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
 
   function changeSection(next: ProjectSection) {
     setSection(next);
+    if (["history", "files", "agenda", "comments"].includes(next)) void markRecordView(projectId, next as "history" | "files" | "agenda" | "comments");
     const url = new URL(window.location.href);
     if (next === "overview") url.searchParams.delete("section"); else url.searchParams.set("section", next);
     window.history.replaceState({}, "", url);
@@ -71,7 +73,10 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
   const canCreateAgenda = can("agenda", "create");
   const canEditAgenda = can("agenda", "edit");
   const canAddFile = can("files", "add_file");
-  const canRemoveFile = can("files", "remove_file");
+  const canRemoveFile = can("files", "remove_file") || can("files", "archive");
+  const canReplaceFile = can("files", "add_file") || can("files", "edit");
+  const canDeleteComment = can("comments", "delete") || canEditProject;
+  const canInternalComment = can("comments", "view_internal") || can("comments", "create_internal");
   const canChecklist = can("checklists", "edit");
   const canWaiveChecklist = can("checklists", "approve") || can("checklists", "manage_settings");
 
@@ -85,8 +90,8 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
         {section === "dates" && <ProjectDatesPanel projectId={projectId} dates={data.dates} types={data.dateTypes} activities={data.activities} events={data.events} canEdit={canChangeDeadline} canCreateActivity={canCreateActivity} canCreateEvent={canCreateAgenda} onChanged={reload} />}
         {section === "activities" && <ProjectActivitiesPanel projectId={projectId} activities={data.activities} users={data.users} canCreate={canCreateActivity} canEdit={canEditActivity} onChanged={reload} />}
         {section === "agenda" && <ProjectAgendaPanel projectId={projectId} events={data.events} canCreate={canCreateAgenda} canEdit={canEditAgenda} onChanged={reload} />}
-        {section === "files" && <ProjectFilesPanel projectId={projectId} files={data.files} canAdd={canAddFile} onChanged={reload} />}
-        {section === "comments" && <ProjectCommentsPanel projectId={projectId} comments={data.comments} canAdd={canEditProject || canEditActivity} onChanged={reload} />}
+        {section === "files" && <ProjectFilesPanel projectId={projectId} files={data.files} canAdd={canAddFile} canReplace={canReplaceFile} canRemove={canRemoveFile} onChanged={reload} />}
+        {section === "comments" && <ProjectCommentsPanel projectId={projectId} comments={data.comments} users={data.users.map((item) => ({ id: item.id, name: item.name, email: item.email || "" }))} canAdd={can("comments", "create") || canEditProject || canEditActivity} canDeleteAny={canDeleteComment} canInternal={canInternalComment} onChanged={reload} />}
         {section === "checklist" && <ProjectChecklistPanel items={data.checklist} currentStage={data.project.stage} canEdit={canChecklist} canWaive={canWaiveChecklist} onChanged={reload} />}
         {section === "history" && <ProjectHistoryPanel history={data.history} />}
         {section === "finance" && showFinance && <ProjectFinancialPanel project={data.project} entries={data.finance} />}

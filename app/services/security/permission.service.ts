@@ -7,8 +7,8 @@ function fallbackPermissions(role?: string | null): EffectivePermission[] {
   const code = legacyProfileMap[role ?? "viewer"] ?? "viewer";
   const all = (module: PermissionModule, actions: PermissionAction[], scope: PermissionScope = "all") => actions.map((action) => ({ module, action, allowed: true, scope }));
   if (code === "administrator" || code === "owner") {
-    const modules: PermissionModule[] = ["dashboard","projects","kanban","activities","agenda","clients","files","reports","finance_professional","users","teams","settings","checklists","notifications","integrations","versions","security"];
-    const actions: PermissionAction[] = ["view","create","edit","delete","archive","reactivate","approve","export","change_status","change_stage","change_deadline","add_file","remove_file","view_values","settle_finance","cancel_entry","manage_users","manage_settings"];
+    const modules: PermissionModule[] = ["dashboard","projects","kanban","activities","agenda","clients","files","reports","finance_professional","users","teams","settings","checklists","notifications","history","comments","integrations","versions","security"];
+    const actions: PermissionAction[] = ["view","create","edit","delete","archive","reactivate","approve","export","change_status","change_stage","change_deadline","add_file","remove_file","view_values","settle_finance","cancel_entry","manage_users","manage_settings","download","view_versions","view_internal","create_internal"];
     const permissions = modules.flatMap((module) => all(module, actions));
     if (code === "owner") permissions.push(...all("finance_personal", actions));
     return permissions;
@@ -24,7 +24,7 @@ function fallbackPermissions(role?: string | null): EffectivePermission[] {
   const operational = [
     ...all("dashboard", ["view"]), ...all("projects", ["view"], assigned), ...all("kanban", ["view"], assigned),
     ...all("activities", code === "viewer" ? ["view"] : ["view","edit","change_status"], assigned), ...all("agenda", ["view"], assigned),
-    ...all("files", code === "viewer" ? ["view"] : ["view","add_file"], assigned), ...all("checklists", code === "viewer" ? ["view"] : ["view","edit"], assigned),
+    ...all("files", code === "viewer" ? ["view"] : ["view","add_file","download","view_versions"], assigned), ...all("comments", code === "viewer" ? ["view"] : ["view","create","edit"], assigned), ...all("history", ["view"], assigned), ...all("notifications", ["view","edit"], "own"), ...all("checklists", code === "viewer" ? ["view"] : ["view","edit"], assigned),
   ];
   return operational;
 }

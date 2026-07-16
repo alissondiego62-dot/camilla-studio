@@ -36,7 +36,7 @@ export function ProjectKanbanCard({ project, users, canStage, canStatus, canResp
         <DeadlineBadge date={project.main_deadline} prefix="Prazo" updatedAt={project.updated_at} />
         {extraDates.length > 0 && <div className="cs-planned-date-summary">{extraDates.map((item) => <DeadlineBadge key={item.id} date={item.starts_at} completedAt={item.completed_at} updatedAt={item.updated_at} prefix={item.title} />)}</div>}
         {project.checklist_total > 0 && <ProgressBar value={checklist} label={`Checklist de ${project.name}`} />}
-        <KanbanCardShortcuts projectId={project.id} history={project.history_count} files={project.files_count} agenda={project.agenda_count} comments={project.comments_count} latestHistory={project.latest_history_at} latestFile={project.latest_file_at} latestAgenda={project.latest_agenda_at} latestComment={project.latest_comment_at} />
+        <KanbanCardShortcuts projectId={project.id} history={project.history_count} files={project.files_count} agenda={project.agenda_count} comments={project.comments_count} unreadHistory={project.unread_history_count} unreadFiles={project.unread_files_count} unreadAgenda={project.unread_agenda_count} unreadComments={project.unread_comments_count} />
         <KanbanCardActions project={project} users={users} canStage={canStage} canStatus={canStatus} canResponsible={canResponsible} pending={pending} onPatch={onPatch} />
       </div>
     </article>

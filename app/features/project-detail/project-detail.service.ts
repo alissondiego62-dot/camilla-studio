@@ -1,5 +1,7 @@
 import { supabase } from "@/lib/supabase";
-import type { Project, ProjectChecklistItem, ProjectComment, ProjectFile, ProjectFinancialEntry, ProjectHistory } from "@/app/domain/architecture-types";
+import type { Project, ProjectChecklistItem, ProjectFinancialEntry, ProjectHistory } from "@/app/domain/architecture-types";
+import type { ProjectCommentItem } from "@/app/features/comments/types";
+import type { LinkedFile } from "@/app/features/file-manager/types";
 import type { ProjectActivity, ProjectDate, ProjectOption, ProjectThumbnail, ProjectWorkspace, DateTypeOption } from "./types";
 import { signedThumbnailUrl } from "@/app/features/project-thumbnail/project-thumbnail.service";
 
@@ -29,8 +31,8 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
     optionalRows<ProjectThumbnail>(supabase.from("project_thumbnails").select("*").eq("project_id", projectId).eq("active", true).is("removed_at", null).order("version", { ascending: false }).limit(1)),
     optionalRows<ProjectActivity>(supabase.from("project_activities").select("id,project_id,title,description,status,priority,due_date,responsible_user_id,responsible_name,completed_at,created_at").eq("project_id", projectId).is("archived_at", null).order("created_at", { ascending: false })),
     optionalRows(supabase.from("calendar_events").select("id,project_id,title,event_type,starts_at,ends_at,location,notes,completed_at,created_at").eq("project_id", projectId).order("starts_at")),
-    optionalRows<ProjectFile>(supabase.from("project_files").select("id,project_id,name,category,drive_url,drive_file_id,mime_type,notes,created_at").eq("project_id", projectId).order("created_at", { ascending: false })),
-    optionalRows<ProjectComment>(supabase.from("project_comments").select("id,project_id,author_id,comment,created_at").eq("project_id", projectId).order("created_at", { ascending: false })),
+    optionalRows<LinkedFile>(supabase.from("project_files").select("*").eq("project_id", projectId).is("archived_at", null).order("created_at", { ascending: false })),
+    optionalRows<ProjectCommentItem>(supabase.from("project_comments").select("id,project_id,parent_comment_id,author_id,comment,comment_kind,important,edited_at,updated_at,deleted_at,created_at,mentions:comment_mentions(user_id)").eq("project_id", projectId).order("created_at", { ascending: true })),
     optionalRows<ProjectChecklistItem>(supabase.from("project_checklist_items").select("id,project_id,stage,section,title,required,responsible_user_id,started_at,completed_at,completed_by,waived_at,waived_by,waiver_reason,position,created_at").eq("project_id", projectId).order("stage").order("position")),
     optionalRows<ProjectHistory>(supabase.from("project_history").select("id,project_id,action_type,description,field_name,old_value,new_value,metadata,author_id,created_at").eq("project_id", projectId).order("created_at", { ascending: false }).limit(250)),
   ]);
@@ -47,6 +49,10 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
     catch { thumbnail.signed_url = null; }
   }
 
+  const profileMap = new Map(users.map((item) => [item.id, item]));
+  const mappedFiles = files.map((item) => ({ ...item, author: item.created_by ? profileMap.get(item.created_by) ?? null : null }));
+  const mappedComments = comments.map((item) => { const author = item.author_id ? profileMap.get(item.author_id) : null; return { ...item, author: author ? { id: author.id, name: author.name, email: author.email ?? null } : null }; });
+
   return {
     project: projectResult.data as unknown as Project,
     clients,
@@ -56,8 +62,8 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
     thumbnail,
     activities,
     events: events as ProjectWorkspace["events"],
-    files,
-    comments,
+    files: mappedFiles,
+    comments: mappedComments,
     checklist,
     history,
     finance,
