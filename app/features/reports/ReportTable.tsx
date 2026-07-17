@@ -1,0 +1,3 @@
+import { formatReportValue } from "./reports.export";
+import type { ReportDefinition } from "./types";
+export function ReportTable({definition,rows}:{definition:ReportDefinition;rows:Array<Record<string,unknown>>}){return <div className="cs-table-wrap cs-report-table-wrap"><table className="cs-table cs-report-table"><thead><tr>{definition.columns.map((column)=><th key={column.key}>{column.label}</th>)}</tr></thead><tbody>{rows.map((row,index)=><tr key={String(row.id??row.code??row.label??index)}>{definition.columns.map((column)=><td data-label={column.label} key={column.key}>{formatReportValue(row[column.key],column)}</td>)}</tr>)}</tbody></table></div>}

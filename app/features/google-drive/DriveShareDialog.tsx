@@ -1,0 +1,11 @@
+"use client";
+import { useCallback,useState } from "react";
+import type { FormEvent } from "react";
+import { Modal } from "@/app/components/ui/Modal";
+import { Button } from "@/app/components/ui/Button";
+import { FeedbackMessage } from "@/app/components/ui/FeedbackMessage";
+import { LoadingState,EmptyState } from "@/app/components/ui/DataState";
+import { useModuleData } from "@/app/hooks/useModuleData";
+import { useAsyncAction } from "@/app/hooks/useAsyncAction";
+import { createDriveShare,listDriveShares,revokeDriveShare } from "./google-drive.service";
+export function DriveShareDialog({projectFileId,onClose}:{projectFileId:string;onClose:()=>void}){const loader=useCallback(()=>listDriveShares(projectFileId),[projectFileId]);const{data,loading,reload}=useModuleData(loader,[]);const action=useAsyncAction();const[role,setRole]=useState<"reader"|"writer">("reader");async function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();const form=new FormData(event.currentTarget);const email=String(form.get("email")||"").trim();const result=await action.run(()=>createDriveShare(projectFileId,email,role),"Compartilhamento criado.");if(result.ok){event.currentTarget.reset();await reload()}}async function revoke(id:string){if(!confirm("Revogar este compartilhamento?"))return;const result=await action.run(()=>revokeDriveShare(id),"Compartilhamento revogado.");if(result.ok)await reload()}return <Modal title="Compartilhar arquivo do Drive" onClose={onClose}><FeedbackMessage error={action.error} success={action.success}/><form className="cs-inline-form" onSubmit={submit}><input name="email" type="email" required placeholder="pessoa@exemplo.com"/><select value={role} onChange={(e)=>setRole(e.target.value as "reader"|"writer")}><option value="reader">Somente leitura</option><option value="writer">Pode editar</option></select><Button variant="primary" loading={action.pending}>Compartilhar</Button></form>{loading?<LoadingState/>:data.length===0?<EmptyState title="Sem compartilhamentos" description="Nenhum acesso específico foi concedido."/>:<div className="cs-record-list">{data.map((share)=><article key={share.id}><div><h4>{share.email_address}</h4><p>{share.role==="writer"?"Pode editar":"Somente leitura"}</p></div><Button variant="danger" onClick={()=>void revoke(share.id)}>Revogar</Button></article>)}</div>}</Modal>}

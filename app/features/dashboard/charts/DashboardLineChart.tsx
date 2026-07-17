@@ -1,0 +1,7 @@
+import type { DashboardFinancial } from "../types";
+function path(values: number[], width: number, height: number, max: number) { return values.map((value, index) => `${index === 0 ? "M" : "L"} ${(index / Math.max(1, values.length - 1)) * width} ${height - (value / max) * height}`).join(" "); }
+export function DashboardLineChart({ financial }: { financial: DashboardFinancial }) {
+  const points = financial.series; const width = 640; const height = 170;
+  const values = points.flatMap((item) => [Number(item.income), Number(item.expense)]); const max = Math.max(1, ...values);
+  return <div className="cs-dashboard-line-chart">{points.length === 0 ? <p className="cs-empty-note">Sem movimentações financeiras no período.</p> : <><svg viewBox={`0 0 ${width} ${height + 28}`} role="img" aria-label="Receitas e despesas no período"><path d={path(points.map((item) => Number(item.income)), width, height, max)} className="series-income"/><path d={path(points.map((item) => Number(item.expense)), width, height, max)} className="series-expense"/>{points.map((item, index) => <text key={item.label} x={(index / Math.max(1, points.length - 1)) * width} y={height + 22} textAnchor={index === 0 ? "start" : index === points.length - 1 ? "end" : "middle"}>{item.label}</text>)}</svg><div className="cs-chart-legend"><span className="income">Receitas</span><span className="expense">Despesas</span></div></>}</div>;
+}

@@ -1,0 +1,3 @@
+import { DashboardBarChart } from "./charts/DashboardBarChart";
+import type { DashboardGroupPoint } from "./types";
+export function DashboardActivitiesPanel({ statuses, responsible }: { statuses: DashboardGroupPoint[]; responsible: DashboardGroupPoint[] }) { return <section className="cs-dashboard-grid-2"><article className="cs-card"><h2>Atividades por status</h2><DashboardBarChart items={statuses} label="Atividades por status" /></article><article className="cs-card"><h2>Atividades por responsável</h2><DashboardBarChart items={responsible} label="Atividades por responsável" /></article></section>; }

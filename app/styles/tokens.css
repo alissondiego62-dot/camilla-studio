@@ -11,3 +11,9 @@
   --cs-shadow-md:0 12px 32px rgba(67,33,23,.08);--cs-font-sans:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --cs-sidebar-width:252px;--cs-transition:160ms ease;
 }
+
+/* Etapa 09 — séries de gráficos Camilla */
+:root{
+  --cs-chart-1:#5e3021;--cs-chart-2:#9b6352;--cs-chart-3:#c58f7d;
+  --cs-chart-4:#8b6a3d;--cs-chart-5:#52705c;--cs-chart-6:#596c73;
+}

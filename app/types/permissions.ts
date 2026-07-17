@@ -9,9 +9,9 @@ export const permissionModules = [
 export type PermissionModule = (typeof permissionModules)[number];
 
 export const permissionActions = [
-  "view", "create", "edit", "delete", "archive", "reactivate", "approve", "export",
+  "view", "create", "edit", "delete", "archive", "reactivate", "approve", "export", "view_team", "view_financial",
   "change_status", "change_stage", "change_deadline", "add_file", "remove_file", "view_values",
-  "settle_finance", "cancel_entry", "view_consolidated", "manage_accounts", "manage_cards", "manage_categories", "manage_templates", "manage_suppliers", "manage_cost_centers", "manage_recurrence", "manage_installments", "manage_transfers", "approve_finance", "change_environment", "view_audit", "export_values", "manage_users", "manage_settings", "download", "view_versions", "view_internal", "create_internal", "view_financial", "manage_notes", "manage_contacts",
+  "settle_finance", "cancel_entry", "view_history", "view_productivity", "connect_drive", "disconnect_drive", "test_drive", "upload_drive", "share_drive", "revoke_drive_share", "refresh_drive_metadata", "view_consolidated", "manage_accounts", "manage_cards", "manage_categories", "manage_templates", "manage_suppliers", "manage_cost_centers", "manage_recurrence", "manage_installments", "manage_transfers", "approve_finance", "change_environment", "view_audit", "export_values", "manage_users", "manage_settings", "download", "view_versions", "view_internal", "create_internal", "view_financial", "manage_notes", "manage_contacts",
 ] as const;
 export type PermissionAction = (typeof permissionActions)[number];
 

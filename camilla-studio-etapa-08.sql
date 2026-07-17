@@ -178,6 +178,11 @@ alter table public.financial_recurring_rules drop constraint if exists financial
 alter table public.financial_recurring_rules add constraint financial_recurring_rules_card_id_fkey foreign key(card_id) references public.financial_cards(id) on delete set null;
 
 -- 4. Evolução aditiva do livro central
+-- As views da Etapa 07 dependem das colunas monetárias que terão a precisão alterada.
+-- Elas são removidas temporariamente e recriadas no final desta migration, dentro da mesma transação.
+drop view if exists public.client_financial_summary_view;
+drop view if exists public.client_financial_entries_view;
+
 alter table public.financial_entries alter column amount type numeric(18,2) using round(amount::numeric,2);
 alter table public.financial_entries
   add column if not exists owner_user_id uuid references auth.users(id) on delete restrict,
@@ -610,8 +615,40 @@ end $$;
 
 -- 11. Ajuste das views do cliente para o novo saldo
 create or replace view public.client_financial_entries_view with(security_invoker=true) as
-select f.id,coalesce(f.client_id,p.client_id) client_id,f.description,f.entry_type,f.amount,f.due_date,f.settled_at,f.effective_status status,f.project_id,p.name project_name,f.paid_amount,f.open_amount
-from public.financial_entry_balance_view f left join public.projects p on p.id=f.project_id where f.environment='professional' and f.archived_at is null and coalesce(f.client_id,p.client_id) is not null;
+select
+  f.id,
+  coalesce(f.client_id,p.client_id) as client_id,
+  f.description,
+  f.entry_type,
+  f.amount,
+  f.due_date,
+  f.settled_at,
+  f.effective_status as status,
+  f.project_id,
+  p.name as project_name,
+  f.paid_amount,
+  f.open_amount
+from public.financial_entry_balance_view f
+left join public.projects p on p.id=f.project_id
+where f.environment='professional'
+  and f.archived_at is null
+  and coalesce(f.client_id,p.client_id) is not null;
+
+create or replace view public.client_financial_summary_view with(security_invoker=true) as
+select
+  e.client_id,
+  coalesce(sum(e.amount) filter(where e.entry_type='income'),0::numeric) as expected_revenue,
+  coalesce(sum(e.paid_amount) filter(where e.entry_type='income'),0::numeric) as received_revenue,
+  coalesce(sum(e.open_amount) filter(where e.entry_type='income'),0::numeric) as receivable,
+  coalesce(sum(e.open_amount) filter(where e.entry_type='income'),0::numeric) as open_amount,
+  coalesce(sum(e.open_amount) filter(where e.entry_type='income' and e.due_date<current_date),0::numeric) as overdue_amount,
+  coalesce(sum(e.paid_amount) filter(where e.entry_type='income' and e.paid_amount>0 and e.open_amount>0),0::numeric) as partial_payments,
+  coalesce(sum(e.amount) filter(where e.entry_type='income'),0::numeric) as total_billed,
+  coalesce(avg(e.amount) filter(where e.entry_type='income'),0::numeric) as average_ticket,
+  max(e.settled_at) as last_payment_at
+from public.client_financial_entries_view e
+group by e.client_id;
+
 revoke all on public.client_financial_entries_view,public.client_financial_summary_view from public,anon,authenticated;
 
 -- 12. Configurações, categorias e dados iniciais
