@@ -14,7 +14,7 @@ const modules: Array<[PermissionModule, string, PermissionAction[]]> = [
   ["kanban", "Kanban", ["view", "change_status", "change_stage", "change_deadline"]],
   ["activities", "Atividades", ["view", "create", "edit", "delete", "archive", "reactivate", "change_status", "change_deadline"]],
   ["agenda", "Agenda", ["view", "create", "edit", "delete", "export"]],
-  ["clients", "Clientes", ["view", "create", "edit", "delete", "archive", "reactivate", "export"]],
+  ["clients", "Clientes", ["view", "create", "edit", "delete", "archive", "reactivate", "export", "view_financial", "manage_notes", "manage_contacts"]],
   ["files", "Arquivos", ["view", "add_file", "remove_file", "archive", "export", "download", "view_versions"]],
   ["reports", "Relatórios", ["view", "export", "view_values"]],
   ["finance_professional", "Financeiro profissional", ["view", "create", "edit", "archive", "view_values", "settle_finance", "cancel_entry", "export"]],
@@ -38,9 +38,10 @@ const actionLabels: Record<PermissionAction, string> = {
   remove_file: "Remover arquivo", view_values: "Visualizar valores", settle_finance: "Realizar baixa",
   cancel_entry: "Cancelar lançamento", manage_users: "Gerenciar usuários", manage_settings: "Gerenciar configurações",
   download: "Baixar", view_versions: "Visualizar versões", view_internal: "Visualizar observações internas", create_internal: "Criar observação interna",
+  view_financial: "Visualizar financeiro do cliente", manage_notes: "Gerenciar observações", manage_contacts: "Gerenciar contatos",
 };
 
-const scopedActions = new Set<PermissionAction>(["view", "edit", "delete", "archive", "reactivate", "approve", "export", "change_status", "change_stage", "change_deadline", "add_file", "remove_file", "download", "view_versions", "view_internal", "create_internal"]);
+const scopedActions = new Set<PermissionAction>(["view", "edit", "delete", "archive", "reactivate", "approve", "export", "change_status", "change_stage", "change_deadline", "add_file", "remove_file", "download", "view_versions", "view_internal", "create_internal", "view_financial", "manage_notes", "manage_contacts"]);
 
 export const permissionCatalog: PermissionCatalogItem[] = modules.flatMap(([module, moduleLabel, actions]) =>
   actions.map((action) => ({ module, moduleLabel, action, actionLabel: actionLabels[action], supportsScope: scopedActions.has(action) })),

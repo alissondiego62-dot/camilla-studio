@@ -16,6 +16,8 @@ export type AgendaItem = {
   project_id: string | null;
   project_name: string | null;
   activity_id: string | null;
+  client_id: string | null;
+  client_name: string | null;
   responsible_user_id: string | null;
   responsible_name: string | null;
   location: string | null;
@@ -28,13 +30,15 @@ export type AgendaItem = {
 export type AgendaFilters = {
   responsibleId: string;
   projectId: string;
+  clientId: string;
   itemType: string;
   status: string;
   showCancelled: boolean;
 };
 
 export type AgendaOptions = {
-  projects: Array<{ id: string; code: string; name: string }>;
+  projects: Array<{ id: string; code: string; name: string; client_id?: string | null }>;
+  clients: Array<{ id: string; name: string }>;
   users: Array<{ id: string; name: string; email: string }>;
   statuses: Array<{ code: string; name: string; color: string | null }>;
   snapMinutes: number;
@@ -56,6 +60,7 @@ export type CalendarEventInput = {
   all_day: boolean;
   project_id: string | null;
   activity_id: string | null;
+  client_id: string | null;
   responsible_user_id: string | null;
   location: string | null;
   notes: string | null;
@@ -69,6 +74,7 @@ export type AgendaActivityInput = {
   due_at: string | null;
   all_day: boolean;
   project_id: string | null;
+  client_id: string | null;
   responsible_user_id: string | null;
   priority: string;
   status: string;
@@ -85,6 +91,7 @@ export type AgendaUpdateInput = {
 export const defaultAgendaFilters: AgendaFilters = {
   responsibleId: "",
   projectId: "",
+  clientId: "",
   itemType: "",
   status: "",
   showCancelled: false,

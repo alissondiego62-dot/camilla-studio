@@ -11,7 +11,7 @@ export type PermissionModule = (typeof permissionModules)[number];
 export const permissionActions = [
   "view", "create", "edit", "delete", "archive", "reactivate", "approve", "export",
   "change_status", "change_stage", "change_deadline", "add_file", "remove_file", "view_values",
-  "settle_finance", "cancel_entry", "manage_users", "manage_settings", "download", "view_versions", "view_internal", "create_internal",
+  "settle_finance", "cancel_entry", "manage_users", "manage_settings", "download", "view_versions", "view_internal", "create_internal", "view_financial", "manage_notes", "manage_contacts",
 ] as const;
 export type PermissionAction = (typeof permissionActions)[number];
 

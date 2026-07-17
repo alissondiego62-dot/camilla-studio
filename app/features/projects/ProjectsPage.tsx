@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import type { FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import { activeStages, priorityLabels, projectStageLabel, statusLabels } from "@/app/domain/architecture-config";
 import { dateOnly } from "@/app/config/regions";
 import { ModuleFrame } from "@/app/components/ui/ModuleFrame";
@@ -26,8 +27,10 @@ export function ProjectsPage() {
   const { data: options } = useModuleData(optionLoader, emptyOptions);
   const action = useAsyncAction();
   const { can } = usePermissions();
+  const params = useSearchParams();
+  const defaultClientId = params.get("client") ?? "";
   const [query, setQuery] = useState("");
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() => params.get("new") === "1" && can("projects", "create"));
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -102,7 +105,7 @@ export function ProjectsPage() {
           <form className="cs-form-grid" onSubmit={submit}>
             <FormField label="Código" name="code" required />
             <FormField label="Nome" name="name" required />
-            <label><span>Cliente</span><select name="client_id" defaultValue=""><option value="">Não informado</option>{options.clients.map((client) => <option key={client.id} value={client.id}>{client.name}</option>)}</select></label>
+            <label><span>Cliente</span><select name="client_id" defaultValue={defaultClientId}><option value="">Não informado</option>{options.clients.map((client) => <option key={client.id} value={client.id}>{client.name}</option>)}</select></label>
             <label><span>Responsável</span><select name="responsible_user_id" defaultValue=""><option value="">Não atribuído</option>{options.users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</select></label>
             <FormField label="Tipo" name="project_type" defaultValue="Arquitetura" required />
             <FormField label="Subtipo" name="subtype" />

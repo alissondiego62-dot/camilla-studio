@@ -1,0 +1,4 @@
+"use client";
+import { Tabs } from "@/app/components/ui/Tabs";
+export type ClientSection="overview"|"projects"|"activities"|"agenda"|"finance"|"files"|"notes"|"history";
+export function ClientNavigation({active,onChange,counts,showFinance}:{active:ClientSection;onChange:(section:ClientSection)=>void;counts:Record<string,number>;showFinance:boolean}){const tabs=[{id:"overview",label:"Visão geral"},{id:"projects",label:"Projetos",count:counts.projects},{id:"activities",label:"Atividades",count:counts.activities},{id:"agenda",label:"Agenda",count:counts.agenda},...(showFinance?[{id:"finance",label:"Financeiro",count:counts.finance}]:[]),{id:"files",label:"Arquivos",count:counts.files},{id:"notes",label:"Observações",count:counts.notes},{id:"history",label:"Histórico",count:counts.history}];return <Tabs tabs={tabs} active={active} onChange={id=>onChange(id as ClientSection)} label="Ficha do cliente"/>}

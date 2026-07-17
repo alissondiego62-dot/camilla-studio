@@ -1,0 +1,16 @@
+"use client";
+import { Button } from "@/app/components/ui/Button";
+import type { ClientEmail, ClientPhone } from "./types";
+
+export function ClientContactFields({phones,emails,onPhones,onEmails,disabled=false}:{phones:ClientPhone[];emails:ClientEmail[];onPhones:(items:ClientPhone[])=>void;onEmails:(items:ClientEmail[])=>void;disabled?:boolean}){
+ const updatePhone=(index:number,changes:Partial<ClientPhone>)=>onPhones(phones.map((item,i)=>i===index?{...item,...changes}:item));
+ const updateEmail=(index:number,changes:Partial<ClientEmail>)=>onEmails(emails.map((item,i)=>i===index?{...item,...changes}:item));
+ return <div className="cs-span-2 cs-client-contact-editor">
+  <section><div className="cs-section-heading"><div><h3>Telefones</h3><p>Principal, adicionais e WhatsApp.</p></div><Button type="button" variant="text" disabled={disabled} onClick={()=>onPhones([...phones,{label:"Outro",phone:"",is_primary:phones.length===0,is_whatsapp:false,position:phones.length}])}>Adicionar telefone</Button></div>
+   {phones.length===0?<p className="cs-empty-note">Nenhum telefone informado.</p>:phones.map((item,index)=><div className="cs-contact-row" key={item.id??`phone-${index}`}><input aria-label="Rótulo do telefone" disabled={disabled} value={item.label} onChange={e=>updatePhone(index,{label:e.target.value})}/><input aria-label="Número do telefone" disabled={disabled} value={item.phone} onChange={e=>updatePhone(index,{phone:e.target.value})}/><label className="cs-inline-check"><input type="radio" name="primary_phone" disabled={disabled} checked={item.is_primary} onChange={()=>onPhones(phones.map((phone,i)=>({...phone,is_primary:i===index})))}/><span>Principal</span></label><label className="cs-inline-check"><input type="checkbox" disabled={disabled} checked={item.is_whatsapp} onChange={e=>updatePhone(index,{is_whatsapp:e.target.checked})}/><span>WhatsApp</span></label><Button type="button" variant="text" disabled={disabled} onClick={()=>onPhones(phones.filter((_,i)=>i!==index).map((phone,i)=>({...phone,position:i})))}>Remover</Button></div>)}
+  </section>
+  <section><div className="cs-section-heading"><div><h3>E-mails</h3><p>E-mail principal e contatos adicionais.</p></div><Button type="button" variant="text" disabled={disabled} onClick={()=>onEmails([...emails,{label:"Outro",email:"",is_primary:emails.length===0,position:emails.length}])}>Adicionar e-mail</Button></div>
+   {emails.length===0?<p className="cs-empty-note">Nenhum e-mail informado.</p>:emails.map((item,index)=><div className="cs-contact-row cs-contact-row-email" key={item.id??`email-${index}`}><input aria-label="Rótulo do e-mail" disabled={disabled} value={item.label} onChange={e=>updateEmail(index,{label:e.target.value})}/><input aria-label="Endereço de e-mail" type="email" disabled={disabled} value={item.email} onChange={e=>updateEmail(index,{email:e.target.value})}/><label className="cs-inline-check"><input type="radio" name="primary_email" disabled={disabled} checked={item.is_primary} onChange={()=>onEmails(emails.map((email,i)=>({...email,is_primary:i===index})))}/><span>Principal</span></label><Button type="button" variant="text" disabled={disabled} onClick={()=>onEmails(emails.filter((_,i)=>i!==index).map((email,i)=>({...email,position:i})))}>Remover</Button></div>)}
+  </section>
+ </div>
+}

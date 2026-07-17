@@ -1,0 +1,5 @@
+"use client";
+import { Button } from "@/app/components/ui/Button";
+import { dateTime } from "@/app/config/regions";
+import type { ClientNote } from "./types";
+export function ClientNoteCard({note,canEdit,onEdit,onArchive,onPin}:{note:ClientNote;canEdit:boolean;onEdit:()=>void;onArchive:()=>void;onPin:()=>void}){return <article className={`cs-card cs-client-note ${note.important?"is-important":""} ${note.pinned_at?"is-pinned":""}`}><header><div><span className="cs-badge">{note.note_type}</span>{note.important&&<span className="cs-badge cs-badge-danger">Importante</span>}{note.pinned_at&&<span className="cs-badge">Fixada</span>}</div><time>{dateTime(note.occurred_at)}</time></header><p>{note.content}</p><footer><small>{note.author?.name||note.author?.email||"Sistema"} · criado em {dateTime(note.created_at)}</small>{canEdit&&<div><Button variant="text" onClick={onPin}>{note.pinned_at?"Desafixar":"Fixar"}</Button><Button variant="text" onClick={onEdit}>Editar</Button><Button variant="text" onClick={onArchive}>Arquivar</Button></div>}</footer></article>}

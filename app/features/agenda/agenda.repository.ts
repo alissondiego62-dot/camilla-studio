@@ -1,30 +1,6 @@
 import { assertNoError, ensureSupabase } from "@/app/services/supabase/base-service";
 import { supabase } from "@/lib/supabase";
 import type { AgendaItem, AgendaOptions } from "./types";
-
-export async function fetchAgendaItems(startIso:string,endIso:string):Promise<AgendaItem[]>{
- if(!ensureSupabase())return[];
- const result=await supabase.from("agenda_items").select("*").lt("starts_at",endIso).gte("ends_at",startIso).order("starts_at",{ascending:true}).order("title",{ascending:true});
- if(result.error&&/agenda_items|schema cache|does not exist/i.test(result.error.message))throw new Error("A Agenda profissional ainda não está disponível. Aplique o SQL da Etapa 06.");
- assertNoError(result);return(result.data??[])as AgendaItem[];
-}
-
-export async function fetchAgendaItem(sourceType:string,sourceId:string):Promise<AgendaItem|null>{
- if(!ensureSupabase())return null;
- const result=await supabase.from("agenda_items").select("*").eq("source_type",sourceType).eq("source_id",sourceId).maybeSingle();
- if(result.error&&result.error.code!=="PGRST116")throw new Error(result.error.message);
- return(result.data??null)as AgendaItem|null;
-}
-
-export async function fetchAgendaOptions():Promise<AgendaOptions>{
- if(!ensureSupabase())return{projects:[],users:[],statuses:[],snapMinutes:15};
- const[projects,users,statuses,settings]=await Promise.all([
-  supabase.from("projects").select("id,code,name").is("archived_at",null).order("name"),
-  supabase.from("profiles").select("id,name,email").eq("active",true).is("blocked_at",null).is("archived_at",null).order("name"),
-  supabase.from("activity_statuses").select("code,name,color").eq("active",true).is("archived_at",null).order("position"),
-  supabase.from("system_settings").select("key,value").eq("key","agenda_snap_minutes").maybeSingle(),
- ]);
- for(const response of[projects,users,statuses])assertNoError(response);
- const raw=Number(settings.data?.value??15);
- return{projects:projects.data??[],users:users.data??[],statuses:statuses.data??[],snapMinutes:[15,30,60].includes(raw)?raw:15}as AgendaOptions;
-}
+export async function fetchAgendaItems(startIso:string,endIso:string):Promise<AgendaItem[]>{if(!ensureSupabase())return[];const result=await supabase.from("agenda_items").select("*").lt("starts_at",endIso).gte("ends_at",startIso).order("starts_at",{ascending:true}).order("title",{ascending:true});if(result.error&&/agenda_items|schema cache|does not exist/i.test(result.error.message))throw new Error("A Agenda profissional ainda não está disponível. Aplique o SQL da Etapa 06.");assertNoError(result);return(result.data??[])as AgendaItem[]}
+export async function fetchAgendaItem(sourceType:string,sourceId:string):Promise<AgendaItem|null>{if(!ensureSupabase())return null;const result=await supabase.from("agenda_items").select("*").eq("source_type",sourceType).eq("source_id",sourceId).maybeSingle();if(result.error&&result.error.code!=="PGRST116")throw new Error(result.error.message);return(result.data??null)as AgendaItem|null}
+export async function fetchAgendaOptions():Promise<AgendaOptions>{if(!ensureSupabase())return{projects:[],clients:[],users:[],statuses:[],snapMinutes:15};const[projects,clients,users,statuses,settings]=await Promise.all([supabase.from("projects").select("id,code,name,client_id").is("archived_at",null).order("name"),supabase.from("clients").select("id,name").is("archived_at",null).order("name"),supabase.from("profiles").select("id,name,email").eq("active",true).is("blocked_at",null).is("archived_at",null).order("name"),supabase.from("activity_statuses").select("code,name,color").eq("active",true).is("archived_at",null).order("position"),supabase.from("system_settings").select("key,value").eq("key","agenda_snap_minutes").maybeSingle()]);for(const response of[projects,clients,users,statuses])assertNoError(response);const raw=Number(settings.data?.value??15);return{projects:projects.data??[],clients:clients.data??[],users:users.data??[],statuses:statuses.data??[],snapMinutes:[15,30,60].includes(raw)?raw:15}as AgendaOptions}

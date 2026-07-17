@@ -1,0 +1,4 @@
+import { EmptyState } from "@/app/components/ui/DataState";
+import { dateTime } from "@/app/config/regions";
+import type { HistoryEntry } from "@/app/features/history/types";
+export function ClientHistoryPanel({history}:{history:HistoryEntry[]}){return <section className="cs-client-panel"><div className="cs-section-heading"><div><h2>Histórico</h2><p>Alterações cadastrais, contatos e registros vinculados.</p></div></div>{history.length===0?<EmptyState title="Nenhum registro" description="As alterações do cliente aparecerão aqui."/>:<ol className="cs-history-list">{history.map(item=><li key={item.id}><span>{dateTime(item.created_at)}</span><div><strong>{item.description}</strong><small>{item.module} · {item.action}{item.field_name?` · ${item.field_name}`:""}</small></div></li>)}</ol>}</section>}

@@ -1,0 +1,12 @@
+"use client";
+import { useState } from "react";
+import { Button } from "@/app/components/ui/Button";
+import { Modal } from "@/app/components/ui/Modal";
+import { EmptyState } from "@/app/components/ui/DataState";
+import { FeedbackMessage } from "@/app/components/ui/FeedbackMessage";
+import { useAsyncAction } from "@/app/hooks/useAsyncAction";
+import { archiveClientNote, pinClientNote, saveClientNote } from "./clients.service";
+import { ClientNoteCard } from "./ClientNoteCard";
+import { ClientNoteForm } from "./ClientNoteForm";
+import type { ClientCategory, ClientNote } from "./types";
+export function ClientNotesPanel({clientId,notes,types,canManage,onChanged}:{clientId:string;notes:ClientNote[];types:ClientCategory[];canManage:boolean;onChanged:()=>Promise<void>}){const[editing,setEditing]=useState<ClientNote|null|undefined>();const action=useAsyncAction();async function save(value:{id?:string;note_type:string;content:string;important:boolean;occurred_at:string}){const result=await action.run(()=>saveClientNote(clientId,value),"Observação salva.");if(result.ok){setEditing(undefined);await onChanged()}}async function archive(note:ClientNote){if(!confirm("Arquivar esta observação?"))return;const result=await action.run(()=>archiveClientNote(note.id),"Observação arquivada.");if(result.ok)await onChanged()}async function pin(note:ClientNote){const result=await action.run(()=>pinClientNote(note.id,!note.pinned_at),note.pinned_at?"Observação desafixada.":"Observação fixada.");if(result.ok)await onChanged()}return <section className="cs-client-panel"><div className="cs-section-heading"><div><h2>Observações</h2><p>Registros separados dos comentários de projetos e atividades.</p></div>{canManage&&<Button variant="primary" onClick={()=>setEditing(null)}>Nova observação</Button>}</div><FeedbackMessage error={action.error} success={action.success}/>{notes.length===0?<EmptyState title="Nenhuma observação" description="Registre contatos, alertas e informações importantes do cliente."/>:<div className="cs-client-note-list">{notes.map(note=><ClientNoteCard key={note.id} note={note} canEdit={canManage} onEdit={()=>setEditing(note)} onArchive={()=>void archive(note)} onPin={()=>void pin(note)}/>)}</div>}{editing!==undefined&&<Modal title={editing?"Editar observação":"Nova observação"} onClose={()=>setEditing(undefined)}><ClientNoteForm note={editing} types={types} pending={action.pending} onSubmit={value=>void save(value)} onCancel={()=>setEditing(undefined)}/></Modal>}</section>}
