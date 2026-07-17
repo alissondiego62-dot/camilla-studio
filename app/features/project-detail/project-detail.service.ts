@@ -39,8 +39,14 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
 
   let finance: ProjectFinancialEntry[] = [];
   if (includeFinance) {
-    finance = await optionalRows<ProjectFinancialEntry>(supabase.from("financial_entries").select("id,project_id,entry_type,description,category,amount,competence_date,due_date,status,notes,created_at").eq("project_id", projectId).is("archived_at", null).order("competence_date", { ascending: false }));
-    if (!finance.length) finance = await optionalRows<ProjectFinancialEntry>(supabase.from("project_financial_entries").select("*").eq("project_id", projectId).order("created_at", { ascending: false }));
+    const financeResult = await supabase.rpc("get_project_financial_entries", { p_project_id: projectId });
+    if (!financeResult.error) {
+      finance = (financeResult.data ?? []) as ProjectFinancialEntry[];
+    } else if (/function .* does not exist|schema cache/i.test(financeResult.error.message)) {
+      finance = await optionalRows<ProjectFinancialEntry>(supabase.from("project_financial_entries").select("*").eq("project_id", projectId).order("created_at", { ascending: false }));
+    } else {
+      throw new Error(financeResult.error.message);
+    }
   }
 
   const thumbnail = thumbnails[0] ?? null;

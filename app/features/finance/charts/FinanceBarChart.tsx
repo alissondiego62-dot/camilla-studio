@@ -1,0 +1,2 @@
+import type { FinanceChartPoint } from "../types";
+export function FinanceBarChart({points}:{points:FinanceChartPoint[]}){const max=Math.max(1,...points.flatMap((point)=>[Number(point.forecast),Number(point.realized)]));return <div className="cs-finance-bars">{points.map((point)=><article key={point.label}><div><i style={{height:`${Math.max(2,(Number(point.forecast)/max)*100)}%`}}/><b style={{height:`${Math.max(2,(Number(point.realized)/max)*100)}%`}}/></div><span>{point.label}</span></article>)}</div>}

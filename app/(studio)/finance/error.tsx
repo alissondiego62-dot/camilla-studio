@@ -1,0 +1,1 @@
+"use client";import { ErrorState } from "@/app/components/ui/DataState";export default function ErrorPage({reset}:{error:Error&{digest?:string};reset:()=>void}){return <ErrorState message="Não foi possível abrir o módulo Financeiro." onRetry={reset}/>}

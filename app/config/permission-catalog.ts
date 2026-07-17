@@ -17,8 +17,8 @@ const modules: Array<[PermissionModule, string, PermissionAction[]]> = [
   ["clients", "Clientes", ["view", "create", "edit", "delete", "archive", "reactivate", "export", "view_financial", "manage_notes", "manage_contacts"]],
   ["files", "Arquivos", ["view", "add_file", "remove_file", "archive", "export", "download", "view_versions"]],
   ["reports", "Relatórios", ["view", "export", "view_values"]],
-  ["finance_professional", "Financeiro profissional", ["view", "create", "edit", "archive", "view_values", "settle_finance", "cancel_entry", "export"]],
-  ["finance_personal", "Financeiro pessoal", ["view", "create", "edit", "archive", "view_values", "settle_finance", "cancel_entry", "export"]],
+  ["finance_professional", "Financeiro profissional", ["view", "create", "edit", "archive", "view_values", "settle_finance", "cancel_entry", "export", "view_consolidated", "manage_accounts", "manage_cards", "manage_categories", "manage_templates", "manage_suppliers", "manage_cost_centers", "manage_recurrence", "manage_installments", "manage_transfers", "approve_finance", "change_environment", "view_audit", "export_values"]],
+  ["finance_personal", "Financeiro pessoal", ["view", "create", "edit", "archive", "view_values", "settle_finance", "cancel_entry", "export", "view_consolidated", "manage_accounts", "manage_cards", "manage_categories", "manage_templates", "manage_suppliers", "manage_cost_centers", "manage_recurrence", "manage_installments", "manage_transfers", "approve_finance", "change_environment", "view_audit", "export_values"]],
   ["users", "Usuários", ["view", "create", "edit", "archive", "reactivate", "manage_users"]],
   ["teams", "Equipes", ["view", "create", "edit", "archive", "reactivate", "manage_users"]],
   ["settings", "Configurações", ["view", "manage_settings"]],
@@ -39,9 +39,10 @@ const actionLabels: Record<PermissionAction, string> = {
   cancel_entry: "Cancelar lançamento", manage_users: "Gerenciar usuários", manage_settings: "Gerenciar configurações",
   download: "Baixar", view_versions: "Visualizar versões", view_internal: "Visualizar observações internas", create_internal: "Criar observação interna",
   view_financial: "Visualizar financeiro do cliente", manage_notes: "Gerenciar observações", manage_contacts: "Gerenciar contatos",
+  view_consolidated: "Visualizar consolidado", manage_accounts: "Gerenciar contas", manage_cards: "Gerenciar cartões", manage_categories: "Gerenciar categorias", manage_templates: "Gerenciar modelos", manage_suppliers: "Gerenciar fornecedores", manage_cost_centers: "Gerenciar centros de custo", manage_recurrence: "Gerenciar recorrências", manage_installments: "Gerenciar parcelamentos", manage_transfers: "Gerenciar transferências", approve_finance: "Aprovar operações financeiras", change_environment: "Alterar ambiente", view_audit: "Visualizar auditoria financeira", export_values: "Exportar valores",
 };
 
-const scopedActions = new Set<PermissionAction>(["view", "edit", "delete", "archive", "reactivate", "approve", "export", "change_status", "change_stage", "change_deadline", "add_file", "remove_file", "download", "view_versions", "view_internal", "create_internal", "view_financial", "manage_notes", "manage_contacts"]);
+const scopedActions = new Set<PermissionAction>(["view", "edit", "delete", "archive", "reactivate", "approve", "export", "change_status", "change_stage", "change_deadline", "add_file", "remove_file", "download", "view_versions", "view_internal", "create_internal", "view_financial", "manage_notes", "manage_contacts", "view_consolidated", "manage_accounts", "manage_cards", "manage_categories", "manage_templates", "manage_suppliers", "manage_cost_centers", "manage_recurrence", "manage_installments", "manage_transfers", "approve_finance", "change_environment", "view_audit", "export_values"]);
 
 export const permissionCatalog: PermissionCatalogItem[] = modules.flatMap(([module, moduleLabel, actions]) =>
   actions.map((action) => ({ module, moduleLabel, action, actionLabel: actionLabels[action], supportsScope: scopedActions.has(action) })),
