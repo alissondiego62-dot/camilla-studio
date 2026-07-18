@@ -19,7 +19,7 @@ function jsonArray(value: unknown): Array<Record<string, unknown>> {
 
 const emptyWorkspace: FinanceWorkspaceData = {
   entries:[], total:0,
-  metrics:{current_balance:"0.00",expected_income:"0.00",realized_income:"0.00",expected_expense:"0.00",realized_expense:"0.00",net_result:"0.00",receivable:"0.00",payable:"0.00",overdue:"0.00",projected_balance:"0.00",previous_period_result:"0.00",result_change_percent:null},
+  metrics:{current_balance:"0.00",expected_income:"0.00",realized_income:"0.00",expected_expense:"0.00",realized_expense:"0.00",net_result:"0.00",receivable:"0.00",receivable_dated:"0.00",receivable_undated:"0.00",payable:"0.00",overdue:"0.00",projected_balance:"0.00",previous_period_result:"0.00",result_change_percent:null},
   timeline:[], categories_chart:[], statuses_chart:[],
   options:{categories:[],subcategories:[],accounts:[],cards:[],suppliers:[],cost_centers:[],payment_methods:[],clients:[],projects:[],templates:[],recurring_rules:[]},
   approvals:[], access:[], project_summaries:[],
@@ -27,12 +27,17 @@ const emptyWorkspace: FinanceWorkspaceData = {
 
 export async function loadFinanceWorkspace(environment: FinanceEnvironment, section: FinanceSection, filters: FinanceFilters, page=0, pageSize=50):Promise<FinanceWorkspaceData>{
   if(!ensureSupabase()) return emptyWorkspace;
-  const [result, projectSummariesResult]=await Promise.all([
+  const shouldLoadUndated=section==="revenue"||section==="receivables";
+  const [result, projectSummariesResult,metricsResult,undatedResult]=await Promise.all([
     supabase.rpc("get_finance_workspace",{p_environment:environment,p_section:section,p_filters:filtersToJson(filters),p_limit:pageSize,p_offset:page*pageSize}),
     supabase.rpc("list_project_financial_summaries"),
+    supabase.rpc("get_finance_dashboard_metrics",{p_environment:environment,p_start_date:filters.start_date||null,p_end_date:filters.end_date||null}),
+    shouldLoadUndated?supabase.rpc("list_undated_financial_entries",{p_environment:environment}):Promise.resolve({data:[],error:null}),
   ]);
   assertNoError(result);
   if(projectSummariesResult.error&&!/function .* does not exist|schema cache/i.test(projectSummariesResult.error.message))throw new Error(projectSummariesResult.error.message);
+  if(metricsResult.error&&!/function .* does not exist|schema cache/i.test(metricsResult.error.message))throw new Error(metricsResult.error.message);
+  if(undatedResult.error&&!/function .* does not exist|schema cache/i.test(undatedResult.error.message))throw new Error(undatedResult.error.message);
   const data=(result.data??{}) as Partial<FinanceWorkspaceData>;
   const project_summaries=jsonArray(projectSummariesResult.data).map((item)=>{
     const row=item as Record<string,unknown>;
@@ -41,12 +46,19 @@ export async function loadFinanceWorkspace(environment: FinanceEnvironment, sect
       project_id:String(row.project_id??""),project_code:String(row.project_code??""),project_name:String(row.project_name??""),
       client_id:row.client_id?String(row.client_id):null,client_name:row.client_name?String(row.client_name):null,
       contract_value:numberValue(row.contract_value),amount_received:numberValue(row.amount_received),balance_due:numberValue(row.balance_due),
+      receivable_dated:numberValue(row.receivable_dated),receivable_undated:numberValue(row.receivable_undated),
       received_from_entries:numberValue(row.received_from_entries),legacy_amount_received:numberValue(row.legacy_amount_received),
       active_income_entries:numberValue(row.active_income_entries),overdue_amount:numberValue(row.overdue_amount),
       next_due_date:typeof row.next_due_date==="string"?row.next_due_date:null,
     } satisfies FinanceProjectSummary;
   });
-  return {...emptyWorkspace,...data,project_summaries,metrics:{...emptyWorkspace.metrics,...data.metrics},options:{...emptyWorkspace.options,...data.options}};
+  const baseEntries=(data.entries??[]) as FinanceEntryRow[];
+  const undatedEntries=jsonArray(undatedResult.data) as unknown as FinanceEntryRow[];
+  const entryMap=new Map(baseEntries.map((entry)=>[entry.id,entry]));
+  for(const entry of undatedEntries)entryMap.set(entry.id,entry);
+  const entries=[...entryMap.values()].sort((a,b)=>String(b.competence_date).localeCompare(String(a.competence_date))||String(b.created_at).localeCompare(String(a.created_at)));
+  const metrics=(metricsResult.data??data.metrics??{}) as Partial<FinanceWorkspaceData["metrics"]>;
+  return {...emptyWorkspace,...data,entries,total:Math.max(Number(data.total??0),entries.length),project_summaries,metrics:{...emptyWorkspace.metrics,...data.metrics,...metrics},options:{...emptyWorkspace.options,...data.options}};
 }
 
 export async function getFinanceEntry(id:string):Promise<FinanceEntryRow>{

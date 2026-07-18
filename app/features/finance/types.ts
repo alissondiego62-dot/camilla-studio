@@ -175,6 +175,8 @@ export type FinanceMetrics = {
   realized_expense: string;
   net_result: string;
   receivable: string;
+  receivable_dated: string;
+  receivable_undated: string;
   payable: string;
   overdue: string;
   projected_balance: string;
@@ -218,6 +220,8 @@ export type FinanceProjectSummary = {
   contract_value: number;
   amount_received: number;
   balance_due: number;
+  receivable_dated: number;
+  receivable_undated: number;
   received_from_entries: number;
   legacy_amount_received: number;
   active_income_entries: number;

@@ -17,6 +17,8 @@ function normalizeSummary(row: Record<string, unknown>): ProjectFinancialSummary
     contract_value: numberValue(row.contract_value),
     amount_received: numberValue(row.amount_received),
     balance_due: numberValue(row.balance_due),
+    receivable_dated: numberValue(row.receivable_dated),
+    receivable_undated: numberValue(row.receivable_undated),
     received_from_entries: numberValue(row.received_from_entries),
     legacy_amount_received: numberValue(row.legacy_amount_received),
     active_income_entries: numberValue(row.active_income_entries),

@@ -24,7 +24,7 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
   if (projectResult.error) throw new Error(projectResult.error.message);
   if (!projectResult.data) throw new Error("Projeto não encontrado ou sem permissão de acesso.");
 
-  const [clients, users, dateTypes, dates, thumbnails, activities, events, files, comments, checklist, history] = await Promise.all([
+  const [clients, users, dateTypes, dates, thumbnails, activities, events, files, comments, checklist, history, financeAccounts, financePaymentMethods] = await Promise.all([
     optionalRows<ProjectOption>(supabase.from("clients").select("id,name").is("archived_at", null).order("name")),
     optionalRows<ProjectOption>(supabase.from("profiles").select("id,name,email").eq("active", true).is("blocked_at", null).is("archived_at", null).order("name")),
     optionalRows<DateTypeOption>(supabase.from("system_categories").select("code,name,color").eq("module", "project_date_type").eq("active", true).is("archived_at", null).order("position")),
@@ -36,6 +36,8 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
     optionalRows<ProjectCommentItem>(supabase.from("project_comments").select("id,project_id,parent_comment_id,author_id,comment,comment_kind,important,edited_at,updated_at,deleted_at,created_at,mentions:comment_mentions(user_id)").eq("project_id", projectId).order("created_at", { ascending: true })),
     optionalRows<ProjectChecklistItem>(supabase.from("project_checklist_items").select("id,project_id,stage,section,title,required,responsible_user_id,started_at,completed_at,completed_by,waived_at,waived_by,waiver_reason,position,created_at").eq("project_id", projectId).order("stage").order("position")),
     optionalRows<ProjectHistory>(supabase.from("project_history").select("id,project_id,action_type,description,field_name,old_value,new_value,metadata,author_id,created_at").eq("project_id", projectId).order("created_at", { ascending: false }).limit(250)),
+    includeFinance ? optionalRows<{ id: string; name: string }>(supabase.from("financial_accounts").select("id,name").eq("environment", "professional").eq("active", true).is("archived_at", null).order("name")) : Promise.resolve([]),
+    includeFinance ? optionalRows<{ id: string; name: string }>(supabase.from("financial_payment_methods").select("id,name").eq("environment", "professional").eq("active", true).is("archived_at", null).order("position")) : Promise.resolve([]),
   ]);
 
   let finance: ProjectFinancialEntry[] = [];
@@ -62,6 +64,8 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
         contract_value: Number(raw.contract_value ?? 0),
         amount_received: Number(raw.amount_received ?? 0),
         balance_due: Number(raw.balance_due ?? 0),
+        receivable_dated: Number(raw.receivable_dated ?? 0),
+        receivable_undated: Number(raw.receivable_undated ?? 0),
         received_from_entries: Number(raw.received_from_entries ?? 0),
         legacy_amount_received: Number(raw.legacy_amount_received ?? 0),
         active_income_entries: Number(raw.active_income_entries ?? 0),
@@ -105,6 +109,7 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
     history,
     finance,
     financeSummary,
+    financeOptions: { accounts: financeAccounts, paymentMethods: financePaymentMethods },
   };
 }
 

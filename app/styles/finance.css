@@ -35,3 +35,23 @@
 .cs-finance-contract-totals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 16px}.cs-finance-contract-totals article{display:grid;gap:4px;padding:12px;border:1px solid var(--cs-border);border-radius:10px;background:var(--cs-background-secondary)}.cs-finance-contract-totals span{font-size:.64rem;color:var(--cs-text-secondary)}.cs-finance-contract-totals strong{font-size:1rem;overflow-wrap:anywhere}
 @media(max-width:820px){.cs-finance-contract-totals{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.cs-finance-contract-totals{grid-template-columns:1fr}}
+
+/* Etapa 19 — recebíveis com e sem data */
+.cs-project-finance-summary{grid-template-columns:repeat(3,minmax(0,1fr));margin:12px 0}
+.cs-project-finance-summary article{display:grid;gap:5px;padding:16px;border:1px solid var(--cs-border);border-radius:12px;background:var(--cs-surface)}
+.cs-project-finance-summary span{font-size:.72rem;color:var(--cs-text-secondary)}
+.cs-project-finance-summary strong{font-size:clamp(1.05rem,2vw,1.45rem);font-variant-numeric:tabular-nums}
+.cs-project-finance-summary small{color:var(--cs-text-secondary)}
+.cs-finance-no-date{display:inline-flex;padding:3px 7px;border-radius:999px;background:var(--cs-background-secondary);color:var(--cs-text-secondary);font-size:.72rem;white-space:nowrap}
+.cs-finance-reconciliation-warning{margin:10px 0;padding:11px 13px;border:1px solid var(--cs-warning-border,var(--cs-border));border-radius:10px;background:var(--cs-warning-background,var(--cs-background-secondary));font-size:.82rem}
+.cs-project-finance-payment-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cs-project-finance-payment-form .cs-span-2{grid-column:1/-1}
+.cs-field-help{margin:0;color:var(--cs-text-secondary);font-size:.75rem}
+.cs-finance-more-options{border:1px solid var(--cs-border);border-radius:10px;background:var(--cs-background-secondary)}
+.cs-finance-more-options>summary{cursor:pointer;padding:11px 12px;font-weight:600}
+.cs-finance-more-options-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 12px 12px}
+.cs-finance-more-options-grid .cs-span-2{grid-column:1/-1}
+@media(max-width:760px){.cs-project-finance-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.cs-project-finance-summary,.cs-project-finance-payment-form,.cs-finance-more-options-grid{grid-template-columns:1fr}.cs-project-finance-payment-form .cs-span-2,.cs-finance-more-options-grid .cs-span-2{grid-column:auto}}
+
+.cs-finance-contract-totals{grid-template-columns:repeat(3,minmax(0,1fr))}

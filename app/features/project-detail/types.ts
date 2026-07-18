@@ -75,4 +75,8 @@ export type ProjectWorkspace = {
   history: ProjectHistory[];
   finance: ProjectFinancialEntry[];
   financeSummary: ProjectFinancialSummary | null;
+  financeOptions: {
+    accounts: Array<{ id: string; name: string }>;
+    paymentMethods: Array<{ id: string; name: string }>;
+  };
 };

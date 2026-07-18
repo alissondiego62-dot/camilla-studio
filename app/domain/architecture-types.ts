@@ -154,6 +154,8 @@ export type ProjectFinancialEntry = {
   amount: number;
   paid_amount?: number;
   open_amount?: number;
+  account_id?: string | null;
+  payment_method_id?: string | null;
   received_on?: string | null;
   competence_date?: string | null;
   due_date?: string | null;

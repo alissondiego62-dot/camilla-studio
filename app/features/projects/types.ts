@@ -3,6 +3,8 @@ export type ProjectFinancialSummary = {
   contract_value: number;
   amount_received: number;
   balance_due: number;
+  receivable_dated: number;
+  receivable_undated: number;
   received_from_entries: number;
   legacy_amount_received: number;
   active_income_entries: number;

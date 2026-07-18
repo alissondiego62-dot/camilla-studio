@@ -97,7 +97,7 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
         {section === "comments" && <ProjectCommentsPanel projectId={projectId} comments={data.comments} users={data.users.map((item) => ({ id: item.id, name: item.name, email: item.email || "" }))} canAdd={can("comments", "create") || canEditProject || canEditActivity} canDeleteAny={canDeleteComment} canInternal={canInternalComment} onChanged={reload} />}
         {section === "checklist" && <ProjectChecklistPanel items={data.checklist} currentStage={data.project.stage} canEdit={canChecklist} canWaive={canWaiveChecklist} onChanged={reload} />}
         {section === "history" && <ProjectHistoryPanel history={data.history} />}
-        {section === "finance" && showFinance && <ProjectFinancialPanel project={data.project} entries={data.finance} summary={data.financeSummary} onChanged={reload} />}
+        {section === "finance" && showFinance && <ProjectFinancialPanel project={data.project} entries={data.finance} summary={data.financeSummary} options={data.financeOptions} onChanged={reload} />}
       </div>
     </div>
   );
