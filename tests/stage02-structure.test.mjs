@@ -26,10 +26,8 @@ test("Edge Functions administrativas não mantêm domínio da Publicolor",async(
   }
 });
 
-test("Financeiro pessoal e profissional possuem permissões distintas",async()=>{
-  const catalog=await content("app/config/permission-catalog.ts");
+test("Etapa 02 preserva a separação histórica dos ambientes financeiros",async()=>{
   const sql=await content("camilla-studio-etapa-02.sql");
-  assert.match(catalog,/finance_professional/);assert.match(catalog,/finance_personal/);
   assert.match(sql,/finance_personal/);assert.match(sql,/finance_professional/);
   assert.match(sql,/public\.can_view_finance\(environment\)/);
 });

@@ -46,3 +46,6 @@ html,body{max-width:100%;overflow-x:hidden}.cs-app,.cs-main,.cs-content{min-widt
 img,svg,video,canvas{max-width:100%;height:auto}.cs-table-wrap{max-width:100%;overflow:auto}.cs-form-grid>*{min-width:0}
 @media(max-width:760px){.cs-kanban-v3 .cs-project-card-v3{display:block!important}.cs-kanban-v3 .cs-project-card-image{width:100%!important;aspect-ratio:16/9}.cs-kanban-v3 .cs-kanban-column{flex-basis:min(92vw,340px)}.cs-kanban-card-controls{grid-template-columns:repeat(3,minmax(0,1fr))!important}.cs-kanban-quick-action select{font-size:.55rem}}
 @media(max-width:420px){.cs-content{padding-inline:8px}.cs-kanban-v3 .cs-kanban-column{flex-basis:calc(100vw - 24px)}.cs-kanban-card-controls{gap:4px}.cs-kanban-quick-action-icon{display:none}}
+
+/* Etapa 17 — tabelas financeiras administrativas */
+@media(max-width:640px){.cs-projects-table .cs-money-cell,.cs-project-finance-table .cs-money-cell{text-align:left}.cs-project-contract-summary{grid-template-columns:1fr!important}.cs-finance-project-contracts{padding:13px}}

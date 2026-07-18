@@ -41,7 +41,10 @@ export function StudioShell({ children }: { children: ReactNode }) {
   if (configured && !user) return <LoginPage />;
 
   const currentNavigation = navigationItems.find((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`));
-  const navigationAllowed = (item: (typeof navigationItems)[number]) => item.permissions.some((permission) => can(permission.module, permission.action));
+  const navigationAllowed = (item: (typeof navigationItems)[number]) => {
+    const profileAllowed = !item.profileCodes?.length || item.profileCodes.includes(access.profileCode);
+    return profileAllowed && item.permissions.some((permission) => can(permission.module, permission.action));
+  };
   const routeAllowed = !configured || !currentNavigation || navigationAllowed(currentNavigation);
 
   async function exit() {

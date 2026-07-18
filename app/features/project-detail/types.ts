@@ -1,6 +1,7 @@
 import type { CalendarEvent, Project, ProjectChecklistItem, ProjectFinancialEntry, ProjectHistory } from "@/app/domain/architecture-types";
 import type { ProjectCommentItem } from "@/app/features/comments/types";
 import type { LinkedFile } from "@/app/features/file-manager/types";
+import type { ProjectFinancialSummary } from "@/app/features/projects/types";
 
 export type ProjectActivity = {
   id: string;
@@ -73,4 +74,5 @@ export type ProjectWorkspace = {
   checklist: ProjectChecklistItem[];
   history: ProjectHistory[];
   finance: ProjectFinancialEntry[];
+  financeSummary: ProjectFinancialSummary | null;
 };

@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { priorityLabels, projectStageLabel, statusLabels } from "@/app/domain/architecture-config";
-import { dateOnly } from "@/app/config/regions";
+import { currencyFormatter, dateOnly } from "@/app/config/regions";
 import { ModuleFrame } from "@/app/components/ui/ModuleFrame";
 import { Button } from "@/app/components/ui/Button";
 import { Modal } from "@/app/components/ui/Modal";
@@ -18,11 +18,14 @@ import { usePermissions } from "@/app/hooks/usePermissions";
 import { createProject, listProjectFormOptions, listProjects } from "./projects.service";
 import { listWorkflow } from "@/app/features/settings/settings.service";
 import type { ProjectFormOptions } from "./types";
+import { isFinancialAdministrator } from "@/app/services/security/financial-access";
 
 const emptyOptions: ProjectFormOptions = { clients: [], users: [] };
 
 export function ProjectsPage() {
-  const loader = useCallback(() => listProjects(), []);
+  const { can, access } = usePermissions();
+  const showFinancialValues = isFinancialAdministrator(access.profileCode);
+  const loader = useCallback(() => listProjects(showFinancialValues), [showFinancialValues]);
   const optionLoader = useCallback(() => listProjectFormOptions(), []);
   const { data: items, loading, error, reload } = useModuleData(loader, []);
   const { data: options } = useModuleData(optionLoader, emptyOptions);
@@ -33,7 +36,6 @@ export function ProjectsPage() {
   const activeStageCatalog = stageCatalog.filter((row) => row.active && !row.archived_at);
   const activeStatusCatalog = statusCatalog.filter((row) => row.active && !row.archived_at);
   const action = useAsyncAction();
-  const { can } = usePermissions();
   const params = useSearchParams();
   const defaultClientId = params.get("client") ?? "";
   const [query, setQuery] = useState("");
@@ -89,7 +91,7 @@ export function ProjectsPage() {
       ) : (
         <div className="cs-table-wrap">
           <table className="cs-table cs-projects-table">
-            <thead><tr><th>Projeto</th><th>Cliente</th><th>Etapa</th><th>Status</th><th>Responsável</th><th>Prazo</th><th /></tr></thead>
+            <thead><tr><th>Projeto</th><th>Cliente</th><th>Etapa</th><th>Status</th><th>Responsável</th><th>Prazo</th>{showFinancialValues && <><th>Contrato</th><th>Recebido</th><th>A receber</th></>}<th /></tr></thead>
             <tbody>
               {filtered.map((project) => (
                 <tr key={project.id}>
@@ -99,6 +101,11 @@ export function ProjectsPage() {
                   <td data-label="Status">{statusCatalog.find((row) => row.code === project.status)?.name ?? statusLabels[project.status as keyof typeof statusLabels] ?? project.status}</td>
                   <td data-label="Responsável">{project.responsible_name ?? "Não definido"}</td>
                   <td data-label="Prazo">{dateOnly(project.main_deadline)}</td>
+                  {showFinancialValues && <>
+                    <td data-label="Contrato" className="cs-money-cell">{currencyFormatter.format(project.financial_summary?.contract_value ?? 0)}</td>
+                    <td data-label="Recebido" className="cs-money-cell is-received">{currencyFormatter.format(project.financial_summary?.amount_received ?? 0)}</td>
+                    <td data-label="A receber" className="cs-money-cell is-open">{currencyFormatter.format(project.financial_summary?.balance_due ?? 0)}</td>
+                  </>}
                   <td data-label="Ações"><Link className="cs-link-button" href={`/projects/${project.id}`}>Abrir projeto</Link></td>
                 </tr>
               ))}

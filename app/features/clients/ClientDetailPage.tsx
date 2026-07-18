@@ -20,11 +20,12 @@ import { ClientNotesPanel } from "./ClientNotesPanel";
 import { ClientHistoryPanel } from "./ClientHistoryPanel";
 import { ClientFormDrawer } from "./ClientFormDrawer";
 import type { ClientWorkspace } from "./types";
+import { isFinancialAdministrator } from "@/app/services/security/financial-access";
 
 const allowed=new Set<ClientSection>(["overview","projects","activities","agenda","finance","files","notes","history"]);
 export function ClientDetailPage({clientId}:{clientId:string}){
- const{can}=usePermissions();
- const showFinance=can("clients","view_financial")&&can("finance_professional","view")&&can("finance_professional","view_values");
+ const{can,access}=usePermissions();
+ const showFinance=isFinancialAdministrator(access.profileCode);
  const loader=useCallback(()=>loadClientWorkspace(clientId,showFinance),[clientId,showFinance]);
  const{data,loading,error,reload}=useModuleData<ClientWorkspace|null>(loader,null);const action=useAsyncAction();const[editing,setEditing]=useState(false);
  const[selected,setSelected]=useState<ClientSection>(()=>{if(typeof window==="undefined")return"overview";const value=new URLSearchParams(window.location.search).get("section") as ClientSection|null;return value&&allowed.has(value)?value:"overview"});

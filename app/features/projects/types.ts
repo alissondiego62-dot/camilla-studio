@@ -1,3 +1,15 @@
+export type ProjectFinancialSummary = {
+  project_id: string;
+  contract_value: number;
+  amount_received: number;
+  balance_due: number;
+  received_from_entries: number;
+  legacy_amount_received: number;
+  active_income_entries: number;
+  overdue_amount: number;
+  next_due_date: string | null;
+};
+
 export type ProjectRow = {
   id: string;
   code: string;
@@ -15,6 +27,7 @@ export type ProjectRow = {
   archived_at?: string | null;
   client_id: string | null;
   client?: { name: string } | null;
+  financial_summary?: ProjectFinancialSummary | null;
 };
 
 export type NewProject = {

@@ -3,6 +3,7 @@ import type { Project, ProjectChecklistItem, ProjectFinancialEntry, ProjectHisto
 import type { ProjectCommentItem } from "@/app/features/comments/types";
 import type { LinkedFile } from "@/app/features/file-manager/types";
 import type { ProjectActivity, ProjectDate, ProjectOption, ProjectThumbnail, ProjectWorkspace, DateTypeOption } from "./types";
+import type { ProjectFinancialSummary } from "@/app/features/projects/types";
 import { signedThumbnailUrl } from "@/app/features/project-thumbnail/project-thumbnail.service";
 
 function optionalMissing(message: string) {
@@ -19,7 +20,7 @@ async function optionalRows<T>(promise: PromiseLike<{ data: unknown; error: { me
 }
 
 export async function loadProjectWorkspace(projectId: string, includeFinance: boolean): Promise<ProjectWorkspace> {
-  const projectResult = await supabase.from("projects").select("id,code,client_id,name,project_type,subtype,stage,status,priority,responsible_name,deadline_stage_1,deadline_stage_2,deadline_stage_3,contract_value,amount_received,balance_due,cover_url,notes,created_by,created_at,updated_at,main_deadline,responsible_user_id,archived_at,client:clients(id,name,phone,email)").eq("id", projectId).maybeSingle();
+  const projectResult = await supabase.from("projects").select("id,code,client_id,name,project_type,subtype,stage,status,priority,responsible_name,deadline_stage_1,deadline_stage_2,deadline_stage_3,cover_url,notes,created_by,created_at,updated_at,main_deadline,responsible_user_id,archived_at,client:clients(id,name,phone,email)").eq("id", projectId).maybeSingle();
   if (projectResult.error) throw new Error(projectResult.error.message);
   if (!projectResult.data) throw new Error("Projeto não encontrado ou sem permissão de acesso.");
 
@@ -38,14 +39,37 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
   ]);
 
   let finance: ProjectFinancialEntry[] = [];
+  let financeSummary: ProjectFinancialSummary | null = null;
   if (includeFinance) {
-    const financeResult = await supabase.rpc("get_project_financial_entries", { p_project_id: projectId });
+    const [financeResult, summaryResult] = await Promise.all([
+      supabase.rpc("get_project_financial_entries", { p_project_id: projectId }),
+      supabase.rpc("get_project_financial_summary", { p_project_id: projectId }),
+    ]);
     if (!financeResult.error) {
-      finance = (financeResult.data ?? []) as ProjectFinancialEntry[];
-    } else if (/function .* does not exist|schema cache/i.test(financeResult.error.message)) {
-      finance = await optionalRows<ProjectFinancialEntry>(supabase.from("project_financial_entries").select("id,project_id,description,category,amount,received_on,payment_method,notes,created_by,created_at,entry_type").eq("project_id", projectId).order("created_at", { ascending: false }));
-    } else {
+      finance = ((financeResult.data ?? []) as Array<Record<string, unknown>>).map((entry) => ({
+        ...entry,
+        amount: Number(entry.amount ?? 0),
+        paid_amount: Number(entry.paid_amount ?? 0),
+        open_amount: Number(entry.open_amount ?? 0),
+      })) as ProjectFinancialEntry[];
+    } else if (!/function .* does not exist|schema cache/i.test(financeResult.error.message)) {
       throw new Error(financeResult.error.message);
+    }
+    if (!summaryResult.error && summaryResult.data) {
+      const raw = summaryResult.data as Record<string, unknown>;
+      financeSummary = {
+        project_id: String(raw.project_id ?? projectId),
+        contract_value: Number(raw.contract_value ?? 0),
+        amount_received: Number(raw.amount_received ?? 0),
+        balance_due: Number(raw.balance_due ?? 0),
+        received_from_entries: Number(raw.received_from_entries ?? 0),
+        legacy_amount_received: Number(raw.legacy_amount_received ?? 0),
+        active_income_entries: Number(raw.active_income_entries ?? 0),
+        overdue_amount: Number(raw.overdue_amount ?? 0),
+        next_due_date: typeof raw.next_due_date === "string" ? raw.next_due_date : null,
+      };
+    } else if (summaryResult.error && !/function .* does not exist|schema cache/i.test(summaryResult.error.message)) {
+      throw new Error(summaryResult.error.message);
     }
   }
 
@@ -59,8 +83,15 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
   const mappedFiles = files.map((item) => ({ ...item, author: item.created_by ? profileMap.get(item.created_by) ?? null : null }));
   const mappedComments = comments.map((item) => { const author = item.author_id ? profileMap.get(item.author_id) : null; return { ...item, author: author ? { id: author.id, name: author.name, email: author.email ?? null } : null }; });
 
+  const project = {
+    ...(projectResult.data as unknown as Project),
+    contract_value: financeSummary?.contract_value ?? 0,
+    amount_received: financeSummary?.amount_received ?? 0,
+    balance_due: financeSummary?.balance_due ?? 0,
+  };
+
   return {
-    project: projectResult.data as unknown as Project,
+    project,
     clients,
     users,
     dateTypes,
@@ -73,6 +104,7 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
     checklist,
     history,
     finance,
+    financeSummary,
   };
 }
 
@@ -89,6 +121,11 @@ export async function updateProjectGeneral(projectId: string, payload: Record<st
     const result = await supabase.from("projects").update(payload).eq("id", projectId);
     if (result.error) throw new Error(result.error.message);
   }
+}
+
+export async function setProjectContractValue(projectId: string, contractValue: number) {
+  const response = await supabase.rpc("set_project_contract_value", { p_project_id: projectId, p_contract_value: contractValue });
+  if (response.error) throw new Error(response.error.message);
 }
 
 export async function addProjectComment(projectId: string, comment: string) {

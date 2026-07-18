@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
 import { once } from "node:events";
 import test from "node:test";
 
 const port = 39173;
 let server;
+const buildAvailable=existsSync(new URL("../.output/server/index.mjs",import.meta.url));
 
 const routes = new Map([
   ["/dashboard", "Dashboard"],
@@ -16,14 +18,11 @@ const routes = new Map([
   ["/clients", "Clientes"],
   ["/clients/00000000-0000-4000-8000-000000000000", "Cliente"],
   ["/finance", "Financeiro"],
-  ["/files", "Arquivos"],
   ["/notifications", "Notificações"],
-  ["/history", "Histórico"],
-  ["/reports", "Relatórios"],
-  ["/users", "Usuários"],
   ["/settings", "Configurações"],
   ["/settings/general", "Configurações gerais"],
   ["/settings/system", "Informações do sistema"],
+  ["/settings/users", "Usuários"],
   ["/settings/permissions", "Perfis e permissões"],
   ["/settings/workflows", "Etapas e status"],
   ["/settings/checklists", "Checklists"],
@@ -51,7 +50,8 @@ async function waitForServer() {
   throw new Error("O servidor de teste não iniciou dentro do limite esperado.");
 }
 
-test.before(async () => {
+test.before(async (context) => {
+  if(!buildAvailable){context.skip("Build não incluído no pacote de distribuição.");return;}
   server = spawn(process.execPath, [".output/server/index.mjs"], {
     cwd: new URL("..", import.meta.url),
     env: { ...process.env, PORT: String(port), HOST: "127.0.0.1" },
@@ -61,6 +61,7 @@ test.before(async () => {
 });
 
 test.after(async () => {
+  if(!buildAvailable)return;
   if (!server || server.killed) return;
   server.kill("SIGTERM");
   await Promise.race([
@@ -70,14 +71,14 @@ test.after(async () => {
   if (!server.killed) server.kill("SIGKILL");
 });
 
-test("redireciona a raiz para o dashboard", async () => {
+test("redireciona a raiz para o dashboard", {skip:!buildAvailable}, async () => {
   const response = await fetch(`http://127.0.0.1:${port}/`, { redirect: "manual" });
   assert.equal(response.status, 307);
   assert.equal(new URL(response.headers.get("location")).pathname, "/dashboard");
 });
 
 for (const [route, title] of routes) {
-  test(`renderiza ${route} de forma independente`, async () => {
+  test(`renderiza ${route} de forma independente`, {skip:!buildAvailable}, async () => {
     const response = await fetch(`http://127.0.0.1:${port}${route}`, {
       headers: { accept: "text/html" },
     });

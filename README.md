@@ -1,31 +1,32 @@
-# Camilla Studio 3.0.12
+# Camilla Studio 3.0.17
 
-Base atual: **Etapa 09 — Dashboard, Relatórios Gerais e Google Drive**.
+Base atual: **Etapa 17 — Saldo contratual integrado e confidencial**.
 
 ## Recursos principais
 
-- Dashboard como página inicial, com dados filtrados pelo escopo do usuário;
-- indicadores de projetos, atividades, Agenda, clientes, pendências e novidades;
-- valores e gráficos financeiros retornados somente para usuários autorizados;
-- relatórios operacionais com filtros, paginação, CSV e impressão/PDF;
-- auditoria das exportações;
-- Google Drive para upload, links, abertura, metadados e compartilhamento;
-- tokens do Drive criptografados em schema privado;
-- banco principal preservado como fonte das relações, permissões, versões e histórico;
-- paleta Camilla aplicada aos gráficos e relatórios;
-- versão 3.0.12 com responsividade, acessibilidade, performance e hardening de segurança.
+- projetos, Kanban, atividades, Agenda, clientes e checklists integrados;
+- Financeiro profissional centralizado;
+- valor do contrato, valor recebido e saldo a receber por projeto;
+- datas previstas e lançamentos do projeto compartilhados com o Financeiro geral;
+- posição contratual consolidada na página Financeiro;
+- valores contratuais exibidos na listagem e na ficha dos projetos;
+- acesso financeiro restrito aos perfis `administrator` e `owner` no frontend e no banco;
+- notificações, comentários, anexos, Google Drive e auditoria;
+- interface responsiva e identidade Camilla Studio.
 
-## Aplicação do banco
+## Aplicação da Etapa 17
 
-1. Faça backup do banco e do Storage.
-2. Execute `supabase/validation/etapa-09-preflight.sql`.
-3. Execute somente `camilla-studio-etapa-09.sql`.
-4. Execute `etapa-09-postflight.sql` e `etapa-09-data-integrity.sql`.
-5. Execute os testes de Dashboard, relatórios, Drive e RLS em homologação.
-6. Configure os secrets e publique as três Edge Functions do Google Drive.
-7. Publique o projeto atualizado.
+1. Faça backup do banco.
+2. Execute `supabase/validation/etapa-17-preflight.sql`.
+3. Execute somente `camilla-studio-etapa-17-saldo-contratual.sql`.
+4. Execute:
+   - `supabase/validation/etapa-17-postflight.sql`;
+   - `supabase/validation/etapa-17-data-integrity.sql`;
+   - `supabase/validation/etapa-17-security-tests.sql`.
+5. Encerre e reabra as sessões dos usuários para recarregar as permissões.
+6. Publique o projeto atualizado.
 
-Não execute o SQL consolidado e a migration equivalente em sequência. O SQL interno da Etapa 08 já contém o hotfix de dependência das views financeiras.
+Não execute o SQL consolidado e a migration equivalente em sequência. Os dois arquivos possuem o mesmo conteúdo.
 
 ## Execução local
 
@@ -38,9 +39,4 @@ pnpm build
 pnpm dev
 ```
 
-Use `.env.example` apenas como referência. Chaves privadas, refresh tokens e `service_role` pertencem aos Supabase Secrets, nunca ao frontend.
-
-
-## Etapa 11 — Fluxos e checklists
-
-Etapas, status de projetos e status de atividades agora são catálogos dinâmicos, ordenáveis, ativáveis, desativáveis e excluíveis com migração segura. A configuração de checklists é organizada diretamente pelas etapas ativas do Kanban.
+Use `.env.example` apenas como referência. Chaves privadas, refresh tokens e `service_role` devem permanecer nos Supabase Secrets.

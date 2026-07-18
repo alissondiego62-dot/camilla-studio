@@ -1,5 +1,6 @@
 import { ensureSupabase, assertNoError } from "@/app/services/supabase/base-service";
 import { supabase } from "@/lib/supabase";
+import { listProjectFinancialSummaries } from "@/app/features/projects/projects.service";
 import type {
   ClientActivitySummary, ClientAgendaSummary, ClientDirectoryRow, ClientEmail, ClientFilters,
   ClientFinancialEntry, ClientFinancialSummary, ClientFormOptions, ClientMutation, ClientNote,
@@ -77,10 +78,11 @@ export async function saveClientNote(clientId: string, note: { id?: string | nul
 export async function archiveClientNote(id: string) { const r = await supabase.rpc("archive_client_note", { p_note_id: id }); assertNoError(r); }
 export async function pinClientNote(id: string, pinned: boolean) { const r = await supabase.rpc("pin_client_note", { p_note_id: id, p_pinned: pinned }); assertNoError(r); }
 
-async function listClientProjects(clientId: string): Promise<ClientProjectSummary[]> {
-  const [projects, thumbs] = await Promise.all([
-    supabase.from("projects").select("id,code,name,stage,status,priority,main_deadline,responsible_name,contract_value,archived_at").eq("client_id", clientId).order("updated_at", { ascending: false }),
+async function listClientProjects(clientId: string, includeFinancial = false): Promise<ClientProjectSummary[]> {
+  const [projects, thumbs, summaries] = await Promise.all([
+    supabase.from("projects").select("id,code,name,stage,status,priority,main_deadline,responsible_name,archived_at").eq("client_id", clientId).order("updated_at", { ascending: false }),
     supabase.from("project_thumbnails").select("project_id,bucket_id,object_path").eq("active", true).is("removed_at", null),
+    includeFinancial ? listProjectFinancialSummaries() : Promise.resolve([]),
   ]);
   assertNoError(projects);
   const thumbMap = new Map<string, string>();
@@ -92,7 +94,17 @@ async function listClientProjects(clientId: string): Promise<ClientProjectSummar
       }
     }
   }
-  return (projects.data ?? []).map((row) => ({ ...row, contract_value: row.contract_value == null ? null : number(row.contract_value), thumbnail_url: thumbMap.get(String(row.id)) ?? null })) as ClientProjectSummary[];
+  const summaryMap = new Map(summaries.map((item) => [item.project_id, item]));
+  return (projects.data ?? []).map((row) => {
+    const summary = summaryMap.get(String(row.id));
+    return {
+      ...row,
+      contract_value: summary?.contract_value ?? null,
+      amount_received: summary?.amount_received ?? null,
+      balance_due: summary?.balance_due ?? null,
+      thumbnail_url: thumbMap.get(String(row.id)) ?? null,
+    };
+  }) as ClientProjectSummary[];
 }
 
 async function listClientActivitiesInternal(clientId: string): Promise<ClientActivitySummary[]> {
@@ -155,7 +167,7 @@ export async function loadClientWorkspace(clientId: string, includeFinancial: bo
     supabase.from("clients").select("*,internal_responsible:profiles!clients_internal_responsible_user_id_fkey(id,name,email)").eq("id", clientId).maybeSingle(),
     supabase.from("client_phones").select("id,client_id,label,phone,is_primary,is_whatsapp,position,archived_at").eq("client_id", clientId).is("archived_at", null).order("position"),
     supabase.from("client_emails").select("id,client_id,label,email,is_primary,position,archived_at").eq("client_id", clientId).is("archived_at", null).order("position"),
-    listClientProjects(clientId), listClientActivitiesInternal(clientId), listClientAgenda(clientId), listClientFiles(clientId), listClientNotes(clientId), listClientHistory(clientId), listClientFormOptions(),
+    listClientProjects(clientId, includeFinancial), listClientActivitiesInternal(clientId), listClientAgenda(clientId), listClientFiles(clientId), listClientNotes(clientId), listClientHistory(clientId), listClientFormOptions(),
   ]);
   if (clientResult.error && clientResult.error.code !== "PGRST116") throw new Error(clientResult.error.message);
   if (!clientResult.data) return null;

@@ -1,5 +1,5 @@
 export type NavigationRequirement={module:string;action:string};
-export type NavigationItem={href:string;label:string;icon:string;permissions:NavigationRequirement[]};
+export type NavigationItem={href:string;label:string;icon:string;permissions:NavigationRequirement[];profileCodes?:string[]};
 export const navigationItems:NavigationItem[]=[
   {href:"/dashboard",label:"Dashboard",icon:"⌂",permissions:[{module:"dashboard",action:"view"}]},
   {href:"/projects",label:"Projetos",icon:"▣",permissions:[{module:"projects",action:"view"}]},
@@ -7,7 +7,7 @@ export const navigationItems:NavigationItem[]=[
   {href:"/activities",label:"Atividades",icon:"✓",permissions:[{module:"activities",action:"view"}]},
   {href:"/agenda",label:"Agenda",icon:"◫",permissions:[{module:"agenda",action:"view"}]},
   {href:"/clients",label:"Clientes",icon:"◎",permissions:[{module:"clients",action:"view"}]},
-  {href:"/finance",label:"Financeiro",icon:"R$",permissions:[{module:"finance_professional",action:"view"}]},
+  {href:"/finance",label:"Financeiro",icon:"R$",permissions:[{module:"finance_professional",action:"view"}],profileCodes:["administrator","owner"]},
   {href:"/notifications",label:"Notificações",icon:"◉",permissions:[{module:"notifications",action:"view"}]},
   {href:"/settings",label:"Configurações",icon:"⚙",permissions:[{module:"settings",action:"view"}]},
 ];

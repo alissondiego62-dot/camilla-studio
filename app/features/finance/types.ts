@@ -208,6 +208,23 @@ export type FinanceWorkspaceOptions = {
   recurring_rules: FinanceRecurringRule[];
 };
 
+
+export type FinanceProjectSummary = {
+  project_id: string;
+  project_code: string;
+  project_name: string;
+  client_id: string | null;
+  client_name: string | null;
+  contract_value: number;
+  amount_received: number;
+  balance_due: number;
+  received_from_entries: number;
+  legacy_amount_received: number;
+  active_income_entries: number;
+  overdue_amount: number;
+  next_due_date: string | null;
+};
+
 export type FinanceWorkspaceData = {
   entries: FinanceEntryRow[];
   total: number;
@@ -218,6 +235,7 @@ export type FinanceWorkspaceData = {
   options: FinanceWorkspaceOptions;
   approvals: FinanceApproval[];
   access: FinanceAccess[];
+  project_summaries: FinanceProjectSummary[];
 };
 
 export type FinanceFilters = {

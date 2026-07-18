@@ -22,13 +22,14 @@ import { ProjectThumbnailPanel } from "@/app/features/project-thumbnail/ProjectT
 import { markRecordView } from "@/app/features/notifications/record-views.service";
 import { loadProjectWorkspace, updateProjectGeneral } from "./project-detail.service";
 import type { ProjectWorkspace } from "./types";
+import { isFinancialAdministrator } from "@/app/services/security/financial-access";
 
 const emptyWorkspace = null as ProjectWorkspace | null;
 const allowedSections = new Set<ProjectSection>(["overview", "dates", "activities", "agenda", "files", "comments", "checklist", "history", "finance"]);
 
 export function ProjectDetailPage({ projectId }: { projectId: string }) {
-  const { can } = usePermissions();
-  const showFinance = can("finance_professional", "view");
+  const { can, access } = usePermissions();
+  const showFinance = isFinancialAdministrator(access.profileCode);
   const loader = useCallback(() => loadProjectWorkspace(projectId, showFinance), [projectId, showFinance]);
   const { data, loading, error, reload } = useModuleData<ProjectWorkspace | null>(loader, emptyWorkspace);
   const action = useAsyncAction();
@@ -94,7 +95,7 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
         {section === "comments" && <ProjectCommentsPanel projectId={projectId} comments={data.comments} users={data.users.map((item) => ({ id: item.id, name: item.name, email: item.email || "" }))} canAdd={can("comments", "create") || canEditProject || canEditActivity} canDeleteAny={canDeleteComment} canInternal={canInternalComment} onChanged={reload} />}
         {section === "checklist" && <ProjectChecklistPanel items={data.checklist} currentStage={data.project.stage} canEdit={canChecklist} canWaive={canWaiveChecklist} onChanged={reload} />}
         {section === "history" && <ProjectHistoryPanel history={data.history} />}
-        {section === "finance" && showFinance && <ProjectFinancialPanel project={data.project} entries={data.finance} />}
+        {section === "finance" && showFinance && <ProjectFinancialPanel project={data.project} entries={data.finance} summary={data.financeSummary} onChanged={reload} />}
       </div>
     </div>
   );

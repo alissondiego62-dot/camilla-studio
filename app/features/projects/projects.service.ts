@@ -1,12 +1,42 @@
 import { supabase } from "@/lib/supabase";
 import { ensureSupabase, assertNoError } from "@/app/services/supabase/base-service";
-import type { NewProject, ProjectFormOptions, ProjectRow } from "./types";
+import type { NewProject, ProjectFinancialSummary, ProjectFormOptions, ProjectRow } from "./types";
 
 function missingStage03(message: string) {
   return /project_dates|save_project_date|schema cache|does not exist/i.test(message);
 }
 
-export async function listProjects() {
+function numberValue(value: unknown) {
+  const parsed = Number(value ?? 0);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function normalizeSummary(row: Record<string, unknown>): ProjectFinancialSummary {
+  return {
+    project_id: String(row.project_id ?? ""),
+    contract_value: numberValue(row.contract_value),
+    amount_received: numberValue(row.amount_received),
+    balance_due: numberValue(row.balance_due),
+    received_from_entries: numberValue(row.received_from_entries),
+    legacy_amount_received: numberValue(row.legacy_amount_received),
+    active_income_entries: numberValue(row.active_income_entries),
+    overdue_amount: numberValue(row.overdue_amount),
+    next_due_date: typeof row.next_due_date === "string" ? row.next_due_date : null,
+  };
+}
+
+export async function listProjectFinancialSummaries(): Promise<ProjectFinancialSummary[]> {
+  if (!ensureSupabase()) return [];
+  const result = await supabase.rpc("list_project_financial_summaries");
+  if (result.error) {
+    if (/function .* does not exist|schema cache/i.test(result.error.message)) return [];
+    throw new Error(result.error.message);
+  }
+  const rows = Array.isArray(result.data) ? result.data : [];
+  return rows.map((row) => normalizeSummary(row as Record<string, unknown>));
+}
+
+export async function listProjects(includeFinancialSummary = false) {
   if (!ensureSupabase()) return [];
   const result = await supabase
     .from("projects")
@@ -14,7 +44,12 @@ export async function listProjects() {
     .is("archived_at", null)
     .order("updated_at", { ascending: false });
   assertNoError(result);
-  return (result.data ?? []) as unknown as ProjectRow[];
+  const rows = (result.data ?? []) as unknown as ProjectRow[];
+  if (!includeFinancialSummary) return rows;
+
+  const summaries = await listProjectFinancialSummaries();
+  const summaryMap = new Map(summaries.map((summary) => [summary.project_id, summary]));
+  return rows.map((row) => ({ ...row, financial_summary: summaryMap.get(row.id) ?? null }));
 }
 
 export async function listProjectFormOptions(): Promise<ProjectFormOptions> {

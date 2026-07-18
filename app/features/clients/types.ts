@@ -108,6 +108,8 @@ export type ClientProjectSummary = {
   main_deadline: string | null;
   responsible_name: string | null;
   contract_value: number | null;
+  amount_received: number | null;
+  balance_due: number | null;
   archived_at: string | null;
   thumbnail_url: string | null;
 };
