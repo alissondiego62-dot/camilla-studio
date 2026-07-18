@@ -77,6 +77,7 @@ export function ProjectKanbanCard({ project, users, stages, statuses, canStage, 
         router.push(projectHref);
       }}
       onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           router.push(projectHref);
@@ -87,11 +88,13 @@ export function ProjectKanbanCard({ project, users, stages, statuses, canStage, 
         type="button"
         className="cs-project-card-image"
         aria-label={image ? `Ampliar miniatura do projeto ${project.name}` : `Projeto ${project.name} sem miniatura`}
+        onPointerDown={(event) => event.stopPropagation()}
         onClick={(event) => { event.stopPropagation(); if (image) setImageOpen(true); }}
+        onDragStart={(event) => event.preventDefault()}
         disabled={!image}
       >
         {image
-          ? <img src={image} alt={`Miniatura do projeto ${project.name}`} loading="lazy" />
+          ? <img src={image} alt={`Miniatura do projeto ${project.name}`} loading="lazy" draggable={false} />
           : <span aria-label="Projeto sem miniatura">{project.code.slice(0, 2).toUpperCase()}</span>}
       </button>
 
@@ -154,9 +157,14 @@ export function ProjectKanbanCard({ project, users, stages, statuses, canStage, 
         />
       </div>
       {imageOpen && image && (
-        <Modal title={`Miniatura — ${project.name}`} onClose={() => setImageOpen(false)}>
+        <Modal
+          title={`Miniatura — ${project.name}`}
+          className="cs-kanban-image-modal"
+          bodyClassName="cs-kanban-image-modal-body"
+          onClose={() => setImageOpen(false)}
+        >
           <div className="cs-kanban-image-lightbox">
-            <img src={image} alt={`Miniatura ampliada do projeto ${project.name}`} />
+            <img src={image} alt={`Miniatura ampliada do projeto ${project.name}`} draggable={false} />
           </div>
         </Modal>
       )}

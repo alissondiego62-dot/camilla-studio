@@ -108,3 +108,127 @@
 .cs-kanban-image-lightbox{display:grid;place-items:center;width:100%;min-height:240px;max-height:78dvh;overflow:auto;background:var(--cs-background-secondary);border-radius:12px;padding:10px}
 .cs-kanban-image-lightbox img{display:block;max-width:100%;max-height:74dvh;width:auto;height:auto;object-fit:contain}
 @media(max-width:520px){.cs-kanban-image-lightbox{min-height:180px;padding:6px}.cs-kanban-card-footer-row .cs-kanban-shortcuts a{min-height:34px}}
+
+/* Etapa 15 — Kanban sem cortes e visualização integral da miniatura */
+.cs-kanban-v3{
+  align-items:flex-start;
+  overflow-x:auto;
+  overflow-y:visible;
+}
+.cs-kanban-v3 .cs-kanban-column{
+  flex:0 0 clamp(286px,27vw,334px);
+  width:clamp(286px,27vw,334px);
+  max-height:none!important;
+  height:max-content;
+  align-self:flex-start;
+}
+.cs-kanban-v3 .cs-kanban-lane{
+  display:grid;
+  align-content:start;
+  height:auto!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+.cs-kanban-v3 article.cs-project-card-v3{
+  display:block!important;
+  width:100%;
+  height:auto!important;
+  min-height:0;
+  max-height:none!important;
+  overflow:hidden;
+  contain:none;
+}
+.cs-kanban-v3 article.cs-project-card-v3>.cs-project-card-image{
+  position:relative;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:16/9!important;
+  overflow:hidden;
+  background:var(--cs-background-secondary)!important;
+  border-bottom:1px solid var(--cs-divider)!important;
+}
+.cs-kanban-v3 article.cs-project-card-v3>.cs-project-card-image>img{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  background:var(--cs-background-secondary)!important;
+}
+.cs-kanban-v3 article.cs-project-card-v3>.cs-project-card-image>span{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+}
+.cs-kanban-v3 article.cs-project-card-v3>.cs-project-card-body{
+  display:grid!important;
+  width:100%;
+  height:auto!important;
+  min-height:0;
+  max-height:none!important;
+  overflow:visible!important;
+}
+.cs-kanban-v3 .cs-kanban-deadlines>div{
+  max-height:none;
+  overflow:visible;
+}
+.cs-kanban-image-modal{
+  width:min(1120px,calc(100vw - 28px));
+  max-width:1120px;
+  max-height:94dvh;
+}
+.cs-kanban-image-modal-body{
+  display:grid;
+  place-items:center;
+  padding:10px;
+  overflow:auto;
+}
+.cs-kanban-image-modal .cs-kanban-image-lightbox{
+  width:100%;
+  min-height:min(68dvh,680px);
+  max-height:calc(94dvh - 86px);
+  padding:0;
+  overflow:auto;
+  background:var(--cs-background-secondary);
+}
+.cs-kanban-image-modal .cs-kanban-image-lightbox img{
+  display:block;
+  width:auto!important;
+  height:auto!important;
+  max-width:100%!important;
+  max-height:calc(94dvh - 106px)!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  margin:auto;
+}
+@media(max-width:760px){
+  .cs-kanban-v3 .cs-kanban-column{
+    flex-basis:min(92vw,340px);
+    width:min(92vw,340px);
+  }
+  .cs-kanban-image-modal{
+    width:100%;
+    max-width:none;
+    max-height:96dvh;
+  }
+  .cs-kanban-image-modal .cs-kanban-image-lightbox{
+    min-height:55dvh;
+    max-height:calc(96dvh - 76px);
+  }
+  .cs-kanban-image-modal .cs-kanban-image-lightbox img{
+    max-height:calc(96dvh - 96px)!important;
+  }
+}
+@media(max-width:420px){
+  .cs-kanban-v3 .cs-kanban-column{
+    flex-basis:calc(100vw - 24px);
+    width:calc(100vw - 24px);
+  }
+}
