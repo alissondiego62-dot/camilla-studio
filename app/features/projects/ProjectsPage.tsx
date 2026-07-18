@@ -65,6 +65,7 @@ export function ProjectsPage() {
         responsible_name: responsible?.name ?? null,
         main_deadline: String(form.get("deadline") || "") || null,
         notes: String(form.get("notes") || "").trim() || null,
+        contract_value: showFinancialValues ? Number(String(form.get("contract_value") || "0").replace(",", ".")) : 0,
       }),
       "Projeto cadastrado com sucesso.",
     );
@@ -127,6 +128,7 @@ export function ProjectsPage() {
             <label><span>Status</span><select name="status" defaultValue="not_started">{activeStatusCatalog.filter((status) => !status.final).map((status) => <option key={status.code} value={status.code}>{status.name}</option>)}</select></label>
             <label><span>Prioridade</span><select name="priority" defaultValue="normal">{Object.entries(priorityLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</select></label>
             <FormField label="Prazo principal" name="deadline" type="date" />
+            {showFinancialValues && <FormField label="Valor do contrato" name="contract_value" type="number" min="0" step="0.01" inputMode="decimal" defaultValue="0.00" />}
             <label className="cs-span-2"><span>Observações</span><textarea name="notes" rows={3} /></label>
             <div className="cs-form-actions"><Button type="button" onClick={() => setOpen(false)}>Cancelar</Button><Button variant="primary" loading={action.pending}>Salvar</Button></div>
           </form>

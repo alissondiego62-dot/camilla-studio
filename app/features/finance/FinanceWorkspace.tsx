@@ -33,7 +33,7 @@ export function FinanceWorkspace(){
  const initialSection=sections.has(params.get("section") as FinanceSection)?params.get("section") as FinanceSection:"overview";
  const workspace=useFinanceWorkspace(initialEnvironment,initialSection);
  const { setEntryId } = workspace;
- const canProfessional=workspace.isAdministrator&&workspace.permissions.can("finance_professional","view");
+ const canProfessional=workspace.isAdministrator;
  useEffect(()=>{const entry=params.get("entry");const create=params.get("new");if(entry)setEntryId(entry);else if(create==="1")setEntryId("new")},[params,setEntryId]);
  function updateUrl(environment:FinanceEnvironment,section:FinanceSection,entry?:string|null){const next=new URLSearchParams(params.toString());next.set("environment",environment);next.set("section",section);if(entry==="new"){next.delete("entry");next.set("new","1")}else if(entry){next.delete("new");next.set("entry",entry)}else{next.delete("entry");next.delete("new")}router.replace(`/finance?${next.toString()}`,{scroll:false})}
  function changeSection(next:FinanceSection){workspace.setSection(next);workspace.setPage(0);updateUrl(workspace.environment,next,null)}

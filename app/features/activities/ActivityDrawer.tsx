@@ -37,7 +37,7 @@ export function ActivityDrawer(props: Props) {
   const dialogRef = useRef<HTMLElement>(null);
   const titleId = useId();
   useBodyScrollLock(true);
-  useFocusTrap(dialogRef, onClose);
+  useFocusTrap(dialogRef, onClose, !confirmDelete);
 
   const fullActivity = activity ? allActivities.find((item) => item.id === activity.id) ?? activity : null;
   async function status(nextStatus: string) {

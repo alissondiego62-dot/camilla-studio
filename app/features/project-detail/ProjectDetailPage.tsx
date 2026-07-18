@@ -71,8 +71,10 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
   const canChangeDeadline = can("projects", "change_deadline") || canEditProject;
   const canCreateActivity = can("activities", "create");
   const canEditActivity = can("activities", "edit") || can("activities", "change_status");
+  const canDeleteActivity = can("activities", "delete");
   const canCreateAgenda = can("agenda", "create");
   const canEditAgenda = can("agenda", "edit");
+  const canDeleteAgenda = can("agenda", "delete") || can("agenda", "archive") || canEditAgenda;
   const canAddFile = can("files", "add_file");
   const canRemoveFile = can("files", "remove_file") || can("files", "archive");
   const canReplaceFile = can("files", "add_file") || can("files", "edit");
@@ -89,8 +91,8 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
       <div className="cs-project-detail-content">
         {section === "overview" && <div className="cs-project-overview-grid"><ProjectGeneralPanel project={data.project} clients={data.clients} users={data.users} canEdit={canEditProject} pending={action.pending} onSave={(payload) => void saveGeneral(payload)} /><ProjectThumbnailPanel projectId={projectId} projectName={data.project.name} thumbnail={data.thumbnail} legacyUrl={data.project.cover_url} canAdd={canAddFile || canEditProject} canRemove={canRemoveFile || canEditProject} onChanged={reload} /></div>}
         {section === "dates" && <ProjectDatesPanel projectId={projectId} dates={data.dates} types={data.dateTypes} activities={data.activities} events={data.events} canEdit={canChangeDeadline} canCreateActivity={canCreateActivity} canCreateEvent={canCreateAgenda} onChanged={reload} />}
-        {section === "activities" && <ProjectActivitiesPanel projectId={projectId} activities={data.activities} users={data.users} canCreate={canCreateActivity} canEdit={canEditActivity} onChanged={reload} />}
-        {section === "agenda" && <ProjectAgendaPanel projectId={projectId} events={data.events} canCreate={canCreateAgenda} canEdit={canEditAgenda} onChanged={reload} />}
+        {section === "activities" && <ProjectActivitiesPanel projectId={projectId} activities={data.activities} users={data.users} canCreate={canCreateActivity} canEdit={canEditActivity} canDelete={canDeleteActivity} onChanged={reload} />}
+        {section === "agenda" && <ProjectAgendaPanel projectId={projectId} events={data.events} users={data.users} clientId={data.project.client_id} canCreate={canCreateAgenda} canEdit={canEditAgenda} canDelete={canDeleteAgenda} onChanged={reload} />}
         {section === "files" && <ProjectFilesPanel projectId={projectId} files={data.files} canAdd={canAddFile} canReplace={canReplaceFile} canRemove={canRemoveFile} onChanged={reload} />}
         {section === "comments" && <ProjectCommentsPanel projectId={projectId} comments={data.comments} users={data.users.map((item) => ({ id: item.id, name: item.name, email: item.email || "" }))} canAdd={can("comments", "create") || canEditProject || canEditActivity} canDeleteAny={canDeleteComment} canInternal={canInternalComment} onChanged={reload} />}
         {section === "checklist" && <ProjectChecklistPanel items={data.checklist} currentStage={data.project.stage} canEdit={canChecklist} canWaive={canWaiveChecklist} onChanged={reload} />}

@@ -32,7 +32,14 @@ export async function listProjectFinancialSummaries(): Promise<ProjectFinancialS
     if (/function .* does not exist|schema cache/i.test(result.error.message)) return [];
     throw new Error(result.error.message);
   }
-  const rows = Array.isArray(result.data) ? result.data : [];
+  let rows: unknown[] = [];
+  if (Array.isArray(result.data)) rows = result.data;
+  else if (typeof result.data === "string") {
+    try {
+      const parsed = JSON.parse(result.data) as unknown;
+      rows = Array.isArray(parsed) ? parsed : [];
+    } catch { rows = []; }
+  }
   return rows.map((row) => normalizeSummary(row as Record<string, unknown>));
 }
 
@@ -67,10 +74,25 @@ export async function listProjectFormOptions(): Promise<ProjectFormOptions> {
 }
 
 export async function createProject(input: NewProject) {
-  const { main_deadline, ...project } = input;
-  const insert = await supabase.from("projects").insert({ ...project, main_deadline }).select("id").single();
-  assertNoError(insert);
-  const projectId = String(insert.data?.id ?? "");
+  const { main_deadline, contract_value = 0, ...project } = input;
+  const payload = { ...project, main_deadline, contract_value };
+  const rpc = await supabase.rpc("create_project_with_contract", { p_payload: payload });
+
+  let projectId = "";
+  if (!rpc.error) {
+    projectId = String(rpc.data ?? "");
+  } else if (/function .* does not exist|schema cache/i.test(rpc.error.message)) {
+    const insert = await supabase.from("projects").insert({ ...project, main_deadline }).select("id").single();
+    assertNoError(insert);
+    projectId = String(insert.data?.id ?? "");
+    if (contract_value > 0) {
+      const contract = await supabase.rpc("set_project_contract_value", { p_project_id: projectId, p_contract_value: contract_value });
+      assertNoError(contract);
+    }
+  } else {
+    throw new Error(rpc.error.message);
+  }
+
   if (!projectId) throw new Error("O projeto foi criado, mas o identificador não foi retornado.");
 
   if (main_deadline) {

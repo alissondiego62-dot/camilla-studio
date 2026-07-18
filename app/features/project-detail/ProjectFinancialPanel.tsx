@@ -118,7 +118,7 @@ export function ProjectFinancialPanel({ project, entries, summary, onChanged }: 
     </p>}
 
     {contractOpen && <form className="cs-project-contract-form" onSubmit={saveContract}>
-      <FormField label="Valor total do contrato" name="contract_value" inputMode="decimal" defaultValue={contractValue.toFixed(2)} required />
+      <FormField label="Valor total do contrato" name="contract_value" type="number" min="0" step="0.01" inputMode="decimal" defaultValue={contractValue.toFixed(2)} required />
       <Button variant="primary" loading={pending}>Salvar contrato</Button>
     </form>}
 

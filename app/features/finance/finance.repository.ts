@@ -3,6 +3,20 @@ import { supabase } from "@/lib/supabase";
 import { filtersToJson } from "./finance.filters";
 import type { FinanceEnvironment, FinanceFilters, FinanceSection, FinanceWorkspaceData, FinanceEntryRow, FinanceLookup, FinanceProjectSummary } from "./types";
 
+
+function jsonArray(value: unknown): Array<Record<string, unknown>> {
+  if (Array.isArray(value)) return value as Array<Record<string, unknown>>;
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value) as unknown;
+      return Array.isArray(parsed) ? parsed as Array<Record<string, unknown>> : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 const emptyWorkspace: FinanceWorkspaceData = {
   entries:[], total:0,
   metrics:{current_balance:"0.00",expected_income:"0.00",realized_income:"0.00",expected_expense:"0.00",realized_expense:"0.00",net_result:"0.00",receivable:"0.00",payable:"0.00",overdue:"0.00",projected_balance:"0.00",previous_period_result:"0.00",result_change_percent:null},
@@ -20,7 +34,7 @@ export async function loadFinanceWorkspace(environment: FinanceEnvironment, sect
   assertNoError(result);
   if(projectSummariesResult.error&&!/function .* does not exist|schema cache/i.test(projectSummariesResult.error.message))throw new Error(projectSummariesResult.error.message);
   const data=(result.data??{}) as Partial<FinanceWorkspaceData>;
-  const project_summaries=(Array.isArray(projectSummariesResult.data)?projectSummariesResult.data:[]).map((item)=>{
+  const project_summaries=jsonArray(projectSummariesResult.data).map((item)=>{
     const row=item as Record<string,unknown>;
     const numberValue=(value:unknown)=>{const parsed=Number(value??0);return Number.isFinite(parsed)?parsed:0};
     return {

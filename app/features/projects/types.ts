@@ -43,6 +43,7 @@ export type NewProject = {
   responsible_name: string | null;
   main_deadline: string | null;
   notes: string | null;
+  contract_value?: number;
 };
 
 export type ProjectFormOptions = {

@@ -31,7 +31,7 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
     optionalRows<ProjectDate>(supabase.from("project_dates").select("id,project_id,purpose_code,title,description,starts_at,ends_at,all_day,is_main_deadline,status,completed_at,activity_id,calendar_event_id,created_by,updated_by,created_at,updated_at,archived_at").eq("project_id", projectId).is("archived_at", null).order("starts_at")),
     optionalRows<ProjectThumbnail>(supabase.from("project_thumbnails").select("id,project_id,bucket_id,object_path,mime_type,file_size,version,active,uploaded_by,created_at,updated_at,removed_at").eq("project_id", projectId).eq("active", true).is("removed_at", null).order("version", { ascending: false }).limit(1)),
     optionalRows<ProjectActivity>(supabase.from("project_activities").select("id,project_id,parent_id,title,description,status,priority,due_date,due_at,progress,responsible_user_id,responsible_name,completed_at,created_at").eq("project_id", projectId).is("archived_at", null).order("created_at", { ascending: false })),
-    optionalRows(supabase.from("calendar_events").select("id,project_id,title,event_type,starts_at,ends_at,location,notes,completed_at,created_at").eq("project_id", projectId).order("starts_at")),
+    optionalRows(supabase.from("calendar_events").select("id,project_id,client_id,title,event_type,starts_at,ends_at,all_day,status,responsible_user_id,location,notes,completed_at,archived_at,created_at").eq("project_id", projectId).is("archived_at", null).order("starts_at")),
     optionalRows<LinkedFile>(supabase.from("project_files").select("id,project_id,client_id,activity_id,financial_entry_id,name,category,drive_url,drive_file_id,drive_folder_id,drive_parent_folder_id,drive_modified_at,mime_type,file_size,origin,storage_bucket,storage_path,version,version_group_id,replaces_file_id,notes,download_allowed,archived_at,created_by,created_at,updated_at").eq("project_id", projectId).is("archived_at", null).order("created_at", { ascending: false })),
     optionalRows<ProjectCommentItem>(supabase.from("project_comments").select("id,project_id,parent_comment_id,author_id,comment,comment_kind,important,edited_at,updated_at,deleted_at,created_at,mentions:comment_mentions(user_id)").eq("project_id", projectId).order("created_at", { ascending: true })),
     optionalRows<ProjectChecklistItem>(supabase.from("project_checklist_items").select("id,project_id,stage,section,title,required,responsible_user_id,started_at,completed_at,completed_by,waived_at,waived_by,waiver_reason,position,created_at").eq("project_id", projectId).order("stage").order("position")),
@@ -138,13 +138,23 @@ export async function addProjectFile(projectId: string, input: { name: string; c
   if (result.error) throw new Error(result.error.message);
 }
 
-export async function addProjectActivity(projectId: string, input: { title: string; description?: string | null; due_date?: string | null; responsible_user_id?: string | null; responsible_name?: string | null }) {
+export async function addProjectActivity(projectId: string, input: { title: string; description?: string | null; due_date?: string | null; due_at?: string | null; responsible_user_id?: string | null; responsible_name?: string | null }) {
   const result = await supabase.from("project_activities").insert({ project_id: projectId, status: "not_started", priority: "normal", ...input });
   if (result.error) throw new Error(result.error.message);
 }
 
-export async function addProjectEvent(projectId: string, input: { title: string; event_type: string; starts_at: string; ends_at?: string | null; location?: string | null; notes?: string | null }) {
-  const result = await supabase.from("calendar_events").insert({ project_id: projectId, status: "scheduled", ...input });
+export async function addProjectEvent(projectId: string, clientId: string | null, input: { title: string; event_type: string; starts_at: string; ends_at?: string | null; all_day?: boolean; status?: string; responsible_user_id?: string | null; location?: string | null; notes?: string | null }) {
+  const result = await supabase.rpc("save_calendar_event", { p_event_id: null, p_payload: { project_id: projectId, client_id: clientId, activity_id: null, ...input } });
+  if (result.error) throw new Error(result.error.message);
+}
+
+export async function updateProjectEvent(eventId: string, projectId: string, clientId: string | null, input: { title: string; event_type: string; starts_at: string; ends_at?: string | null; all_day?: boolean; status?: string; responsible_user_id?: string | null; location?: string | null; notes?: string | null }) {
+  const result = await supabase.rpc("save_calendar_event", { p_event_id: eventId, p_payload: { project_id: projectId, client_id: clientId, activity_id: null, ...input } });
+  if (result.error) throw new Error(result.error.message);
+}
+
+export async function deleteProjectEvent(eventId: string) {
+  const result = await supabase.rpc("archive_calendar_event", { p_event_id: eventId });
   if (result.error) throw new Error(result.error.message);
 }
 

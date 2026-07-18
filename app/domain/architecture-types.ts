@@ -130,13 +130,18 @@ export type ProjectHistory = {
 export type CalendarEvent = {
   id: string;
   project_id: string | null;
+  client_id?: string | null;
   title: string;
   event_type: string;
   starts_at: string;
   ends_at: string | null;
+  all_day?: boolean;
+  status?: string | null;
+  responsible_user_id?: string | null;
   location: string | null;
   notes: string | null;
   completed_at: string | null;
+  archived_at?: string | null;
   created_at?: string;
 };
 

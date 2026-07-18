@@ -49,3 +49,15 @@ img,svg,video,canvas{max-width:100%;height:auto}.cs-table-wrap{max-width:100%;ov
 
 /* Etapa 17 — tabelas financeiras administrativas */
 @media(max-width:640px){.cs-projects-table .cs-money-cell,.cs-project-finance-table .cs-money-cell{text-align:left}.cs-project-contract-summary{grid-template-columns:1fr!important}.cs-finance-project-contracts{padding:13px}}
+
+/* Etapa 18 — listas e dados contratuais responsivos */
+@media(max-width:900px){
+  .cs-record-list article{grid-template-columns:minmax(0,1fr) auto}
+  .cs-record-actions{grid-column:1/-1;justify-content:flex-start;flex-wrap:wrap}
+}
+@media(max-width:640px){
+  .cs-record-list article{grid-template-columns:1fr}
+  .cs-record-actions{width:100%}
+  .cs-record-actions .cs-button{flex:1 1 auto}
+  .cs-project-contract-summary{grid-template-columns:1fr}
+}

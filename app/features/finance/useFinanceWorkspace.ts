@@ -19,7 +19,7 @@ export function useFinanceWorkspace(initialEnvironment:FinanceEnvironment="profe
  const selectedEntry=entryId&&entryId!=="new"?data.entries.find((entry)=>entry.id===entryId)??null:null;
  const storedEnvironment: FinanceStoredEnvironment = "professional";
  const moduleName = "finance_professional";
- const canViewValues=isAdministrator&&permissions.can(moduleName,"view_values");
+ const canViewValues=isAdministrator;
  const currentAccess=data.access.find((item)=>item.environment==="professional")??null;
  const canCreate=isAdministrator&&permissions.can(moduleName,"create")&&(currentAccess?.can_create??true);const canEdit=isAdministrator&&permissions.can(moduleName,"edit")&&(currentAccess?.can_edit??true);const canSettle=isAdministrator&&permissions.can(moduleName,"settle_finance")&&(currentAccess?.can_settle??true);const canExport=isAdministrator&&permissions.can(moduleName,"export")&&(currentAccess?.can_export??true);
  const pageCount=Math.max(1,Math.ceil(data.total/pageSize));
