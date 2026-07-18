@@ -1,0 +1,7 @@
+import test from "node:test";import assert from "node:assert/strict";import{readFile}from"node:fs/promises";
+const read=(file)=>readFile(new URL(`../${file}`,import.meta.url),"utf8");
+test("Financeiro possui seletor único de período",async()=>{const source=await read("app/features/finance/FinanceToolbar.tsx");assert.match(source,/cs-finance-period-select/);assert.match(source,/Mês atual/);assert.doesNotMatch(source,/cs-finance-periods/)});
+test("mês atual permanece como período padrão",async()=>{const source=await read("app/features/finance/finance.filters.ts");assert.match(source,/period:"month"/);const hook=await read("app/features/finance/useFinanceWorkspace.ts");assert.match(hook,/resetToCurrentMonthAndReload/)});
+test("exclusão financeira exige confirmação e motivo",async()=>{const dialog=await read("app/features/finance/FinanceDeleteDialog.tsx");const sql=await read("camilla-studio-etapa-16-financeiro-integrado.sql");assert.match(dialog,/Motivo da exclusão/);assert.match(sql,/remove_financial_entry/);assert.match(sql,/security_audit_events/)});
+test("financeiro do projeto cria previsão na base geral",async()=>{const source=await read("app/features/project-detail/ProjectFinancialPanel.tsx");assert.match(source,/saveFinanceEntry/);assert.match(source,/project_id:project.id/);assert.match(source,/Data prevista para pagamento/)});
+test("aviso do Kanban permanece dentro do card",async()=>{const css=await read("app/styles/components.css");assert.match(css,/Etapa 16 — o aviso/);assert.match(css,/top:2px!important;right:2px!important/)});

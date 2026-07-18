@@ -232,3 +232,8 @@
     width:calc(100vw - 24px);
   }
 }
+
+/* Etapa 16 — o aviso de atualização não pode sair da área visível do card */
+.cs-kanban-card-footer-row .cs-kanban-shortcuts a{overflow:visible!important;isolation:isolate}
+.cs-kanban-card-footer-row .cs-kanban-shortcuts em{top:2px!important;right:2px!important;z-index:5;box-shadow:0 0 0 2px var(--cs-background-secondary)!important}
+.cs-kanban-card-footer-row{padding-top:2px;padding-right:2px;overflow:visible}

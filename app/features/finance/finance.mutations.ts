@@ -9,6 +9,7 @@ export async function saveFinanceEntry(input:FinanceEntryInput):Promise<FinanceE
 }
 export async function duplicateFinanceEntry(id:string){const result=await supabase.rpc("duplicate_financial_entry",{p_entry_id:id});assertNoError(result);return String(result.data)}
 export async function archiveFinanceEntry(id:string){const result=await supabase.rpc("archive_financial_entry",{p_entry_id:id});assertNoError(result)}
+export async function removeFinanceEntry(id:string,reason:string){const result=await supabase.rpc("remove_financial_entry",{p_entry_id:id,p_reason:reason});assertNoError(result)}
 export async function reactivateFinanceEntry(id:string){const result=await supabase.rpc("reactivate_financial_entry",{p_entry_id:id});assertNoError(result)}
 export async function cancelFinanceEntry(id:string,reason:string){const result=await supabase.rpc("cancel_financial_entry",{p_entry_id:id,p_reason:reason});assertNoError(result)}
 export async function settleFinanceEntry(input:FinancePaymentInput){const result=await supabase.rpc("settle_financial_entry",{p_entry_id:input.entry_id,p_payload:{...input,amount:normalizeMoneyInput(input.amount),discount_amount:normalizeMoneyInput(input.discount_amount),interest_amount:normalizeMoneyInput(input.interest_amount),fine_amount:normalizeMoneyInput(input.fine_amount)}});assertNoError(result);return result.data as FinanceEntryRow}

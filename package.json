@@ -1,6 +1,6 @@
 {
   "name": "camilla-studio-architecture",
-  "version": "3.0.13",
+  "version": "3.0.16",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
