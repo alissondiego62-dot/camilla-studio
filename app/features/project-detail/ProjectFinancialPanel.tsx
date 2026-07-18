@@ -8,7 +8,7 @@ import { FeedbackMessage } from "@/app/components/ui/FeedbackMessage";
 import { Modal } from "@/app/components/ui/Modal";
 import { currencyFormatter, dateOnly } from "@/app/config/regions";
 import { normalizeMoneyInput } from "@/app/features/finance/finance.money";
-import { removeFinanceEntry, saveFinanceEntry, settleFinanceEntry, settleProjectReceivable } from "@/app/features/finance/finance.mutations";
+import { cancelFinanceEntry, removeFinanceEntry, saveFinanceEntry, settleFinanceEntry, settleProjectReceivable } from "@/app/features/finance/finance.mutations";
 import { setProjectContractValue } from "./project-detail.service";
 import type { Project, ProjectFinancialEntry } from "@/app/domain/architecture-types";
 import type { ProjectFinancialSummary } from "@/app/features/projects/types";
@@ -44,6 +44,8 @@ export function ProjectFinancialPanel({ project, entries, summary, options, onCh
   const [receiveContract, setReceiveContract] = useState(false);
   const [deleteEntry, setDeleteEntry] = useState<ProjectFinancialEntry | null>(null);
   const [deleteReason, setDeleteReason] = useState("");
+  const [cancelEntry, setCancelEntry] = useState<ProjectFinancialEntry | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -133,6 +135,16 @@ export function ProjectFinancialPanel({ project, entries, summary, options, onCh
     if (ok) { setDeleteEntry(null); setDeleteReason(""); }
   }
 
+  async function confirmCancel() {
+    if (!cancelEntry) return;
+    const hasSettlement = Number(cancelEntry.paid_amount || 0) > 0;
+    const ok = await runAction(
+      () => cancelFinanceEntry(cancelEntry.id, cancelReason.trim()),
+      hasSettlement ? "Baixa estornada e lançamento cancelado." : "Lançamento cancelado.",
+    );
+    if (ok) { setCancelEntry(null); setCancelReason(""); }
+  }
+
   return <section className="cs-project-panel">
     <div className="cs-section-heading">
       <div>
@@ -188,7 +200,8 @@ export function ProjectFinancialPanel({ project, entries, summary, options, onCh
             <td data-label="Recebido">{currencyFormatter.format(paid)}</td>
             <td data-label="Em aberto">{currencyFormatter.format(open)}</td>
             <td data-label="Ações"><div className="cs-finance-row-actions">
-              {open > 0 && <Button variant="text" onClick={() => setPaymentEntry(entry)}>Liquidar</Button>}
+              {open > 0 && <Button variant="text" onClick={() => setPaymentEntry(entry)}>{entry.entry_type === "expense" ? "Pagar" : "Liquidar"}</Button>}
+              {entry.status !== "cancelled" && <Button variant="text" onClick={() => setCancelEntry(entry)}>{paid > 0 ? "Estornar e cancelar" : "Cancelar"}</Button>}
               {paid === 0 && <Button variant="text" onClick={() => setDeleteEntry(entry)}>Excluir</Button>}
             </div></td>
           </tr>;
@@ -206,6 +219,14 @@ export function ProjectFinancialPanel({ project, entries, summary, options, onCh
         <label className="cs-span-2"><span>Observações</span><textarea name="notes" rows={3} /></label>
         <div className="cs-form-actions cs-span-2"><Button type="button" onClick={() => { setPaymentEntry(null); setReceiveContract(false); }}>Cancelar</Button><Button variant="primary" loading={pending}>Confirmar recebimento</Button></div>
       </form>
+    </Modal>}
+
+    {cancelEntry && <Modal title={Number(cancelEntry.paid_amount || 0) > 0 ? "Estornar baixa e cancelar lançamento" : "Cancelar lançamento financeiro"} onClose={() => setCancelEntry(null)}>
+      <p>{Number(cancelEntry.paid_amount || 0) > 0
+        ? `Este lançamento possui ${cancelEntry.entry_type === "expense" ? "pagamento" : "recebimento"} registrado. A confirmação estornará as baixas e ajustes ativos, corrigirá o saldo da conta e cancelará o lançamento.`
+        : "O lançamento será retirado dos valores previstos e permanecerá preservado no histórico."}</p>
+      <label className="cs-field"><span>Motivo do cancelamento</span><textarea rows={3} value={cancelReason} onChange={(event) => setCancelReason(event.target.value)} autoFocus /></label>
+      <div className="cs-form-actions"><Button onClick={() => setCancelEntry(null)}>Voltar</Button><Button variant="danger" loading={pending} disabled={cancelReason.trim().length < 5} onClick={() => void confirmCancel()}>{Number(cancelEntry.paid_amount || 0) > 0 ? "Estornar e cancelar" : "Cancelar lançamento"}</Button></div>
     </Modal>}
 
     {deleteEntry && <Modal title="Excluir lançamento financeiro" onClose={() => setDeleteEntry(null)}>

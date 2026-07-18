@@ -47,12 +47,14 @@ export function FinanceEntryDrawer({
   useFocusTrap(dialogRef, onClose);
   const [confirm, setConfirm] = useState<"archive" | "cancel" | "environment" | null>(null);
   const [reason, setReason] = useState("");
+  const hasSettlement = Boolean(entry && Number(entry.paid_amount || 0) > 0);
+  const cancelActionLabel = hasSettlement ? "Estornar e cancelar" : `Cancelar ${entry?.entry_type === "income" ? "receita" : "despesa"}`;
 
   function confirmAction() {
     if (!entry || !confirm) return;
     if (confirm === "archive") onArchive(entry.id);
-    else if (confirm === "environment") onChangeEnvironment(entry.id, environment === "personal" ? "professional" : "personal", reason.trim() || "Mudança de ambiente confirmada pela interface.");
-    else onCancel(entry.id, reason.trim() || "Cancelamento solicitado pela interface.");
+    else if (confirm === "environment") onChangeEnvironment(entry.id, environment === "personal" ? "professional" : "personal", reason.trim());
+    else onCancel(entry.id, reason.trim());
     setConfirm(null);
     setReason("");
   }
@@ -108,7 +110,7 @@ export function FinanceEntryDrawer({
               {canDuplicate && <Button onClick={() => onDuplicate(entry.id)}>Duplicar</Button>}
               {canInstallments && entry.installment_group_id === null && entry.paid_amount === "0.00" && <Button onClick={() => onInstallment(entry)}>Parcelar</Button>}
               {canChangeEnvironment && entry.paid_amount === "0.00" && <Button onClick={() => setConfirm("environment")}>Mover de ambiente</Button>}
-              {canCancel && entry.status !== "cancelled" && <Button variant="danger" onClick={() => setConfirm("cancel")}>Cancelar</Button>}
+              {canCancel && entry.status !== "cancelled" && <Button variant="danger" onClick={() => setConfirm("cancel")}>{cancelActionLabel}</Button>}
               {canArchive && <Button onClick={() => setConfirm("archive")}>Arquivar</Button>}
               {canSettle && entry.open_amount !== "0.00" && entry.status !== "cancelled" && <Button variant="primary" onClick={() => onSettle(entry)}>Registrar baixa</Button>}
               {canEdit && <Button variant="primary" onClick={() => setEditing(true)}>Editar</Button>}
@@ -118,13 +120,15 @@ export function FinanceEntryDrawer({
       </aside>
 
       {confirm && (
-        <Modal title={confirm === "archive" ? "Arquivar lançamento" : confirm === "environment" ? "Mover lançamento de ambiente" : "Cancelar lançamento"} onClose={() => setConfirm(null)}>
+        <Modal title={confirm === "archive" ? "Arquivar lançamento" : confirm === "environment" ? "Mover lançamento de ambiente" : hasSettlement ? "Estornar baixa e cancelar lançamento" : "Cancelar lançamento"} onClose={() => setConfirm(null)}>
           <p className="cs-confirm-message">
             {confirm === "archive"
               ? "O registro continuará no histórico e poderá ser reativado."
               : confirm === "environment"
                 ? `O lançamento será movido para o Financeiro ${environment === "personal" ? "Profissional / CNPJ" : "Pessoal"}. Vínculos incompatíveis serão removidos e a ação ficará no histórico.`
-                : "Informe o motivo do cancelamento. Esta ação não apaga o histórico."}
+                : hasSettlement
+                  ? `Este lançamento possui ${entry?.entry_type === "income" ? "recebimento" : "pagamento"} registrado. Ao confirmar, todas as baixas e ajustes ativos serão estornados, o saldo da conta será corrigido e o lançamento será cancelado sem apagar o histórico.`
+                  : "Informe o motivo do cancelamento. O lançamento sairá dos valores previstos, mas continuará preservado no histórico."}
           </p>
           {confirm !== "archive" && (
             <label className="cs-field">
@@ -134,8 +138,14 @@ export function FinanceEntryDrawer({
           )}
           <div className="cs-form-actions">
             <Button type="button" onClick={() => setConfirm(null)}>Voltar</Button>
-            <Button type="button" variant="danger" loading={pending} onClick={confirmAction}>
-              {confirm === "archive" ? "Arquivar" : confirm === "environment" ? "Mover ambiente" : "Cancelar lançamento"}
+            <Button
+              type="button"
+              variant="danger"
+              loading={pending}
+              disabled={confirm !== "archive" && reason.trim().length < (confirm === "cancel" ? 5 : 3)}
+              onClick={confirmAction}
+            >
+              {confirm === "archive" ? "Arquivar" : confirm === "environment" ? "Mover ambiente" : cancelActionLabel}
             </Button>
           </div>
         </Modal>
