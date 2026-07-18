@@ -2,15 +2,48 @@
 
 import Link from "next/link";
 
-export function KanbanCardShortcuts({ projectId, history, files, agenda, comments, unreadHistory, unreadFiles, unreadAgenda, unreadComments }: {
-  projectId: string; history: number; files: number; agenda: number; comments: number;
-  unreadHistory: number; unreadFiles: number; unreadAgenda: number; unreadComments: number;
+function initials(name: string | null) {
+  if (!name) return "--";
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+}
+
+export function KanbanCardShortcuts({ projectId, responsibleName, checklistCompleted, checklistTotal, files, comments, unreadFiles, unreadComments }: {
+  projectId: string;
+  responsibleName: string | null;
+  checklistCompleted: number;
+  checklistTotal: number;
+  files: number;
+  comments: number;
+  unreadFiles: number;
+  unreadComments: number;
 }) {
   const items = [
-    { section: "history", icon: "↺", label: "Histórico", count: history, unread: unreadHistory },
-    { section: "files", icon: "↗", label: "Arquivos", count: files, unread: unreadFiles },
-    { section: "agenda", icon: "◷", label: "Agenda", count: agenda, unread: unreadAgenda },
-    { section: "comments", icon: "◌", label: "Comentários", count: comments, unread: unreadComments },
+    { section: "checklist", icon: "✓", label: "Checklist", count: checklistTotal > 0 ? `${checklistCompleted}/${checklistTotal}` : "0", unread: 0 },
+    { section: "comments", icon: "◌", label: "Comentários", count: String(comments), unread: unreadComments },
+    { section: "files", icon: "↗", label: "Arquivos", count: String(files), unread: unreadFiles },
   ];
-  return <nav className="cs-kanban-shortcuts" aria-label="Atalhos do projeto">{items.map((item) => <Link key={item.section} href={`/projects/${projectId}?section=${item.section}`} aria-label={`${item.label}: ${item.count}; ${item.unread} não visualizados`} title={item.label}><span aria-hidden="true">{item.icon}</span><b>{item.count}</b>{item.unread > 0 && <em>{item.unread > 99 ? "99+" : item.unread}</em>}</Link>)}</nav>;
+
+  return (
+    <div className="cs-kanban-card-footer-row">
+      <nav className="cs-kanban-shortcuts" aria-label="Atalhos do projeto">
+        {items.map((item) => (
+          <Link
+            key={item.section}
+            href={`/projects/${projectId}?section=${item.section}`}
+            aria-label={`${item.label}: ${item.count}${item.unread ? `; ${item.unread} não visualizados` : ""}`}
+            title={item.label}
+          >
+            <span aria-hidden="true">{item.icon}</span>
+            <b>{item.count}</b>
+            {item.unread > 0 && <em>{item.unread > 99 ? "99+" : item.unread}</em>}
+          </Link>
+        ))}
+      </nav>
+      <span className="cs-kanban-responsible" title={responsibleName ? `Responsável: ${responsibleName}` : "Sem responsável"} aria-label={responsibleName ? `Responsável: ${responsibleName}` : "Sem responsável"}>
+        {initials(responsibleName)}
+      </span>
+    </div>
+  );
 }

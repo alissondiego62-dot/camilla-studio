@@ -29,7 +29,7 @@ export function LoginPage() {
   }
 
   return (
-    <main className="cs-login-page">
+    <main id="main-content" className="cs-login-page" tabIndex={-1}>
       <section className="cs-login-card">
         <Image
           src={CAMILLA_BRAND.logoPath}

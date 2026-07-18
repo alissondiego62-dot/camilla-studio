@@ -1,0 +1,213 @@
+# Arquivos da Etapa 10
+
+Comparação entre o ZIP da Etapa 09 e a versão final 3.0.11.
+
+| Classificação | Quantidade |
+|---|---:|
+| Base | 650 |
+| Final | 659 |
+| Criados | 37 |
+| Modificados | 33 |
+| Removidos | 28 |
+
+## Criados
+
+- `ETAPA-10-RELATORIO-CAMILLA-STUDIO.md`
+
+- `app/components/a11y/FocusTrap.tsx`
+
+- `app/components/a11y/LiveRegion.tsx`
+
+- `app/components/a11y/SkipLink.tsx`
+
+- `app/config/quality.ts`
+
+- `app/hooks/useFocusReturn.ts`
+
+- `app/hooks/useReducedMotion.ts`
+
+- `camilla-studio-etapa-10-final.sql`
+
+- `docs/ETAPA-10-ACESSIBILIDADE.md`
+
+- `docs/ETAPA-10-ARQUIVOS.json`
+
+- `docs/ETAPA-10-ARQUIVOS.md`
+
+- `docs/ETAPA-10-BANCO-E-SEGURANCA.md`
+
+- `docs/ETAPA-10-CHECKLIST-FINAL.md`
+
+- `docs/ETAPA-10-PERFORMANCE.md`
+
+- `docs/ETAPA-10-PUBLICACAO.md`
+
+- `docs/ETAPA-10-RELATORIO-FINAL.md`
+
+- `docs/ETAPA-10-RESPONSIVIDADE.md`
+
+- `docs/ETAPA-10-REVERSAO.md`
+
+- `scripts/audit-accessibility.mjs`
+
+- `scripts/audit-bundle.mjs`
+
+- `scripts/audit-identities.mjs`
+
+- `scripts/audit-routes.mjs`
+
+- `supabase/migrations/20260717070000_camilla_stage10_final_consolidation.sql`
+
+- `supabase/rollback/camilla-stage10-final-rollback.sql`
+
+- `supabase/validation/etapa-10-data-integrity.sql`
+
+- `supabase/validation/etapa-10-migration-chain-tests.sql`
+
+- `supabase/validation/etapa-10-performance-tests.sql`
+
+- `supabase/validation/etapa-10-postflight.sql`
+
+- `supabase/validation/etapa-10-preflight.sql`
+
+- `supabase/validation/etapa-10-rls-tests.sql`
+
+- `supabase/validation/etapa-10-security-tests.sql`
+
+- `tests/stage10-accessibility.test.mjs`
+
+- `tests/stage10-performance.test.mjs`
+
+- `tests/stage10-regression.test.mjs`
+
+- `tests/stage10-responsive.test.mjs`
+
+- `tests/stage10-security.test.mjs`
+
+- `tests/stage10-structure.test.mjs`
+
+## Modificados
+
+- `README.md`
+
+- `app/components/layout/LoginPage.tsx`
+
+- `app/components/layout/StudioShell.tsx`
+
+- `app/components/ui/Button.tsx`
+
+- `app/components/ui/DataState.tsx`
+
+- `app/components/ui/FeedbackMessage.tsx`
+
+- `app/components/ui/FormField.tsx`
+
+- `app/components/ui/Modal.tsx`
+
+- `app/config/version.ts`
+
+- `app/features/activities/ActivityDrawer.tsx`
+
+- `app/features/activities/activities.service.ts`
+
+- `app/features/agenda/AgendaItemDrawer.tsx`
+
+- `app/features/agenda/agenda.repository.ts`
+
+- `app/features/clients/clients.service.ts`
+
+- `app/features/file-manager/file-manager.service.ts`
+
+- `app/features/finance/FinanceEntryDrawer.tsx`
+
+- `app/features/finance/FinanceInstallmentDrawer.tsx`
+
+- `app/features/finance/FinancePaymentDrawer.tsx`
+
+- `app/features/finance/FinanceTransferDrawer.tsx`
+
+- `app/features/history/HistoryPage.tsx`
+
+- `app/features/history/history.service.ts`
+
+- `app/features/notifications/notifications.service.ts`
+
+- `app/features/project-detail/project-detail.service.ts`
+
+- `app/layout.tsx`
+
+- `app/styles/base.css`
+
+- `app/styles/components.css`
+
+- `app/styles/layout.css`
+
+- `app/styles/responsive.css`
+
+- `eslint.config.mjs`
+
+- `package.json`
+
+- `tests/rendered-html.test.mjs`
+
+- `tests/stage05-structure.test.mjs`
+
+- `tests/stage09-structure.test.mjs`
+
+## Removidos
+
+- `MODULO-1-ORDEM-DE-SERVICO.md`
+
+- `PUBLICOLOR-V3-INSTALACAO.md`
+
+- `app/architecture.css`
+
+- `app/brand-overrides.css`
+
+- `app/components/ActivitiesWorkspace.tsx`
+
+- `app/components/ArchitectureAgendaCalendar.tsx`
+
+- `app/components/CompletedOrdersView.tsx`
+
+- `app/components/DriveIntegrationSettings.tsx`
+
+- `app/components/InstallationAgendaView.tsx`
+
+- `app/components/NotificationSettings.tsx`
+
+- `app/design-tokens.css`
+
+- `app/details.css`
+
+- `app/globals.css`
+
+- `app/kanban-cards.css`
+
+- `app/legacy-page.tsx`
+
+- `app/navigation.css`
+
+- `app/pcp-v2.css`
+
+- `app/publicolor-integration.css`
+
+- `app/recovery.css`
+
+- `app/results.css`
+
+- `app/search.css`
+
+- `app/supabase.css`
+
+- `app/v3.css`
+
+- `components/CompletedOrdersView.tsx`
+
+- `lib/pcp-config.ts`
+
+- `lib/pcp-formatters.ts`
+
+- `lib/pcp-types.ts`
+
+- `public/publicolor-logo.png`

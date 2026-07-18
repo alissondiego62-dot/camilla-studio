@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { CAMILLA_BRAND } from "@/app/config/brand";
 import { navigationItems } from "@/app/config/navigation";
@@ -14,6 +14,7 @@ import { LoadingState } from "@/app/components/ui/DataState";
 import { AccessDenied } from "@/app/components/security/PermissionGate";
 import { LoginPage } from "./LoginPage";
 import { NotificationBell } from "@/app/features/notifications/NotificationBell";
+import { SkipLink } from "@/app/components/a11y/SkipLink";
 
 export function StudioShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -21,16 +22,17 @@ export function StudioShell({ children }: { children: ReactNode }) {
   const { can } = usePermissions();
   const [menuOpen, setMenuOpen] = useState(false);
   const [signOutError, setSignOutError] = useState("");
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useBodyScrollLock(menuOpen);
 
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key === "Escape" && menuOpen) { setMenuOpen(false); menuButtonRef.current?.focus(); }
     };
     window.addEventListener("keydown", listener);
     return () => window.removeEventListener("keydown", listener);
-  }, []);
+  }, [menuOpen]);
 
   if (!ready) {
     return <main className="cs-boot"><LoadingState label="Carregando Camilla Studio…" /></main>;
@@ -53,6 +55,7 @@ export function StudioShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="cs-app">
+      <SkipLink />
       <aside id="studio-navigation" className={`cs-sidebar ${menuOpen ? "is-open" : ""}`}>
         <div className="cs-brand">
           <Image src={CAMILLA_BRAND.logoPath} alt={CAMILLA_BRAND.companyName} width={80} height={82} />
@@ -62,17 +65,20 @@ export function StudioShell({ children }: { children: ReactNode }) {
           </div>
         </div>
         <nav aria-label="Navegação principal">
-          {navigationItems.filter((item) => !configured || navigationAllowed(item)).map((item) => (
+          {navigationItems.filter((item) => !configured || navigationAllowed(item)).map((item) => {
+            const active = pathname === item.href || pathname?.startsWith(`${item.href}/`);
+            return (
             <Link
               key={item.href}
               href={item.href}
-              className={pathname?.startsWith(item.href) ? "active" : ""}
+              className={active ? "active" : ""}
+              aria-current={active ? "page" : undefined}
               onClick={() => setMenuOpen(false)}
             >
               <span aria-hidden="true">{item.icon}</span>
               <span>{item.label}</span>
             </Link>
-          ))}
+          );})}
         </nav>
         <footer>
           <div>
@@ -87,6 +93,7 @@ export function StudioShell({ children }: { children: ReactNode }) {
       <div className="cs-main">
         <div className="cs-mobile-topbar">
           <button
+            ref={menuButtonRef}
             type="button"
             aria-label="Abrir menu"
             aria-controls="studio-navigation"
@@ -102,10 +109,10 @@ export function StudioShell({ children }: { children: ReactNode }) {
             Supabase não configurado. As páginas serão exibidas sem registros até que as variáveis públicas sejam definidas.
           </div>
         )}
-        <div className="cs-desktop-tools"><NotificationBell /></div><main className="cs-content">{routeAllowed ? children : <AccessDenied />}</main>
+        <div className="cs-desktop-tools"><NotificationBell /></div><main id="main-content" className="cs-content" tabIndex={-1}>{routeAllowed ? children : <AccessDenied />}</main>
       </div>
 
-      {menuOpen && <button className="cs-overlay" aria-label="Fechar menu" onClick={() => setMenuOpen(false)} />}
+      {menuOpen && <button className="cs-overlay" aria-label="Fechar menu" onClick={() => { setMenuOpen(false); menuButtonRef.current?.focus(); }} />}
     </div>
   );
 }

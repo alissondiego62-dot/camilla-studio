@@ -4,7 +4,7 @@ import type { HistoryEntry } from "./types";
 
 export async function listHistory(filters: { module?: string; action?: string; query?: string; limit?: number } = {}) {
   if (!ensureSupabase()) return [];
-  let request = supabase.from("history_entries").select("*").order("created_at", { ascending: false }).limit(filters.limit ?? 500);
+  let request = supabase.from("history_entries").select("id,module,record_type,record_id,project_id,actor_user_id,action,field_name,old_value,new_value,description,metadata,source_table,source_id,created_at").order("created_at", { ascending: false }).limit(filters.limit ?? 500);
   if (filters.module) request = request.eq("module", filters.module);
   if (filters.action) request = request.eq("action", filters.action);
   if (filters.query) request = request.ilike("description", `%${filters.query}%`);

@@ -147,7 +147,7 @@ export async function deleteActivityLogically(id: string) {
 
 export async function listSavedActivityViews(): Promise<ActivitySavedView[]> {
   if (!ensureSupabase()) return [];
-  const result = await supabase.from("activity_saved_views").select("*").order("is_default", { ascending: false }).order("updated_at", { ascending: false });
+  const result = await supabase.from("activity_saved_views").select("id,user_id,name,view_type,filters,sorting,grouping,visible_properties,column_order,column_widths,page_size,is_default,include_archived,created_at,updated_at").order("is_default", { ascending: false }).order("updated_at", { ascending: false });
   if (result.error && /activity_saved_views|schema cache|does not exist/i.test(result.error.message)) return [];
   assertNoError(result); return (result.data ?? []) as ActivitySavedView[];
 }

@@ -23,8 +23,8 @@ test("fluxo ativo usa Estudo Preliminar e não oferece Obra", async () => {
   assert.match(config, /briefing_preliminary:\s*"Estudo Preliminar"/);
   const activeBlock = config.match(/export const activeStages[\s\S]*?\];/)?.[0] ?? "";
   assert.doesNotMatch(activeBlock, /construction/);
-  assert.match(workflow, /neq\("code",\s*"construction"\)/);
-  assert.match(checklist, /stage_code !== "construction"/);
+  assert.match(workflow, /list_workflow_catalog/);
+  assert.match(checklist, /listStageChecklists/);
 });
 
 test("Kanban atualiza somente o card e possui rollback em caso de erro", async () => {

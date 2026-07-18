@@ -4,7 +4,7 @@ import type { NotificationCatalogItem, NotificationPreference, NotificationProfi
 
 export async function listNotifications(module = "", unreadOnly = false, limit = 100): Promise<StudioNotification[]> {
   if (!ensureSupabase()) return [];
-  let query = supabase.from("notifications").select("*").is("archived_at", null).order("created_at", { ascending: false }).limit(limit);
+  let query = supabase.from("notifications").select("id,user_id,actor_user_id,type_code,module,record_type,record_id,project_id,title,body,priority,link,read_at,archived_at,metadata,created_at").is("archived_at", null).order("created_at", { ascending: false }).limit(limit);
   if (module) query = query.eq("module", module);
   if (unreadOnly) query = query.is("read_at", null);
   const result = await query;

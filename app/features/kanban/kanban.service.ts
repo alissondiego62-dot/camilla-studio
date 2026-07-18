@@ -108,3 +108,12 @@ export async function updateProjectWorkflow(id: string, patch: WorkflowPatch) {
     throw new Error(response.error.message);
   }
 }
+
+export async function listKanbanWorkflowOptions(){
+  const [stages,statuses]=await Promise.all([
+    supabase.from("project_stages").select("code,name,color,position,active").eq("active",true).is("archived_at",null).order("position"),
+    supabase.from("project_statuses").select("code,name,color,position,active").eq("active",true).is("archived_at",null).order("position"),
+  ]);
+  assertNoError(stages);assertNoError(statuses);
+  return {stages:(stages.data??[]) as Array<{code:string;name:string;color:string|null;position:number;active:boolean}>,statuses:(statuses.data??[]) as Array<{code:string;name:string;color:string|null;position:number;active:boolean}>};
+}

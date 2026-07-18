@@ -1,6 +1,6 @@
 {
   "name": "camilla-studio-architecture",
-  "version": "3.0.10",
+  "version": "3.0.12",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -13,7 +13,13 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm typecheck && pnpm lint"
+    "check": "pnpm typecheck && pnpm lint",
+    "test:unit": "node --test tests/*.test.mjs",
+    "audit:routes": "node scripts/audit-routes.mjs",
+    "audit:a11y": "node scripts/audit-accessibility.mjs",
+    "audit:identity": "node scripts/audit-identities.mjs",
+    "audit:bundle": "node scripts/audit-bundle.mjs",
+    "audit:quality": "node scripts/audit-routes.mjs && node scripts/audit-accessibility.mjs && node scripts/audit-identities.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.110.2",

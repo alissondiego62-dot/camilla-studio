@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
-import { activeStages, priorityLabels, projectStageLabel, statusLabels } from "@/app/domain/architecture-config";
+import { priorityLabels, projectStageLabel, statusLabels } from "@/app/domain/architecture-config";
 import { dateOnly } from "@/app/config/regions";
 import { ModuleFrame } from "@/app/components/ui/ModuleFrame";
 import { Button } from "@/app/components/ui/Button";
@@ -16,6 +16,7 @@ import { useModuleData } from "@/app/hooks/useModuleData";
 import { useAsyncAction } from "@/app/hooks/useAsyncAction";
 import { usePermissions } from "@/app/hooks/usePermissions";
 import { createProject, listProjectFormOptions, listProjects } from "./projects.service";
+import { listWorkflow } from "@/app/features/settings/settings.service";
 import type { ProjectFormOptions } from "./types";
 
 const emptyOptions: ProjectFormOptions = { clients: [], users: [] };
@@ -25,6 +26,12 @@ export function ProjectsPage() {
   const optionLoader = useCallback(() => listProjectFormOptions(), []);
   const { data: items, loading, error, reload } = useModuleData(loader, []);
   const { data: options } = useModuleData(optionLoader, emptyOptions);
+  const stageLoader = useCallback(() => listWorkflow("project_stages"), []);
+  const statusLoader = useCallback(() => listWorkflow("project_statuses"), []);
+  const { data: stageCatalog } = useModuleData(stageLoader, []);
+  const { data: statusCatalog } = useModuleData(statusLoader, []);
+  const activeStageCatalog = stageCatalog.filter((row) => row.active && !row.archived_at);
+  const activeStatusCatalog = statusCatalog.filter((row) => row.active && !row.archived_at);
   const action = useAsyncAction();
   const { can } = usePermissions();
   const params = useSearchParams();
@@ -88,8 +95,8 @@ export function ProjectsPage() {
                 <tr key={project.id}>
                   <td data-label="Projeto"><strong>{project.code}</strong><span>{project.name}</span></td>
                   <td data-label="Cliente">{project.client?.name ?? "—"}</td>
-                  <td data-label="Etapa"><span className="cs-badge">{projectStageLabel(project.stage)}</span></td>
-                  <td data-label="Status">{statusLabels[project.status as keyof typeof statusLabels] ?? project.status}</td>
+                  <td data-label="Etapa"><span className="cs-badge">{stageCatalog.find((row) => row.code === project.stage)?.name ?? projectStageLabel(project.stage)}</span></td>
+                  <td data-label="Status">{statusCatalog.find((row) => row.code === project.status)?.name ?? statusLabels[project.status as keyof typeof statusLabels] ?? project.status}</td>
                   <td data-label="Responsável">{project.responsible_name ?? "Não definido"}</td>
                   <td data-label="Prazo">{dateOnly(project.main_deadline)}</td>
                   <td data-label="Ações"><Link className="cs-link-button" href={`/projects/${project.id}`}>Abrir projeto</Link></td>
@@ -109,8 +116,8 @@ export function ProjectsPage() {
             <label><span>Responsável</span><select name="responsible_user_id" defaultValue=""><option value="">Não atribuído</option>{options.users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</select></label>
             <FormField label="Tipo" name="project_type" defaultValue="Arquitetura" required />
             <FormField label="Subtipo" name="subtype" />
-            <label><span>Etapa inicial</span><select name="stage" defaultValue="briefing_preliminary">{activeStages.filter((stage) => stage !== "completed").map((stage) => <option key={stage} value={stage}>{projectStageLabel(stage)}</option>)}</select></label>
-            <label><span>Status</span><select name="status" defaultValue="not_started">{Object.entries(statusLabels).filter(([code]) => code !== "completed" && code !== "cancelled").map(([code, label]) => <option key={code} value={code}>{label}</option>)}</select></label>
+            <label><span>Etapa inicial</span><select name="stage" defaultValue="briefing_preliminary">{activeStageCatalog.filter((stage) => !stage.final).map((stage) => <option key={stage.code} value={stage.code}>{stage.name}</option>)}</select></label>
+            <label><span>Status</span><select name="status" defaultValue="not_started">{activeStatusCatalog.filter((status) => !status.final).map((status) => <option key={status.code} value={status.code}>{status.name}</option>)}</select></label>
             <label><span>Prioridade</span><select name="priority" defaultValue="normal">{Object.entries(priorityLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</select></label>
             <FormField label="Prazo principal" name="deadline" type="date" />
             <label className="cs-span-2"><span>Observações</span><textarea name="notes" rows={3} /></label>

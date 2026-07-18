@@ -19,7 +19,7 @@ async function optionalRows<T>(promise: PromiseLike<{ data: unknown; error: { me
 }
 
 export async function loadProjectWorkspace(projectId: string, includeFinance: boolean): Promise<ProjectWorkspace> {
-  const projectResult = await supabase.from("projects").select("*,client:clients(*)").eq("id", projectId).maybeSingle();
+  const projectResult = await supabase.from("projects").select("id,code,client_id,name,project_type,subtype,stage,status,priority,responsible_name,deadline_stage_1,deadline_stage_2,deadline_stage_3,contract_value,amount_received,balance_due,cover_url,notes,created_by,created_at,updated_at,main_deadline,responsible_user_id,archived_at,client:clients(id,name,phone,email)").eq("id", projectId).maybeSingle();
   if (projectResult.error) throw new Error(projectResult.error.message);
   if (!projectResult.data) throw new Error("Projeto não encontrado ou sem permissão de acesso.");
 
@@ -27,11 +27,11 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
     optionalRows<ProjectOption>(supabase.from("clients").select("id,name").is("archived_at", null).order("name")),
     optionalRows<ProjectOption>(supabase.from("profiles").select("id,name,email").eq("active", true).is("blocked_at", null).is("archived_at", null).order("name")),
     optionalRows<DateTypeOption>(supabase.from("system_categories").select("code,name,color").eq("module", "project_date_type").eq("active", true).is("archived_at", null).order("position")),
-    optionalRows<ProjectDate>(supabase.from("project_dates").select("*").eq("project_id", projectId).is("archived_at", null).order("starts_at")),
-    optionalRows<ProjectThumbnail>(supabase.from("project_thumbnails").select("*").eq("project_id", projectId).eq("active", true).is("removed_at", null).order("version", { ascending: false }).limit(1)),
+    optionalRows<ProjectDate>(supabase.from("project_dates").select("id,project_id,purpose_code,title,description,starts_at,ends_at,all_day,is_main_deadline,status,completed_at,activity_id,calendar_event_id,created_by,updated_by,created_at,updated_at,archived_at").eq("project_id", projectId).is("archived_at", null).order("starts_at")),
+    optionalRows<ProjectThumbnail>(supabase.from("project_thumbnails").select("id,project_id,bucket_id,object_path,mime_type,file_size,version,active,uploaded_by,created_at,updated_at,removed_at").eq("project_id", projectId).eq("active", true).is("removed_at", null).order("version", { ascending: false }).limit(1)),
     optionalRows<ProjectActivity>(supabase.from("project_activities").select("id,project_id,parent_id,title,description,status,priority,due_date,due_at,progress,responsible_user_id,responsible_name,completed_at,created_at").eq("project_id", projectId).is("archived_at", null).order("created_at", { ascending: false })),
     optionalRows(supabase.from("calendar_events").select("id,project_id,title,event_type,starts_at,ends_at,location,notes,completed_at,created_at").eq("project_id", projectId).order("starts_at")),
-    optionalRows<LinkedFile>(supabase.from("project_files").select("*").eq("project_id", projectId).is("archived_at", null).order("created_at", { ascending: false })),
+    optionalRows<LinkedFile>(supabase.from("project_files").select("id,project_id,client_id,activity_id,financial_entry_id,name,category,drive_url,drive_file_id,drive_folder_id,drive_parent_folder_id,drive_modified_at,mime_type,file_size,origin,storage_bucket,storage_path,version,version_group_id,replaces_file_id,notes,download_allowed,archived_at,created_by,created_at,updated_at").eq("project_id", projectId).is("archived_at", null).order("created_at", { ascending: false })),
     optionalRows<ProjectCommentItem>(supabase.from("project_comments").select("id,project_id,parent_comment_id,author_id,comment,comment_kind,important,edited_at,updated_at,deleted_at,created_at,mentions:comment_mentions(user_id)").eq("project_id", projectId).order("created_at", { ascending: true })),
     optionalRows<ProjectChecklistItem>(supabase.from("project_checklist_items").select("id,project_id,stage,section,title,required,responsible_user_id,started_at,completed_at,completed_by,waived_at,waived_by,waiver_reason,position,created_at").eq("project_id", projectId).order("stage").order("position")),
     optionalRows<ProjectHistory>(supabase.from("project_history").select("id,project_id,action_type,description,field_name,old_value,new_value,metadata,author_id,created_at").eq("project_id", projectId).order("created_at", { ascending: false }).limit(250)),
@@ -43,7 +43,7 @@ export async function loadProjectWorkspace(projectId: string, includeFinance: bo
     if (!financeResult.error) {
       finance = (financeResult.data ?? []) as ProjectFinancialEntry[];
     } else if (/function .* does not exist|schema cache/i.test(financeResult.error.message)) {
-      finance = await optionalRows<ProjectFinancialEntry>(supabase.from("project_financial_entries").select("*").eq("project_id", projectId).order("created_at", { ascending: false }));
+      finance = await optionalRows<ProjectFinancialEntry>(supabase.from("project_financial_entries").select("id,project_id,description,category,amount,received_on,payment_method,notes,created_by,created_at,entry_type").eq("project_id", projectId).order("created_at", { ascending: false }));
     } else {
       throw new Error(financeResult.error.message);
     }

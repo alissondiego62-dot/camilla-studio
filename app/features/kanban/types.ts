@@ -52,3 +52,5 @@ export type WorkflowPatch = {
 };
 
 export type AssignableUser = { id: string; name: string; email: string };
+
+export type WorkflowOption = { code: string; name: string; color: string | null; position: number; active: boolean };

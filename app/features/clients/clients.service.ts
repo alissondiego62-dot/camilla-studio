@@ -28,7 +28,7 @@ export async function listClients(filters: ClientFilters): Promise<ClientDirecto
   });
   if (!response.error) return (response.data ?? []) as ClientDirectoryRow[];
   if (!missingStage07(response.error.message)) throw new Error(response.error.message);
-  let fallback = supabase.from("clients").select("*").order("name");
+  let fallback = supabase.from("clients").select("id,name,legal_name,trade_name,person_type,cpf,cnpj,document,state_registration,municipal_registration,phone,whatsapp,email,website,postal_code,address,address_number,address_complement,neighborhood,city,state,primary_contact_name,primary_contact_role,internal_responsible_user_id,source_code,segment_code,relationship_status,notes,created_by,created_at,updated_by,updated_at,archived_at,archived_by").order("name");
   if (!filters.includeArchived) fallback = fallback.is("archived_at", null);
   if (filters.personType) fallback = fallback.eq("person_type", filters.personType);
   if (filters.relationshipStatus) fallback = fallback.eq("relationship_status", filters.relationshipStatus);
@@ -108,12 +108,12 @@ async function listClientAgenda(clientId: string): Promise<ClientAgendaSummary[]
 }
 
 async function listClientFiles(clientId: string): Promise<LinkedFile[]> {
-  const result = await supabase.from("project_files").select("*").eq("client_id", clientId).is("archived_at", null).order("created_at", { ascending: false });
+  const result = await supabase.from("project_files").select("id,project_id,client_id,activity_id,financial_entry_id,name,category,drive_url,drive_file_id,drive_folder_id,drive_parent_folder_id,drive_modified_at,mime_type,file_size,origin,storage_bucket,storage_path,version,version_group_id,replaces_file_id,notes,download_allowed,archived_at,created_by,created_at,updated_at").eq("client_id", clientId).is("archived_at", null).order("created_at", { ascending: false });
   assertNoError(result); return (result.data ?? []) as LinkedFile[];
 }
 
 async function listClientNotes(clientId: string): Promise<ClientNote[]> {
-  const result = await supabase.from("client_notes").select("*").eq("client_id", clientId).is("archived_at", null).order("pinned_at", { ascending: false, nullsFirst: false }).order("occurred_at", { ascending: false });
+  const result = await supabase.from("client_notes").select("id,client_id,note_type,content,important,pinned_at,occurred_at,created_by,updated_by,created_at,updated_at,archived_at").eq("client_id", clientId).is("archived_at", null).order("pinned_at", { ascending: false, nullsFirst: false }).order("occurred_at", { ascending: false });
   if (result.error && missingStage07(result.error.message)) return [];
   assertNoError(result);
   const rows = (result.data ?? []) as ClientNote[];
@@ -125,9 +125,9 @@ async function listClientNotes(clientId: string): Promise<ClientNote[]> {
 }
 
 async function listClientHistory(clientId: string): Promise<HistoryEntry[]> {
-  const result = await supabase.from("history_entries").select("*").or(`and(module.eq.clients,record_id.eq.${clientId}),metadata->>client_id.eq.${clientId}`).order("created_at", { ascending: false }).limit(400);
+  const result = await supabase.from("history_entries").select("id,module,record_type,record_id,project_id,actor_user_id,action,field_name,old_value,new_value,description,metadata,source_table,source_id,created_at").or(`and(module.eq.clients,record_id.eq.${clientId}),metadata->>client_id.eq.${clientId}`).order("created_at", { ascending: false }).limit(400);
   if (result.error && /metadata|operator|syntax/i.test(result.error.message)) {
-    const fallback = await supabase.from("history_entries").select("*").eq("module", "clients").eq("record_id", clientId).order("created_at", { ascending: false }).limit(400);
+    const fallback = await supabase.from("history_entries").select("id,module,record_type,record_id,project_id,actor_user_id,action,field_name,old_value,new_value,description,metadata,source_table,source_id,created_at").eq("module", "clients").eq("record_id", clientId).order("created_at", { ascending: false }).limit(400);
     assertNoError(fallback); return (fallback.data ?? []) as HistoryEntry[];
   }
   assertNoError(result); return (result.data ?? []) as HistoryEntry[];

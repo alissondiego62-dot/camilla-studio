@@ -1,4 +1,4 @@
-# Camilla Studio 3.0.10
+# Camilla Studio 3.0.12
 
 Base atual: **Etapa 09 — Dashboard, Relatórios Gerais e Google Drive**.
 
@@ -13,7 +13,7 @@ Base atual: **Etapa 09 — Dashboard, Relatórios Gerais e Google Drive**.
 - tokens do Drive criptografados em schema privado;
 - banco principal preservado como fonte das relações, permissões, versões e histórico;
 - paleta Camilla aplicada aos gráficos e relatórios;
-- versão e informações do sistema atualizadas para 3.0.10.
+- versão 3.0.12 com responsividade, acessibilidade, performance e hardening de segurança.
 
 ## Aplicação do banco
 
@@ -39,3 +39,8 @@ pnpm dev
 ```
 
 Use `.env.example` apenas como referência. Chaves privadas, refresh tokens e `service_role` pertencem aos Supabase Secrets, nunca ao frontend.
+
+
+## Etapa 11 — Fluxos e checklists
+
+Etapas, status de projetos e status de atividades agora são catálogos dinâmicos, ordenáveis, ativáveis, desativáveis e excluíveis com migração segura. A configuração de checklists é organizada diretamente pelas etapas ativas do Kanban.

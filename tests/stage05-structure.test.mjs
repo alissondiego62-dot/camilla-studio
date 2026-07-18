@@ -84,8 +84,8 @@ test("comentários e arquivos são carregados no painel da atividade", async () 
 
 test("interface ativa não contém atividades fictícias", async () => {
   const active = await content("app/features/activities/ActivitiesWorkspace.tsx");
-  const legacy = await content("app/components/ActivitiesWorkspace.tsx");
-  assert.doesNotMatch(active + legacy, /task-demo|demo-1|Revisar agenda semanal do escritório/);
+  assert.doesNotMatch(active, /task-demo|demo-1|Revisar agenda semanal do escritório/);
+  assert.equal(existsSync(new URL("app/components/ActivitiesWorkspace.tsx", root)), false);
 });
 
 

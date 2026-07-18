@@ -1,10 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useId, useRef, useState } from "react";
 import { Button } from "@/app/components/ui/Button";
 import { ConfirmDialog } from "@/app/components/ui/ConfirmDialog";
 import { FeedbackMessage } from "@/app/components/ui/FeedbackMessage";
 import { Tabs } from "@/app/components/ui/Tabs";
 import { useBodyScrollLock } from "@/app/hooks/useBodyScrollLock";
+import { useFocusTrap } from "@/app/components/a11y/FocusTrap";
 import { ActivityNotesEditor } from "@/app/features/activity-notes/ActivityNotesEditor";
 import { ActivityAgendaPanel } from "./ActivityAgendaPanel";
 import { ActivityCommentsPanel } from "./ActivityCommentsPanel";
@@ -13,10 +15,68 @@ import { ActivityForm } from "./ActivityForm";
 import { SubactivityList } from "./subactivities/SubactivityList";
 import type { ActivityMutation, ActivityRow, ActivityWorkspaceOptions } from "./types";
 
-type TabId="details"|"subactivities"|"notes"|"comments"|"files"|"agenda";
-export function ActivityDrawer({activity,isNew,options,allActivities,defaultProjectId,defaultClientId,canCreate,canEdit,canDelete,canArchive,canFiles,canComments,canInternal,pending,error,success,onClose,onOpen,onSave,onStatus,onDuplicate,onArchive,onReactivate,onDelete,onMove,onReload}:{activity:ActivityRow|null;isNew:boolean;options:ActivityWorkspaceOptions;allActivities:ActivityRow[];defaultProjectId?:string;defaultClientId?:string;canCreate:boolean;canEdit:boolean;canDelete:boolean;canArchive:boolean;canFiles:boolean;canComments:boolean;canInternal:boolean;pending:boolean;error:string;success:string;onClose:()=>void;onOpen:(id:string)=>void;onSave:(id:string|null,changes:ActivityMutation)=>Promise<unknown>;onStatus:(id:string,status:string,force?:boolean,reason?:string)=>Promise<{ok:boolean}|undefined>;onDuplicate:(id:string)=>void;onArchive:(id:string)=>void;onReactivate:(id:string)=>void;onDelete:(id:string)=>void;onMove:(id:string,parentId:string|null,position?:number)=>Promise<unknown>;onReload:()=>Promise<void>}){
- const[tab,setTab]=useState<TabId>("details");const[confirmDelete,setConfirmDelete]=useState(false);useBodyScrollLock(true);useEffect(()=>{const listener=(e:KeyboardEvent)=>{if(e.key==="Escape")onClose()};window.addEventListener("keydown",listener);return()=>window.removeEventListener("keydown",listener)},[onClose]);
- const fullActivity=activity?allActivities.find((item)=>item.id===activity.id)??activity:null;
- async function status(status:string){if(!fullActivity)return;const result=await onStatus(fullActivity.id,status);if(result&&!result.ok&&status==="completed"){const reason=prompt("Há subatividades pendentes. Informe uma justificativa para forçar a conclusão:");if(reason?.trim())await onStatus(fullActivity.id,status,true,reason.trim())}}
- return <div className="cs-drawer-backdrop" onMouseDown={onClose}><aside className="cs-activity-drawer" onMouseDown={(e)=>e.stopPropagation()}><header className="cs-drawer-header"><div><small>{isNew?"NOVA ATIVIDADE":fullActivity?.project?.code??"ATIVIDADE"}</small><h2>{isNew?"Nova atividade":fullActivity?.title}</h2></div><button type="button" aria-label="Fechar" onClick={onClose}>×</button></header><FeedbackMessage error={error} success={success}/>{!isNew&&fullActivity&&<Tabs active={tab} onChange={(value)=>setTab(value as TabId)} tabs={[{id:"details",label:"Detalhes"},{id:"subactivities",label:"Subatividades",count:fullActivity.children?.length??0},{id:"notes",label:"Observações"},{id:"comments",label:"Comentários"},{id:"files",label:"Anexos"},{id:"agenda",label:"Agenda"}]}/>}<div className="cs-drawer-body">{(isNew||tab==="details")&&<ActivityForm key={isNew?`new:${defaultProjectId??""}:${defaultClientId??""}`:`${fullActivity!.id}:${fullActivity!.updated_at}`} activity={isNew?null:fullActivity} options={options} canEdit={isNew?canCreate:canEdit} pending={pending} defaultProjectId={defaultProjectId} defaultClientId={defaultClientId} onSave={(changes)=>void onSave(isNew?null:fullActivity!.id,changes)} onStatus={(value)=>void status(value)}/>} {!isNew&&fullActivity&&tab==="subactivities"&&<SubactivityList activity={fullActivity} options={options} canCreate={canCreate} canEdit={canEdit} onCreate={async(input)=>{await onSave(null,{...input,project_id:fullActivity.project_id,client_id:fullActivity.client_id});await onReload()}} onOpen={onOpen} onStatus={(id,value)=>void onStatus(id,value)} onMove={(id,parent)=>void onMove(id,parent)} onReorder={(id,position)=>void onMove(id,fullActivity.id,position)}/>} {!isNew&&fullActivity&&tab==="notes"&&<ActivityNotesEditor key={`${fullActivity.id}:${fullActivity.updated_at}`} value={fullActivity.notes_document} canEdit={canEdit} pending={pending} onSave={(value)=>void onSave(fullActivity.id,{notes_document:value})}/>} {!isNew&&fullActivity&&tab==="comments"&&<ActivityCommentsPanel activityId={fullActivity.id} options={options} canCreate={canComments} canInternal={canInternal} canDeleteAny={canDelete}/>} {!isNew&&fullActivity&&tab==="files"&&<ActivityFilesPanel activityId={fullActivity.id} canAdd={canFiles} canArchive={canArchive}/>} {!isNew&&fullActivity&&tab==="agenda"&&<ActivityAgendaPanel activity={fullActivity} canCreate={canEdit}/>}</div>{!isNew&&fullActivity&&<footer className="cs-drawer-footer"><Button onClick={()=>onDuplicate(fullActivity.id)}>Duplicar</Button>{fullActivity.parent_id&&canEdit&&<Button onClick={()=>void onMove(fullActivity.id,null)}>Tornar principal</Button>}{canArchive&&(fullActivity.archived_at?<Button onClick={()=>onReactivate(fullActivity.id)}>Reativar</Button>:<Button onClick={()=>onArchive(fullActivity.id)}>Arquivar</Button>)}{canDelete&&<Button variant="danger" onClick={()=>setConfirmDelete(true)}>Excluir</Button>}</footer>}{confirmDelete&&fullActivity&&<ConfirmDialog title="Excluir atividade" message="A atividade será excluída logicamente. Subatividades serão preservadas e promovidas quando necessário." confirmLabel="Excluir" danger pending={pending} onClose={()=>setConfirmDelete(false)} onConfirm={()=>{setConfirmDelete(false);onDelete(fullActivity.id)}}/>}</aside></div>
+type TabId = "details" | "subactivities" | "notes" | "comments" | "files" | "agenda";
+type Props = {
+  activity: ActivityRow | null; isNew: boolean; options: ActivityWorkspaceOptions; allActivities: ActivityRow[];
+  defaultProjectId?: string; defaultClientId?: string; canCreate: boolean; canEdit: boolean; canDelete: boolean;
+  canArchive: boolean; canFiles: boolean; canComments: boolean; canInternal: boolean; pending: boolean;
+  error: string; success: string; onClose: () => void; onOpen: (id: string) => void;
+  onSave: (id: string | null, changes: ActivityMutation) => Promise<unknown>;
+  onStatus: (id: string, status: string, force?: boolean, reason?: string) => Promise<{ ok: boolean } | undefined>;
+  onDuplicate: (id: string) => void; onArchive: (id: string) => void; onReactivate: (id: string) => void;
+  onDelete: (id: string) => void; onMove: (id: string, parentId: string | null, position?: number) => Promise<unknown>;
+  onReload: () => Promise<void>;
+};
+
+export function ActivityDrawer(props: Props) {
+  const { activity, isNew, options, allActivities, defaultProjectId, defaultClientId, canCreate, canEdit, canDelete,
+    canArchive, canFiles, canComments, canInternal, pending, error, success, onClose, onOpen, onSave, onStatus,
+    onDuplicate, onArchive, onReactivate, onDelete, onMove, onReload } = props;
+  const [tab, setTab] = useState<TabId>("details");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const dialogRef = useRef<HTMLElement>(null);
+  const titleId = useId();
+  useBodyScrollLock(true);
+  useFocusTrap(dialogRef, onClose);
+
+  const fullActivity = activity ? allActivities.find((item) => item.id === activity.id) ?? activity : null;
+  async function status(nextStatus: string) {
+    if (!fullActivity) return;
+    const result = await onStatus(fullActivity.id, nextStatus);
+    if (result && !result.ok && nextStatus === "completed") {
+      const reason = window.prompt("Há subatividades pendentes. Informe uma justificativa para forçar a conclusão:");
+      if (reason?.trim()) await onStatus(fullActivity.id, nextStatus, true, reason.trim());
+    }
+  }
+
+  return (
+    <div className="cs-drawer-backdrop" role="presentation" onMouseDown={onClose}>
+      <aside ref={dialogRef} className="cs-activity-drawer" role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} onMouseDown={(event) => event.stopPropagation()}>
+        <header className="cs-drawer-header">
+          <div><small>{isNew ? "NOVA ATIVIDADE" : fullActivity?.project?.code ?? "ATIVIDADE"}</small><h2 id={titleId}>{isNew ? "Nova atividade" : fullActivity?.title}</h2></div>
+          <button type="button" aria-label="Fechar atividade" onClick={onClose}>×</button>
+        </header>
+        <FeedbackMessage error={error} success={success} />
+        {!isNew && fullActivity && <Tabs active={tab} onChange={(value) => setTab(value as TabId)} tabs={[
+          { id: "details", label: "Detalhes" }, { id: "subactivities", label: "Subatividades", count: fullActivity.children?.length ?? 0 },
+          { id: "notes", label: "Observações" }, { id: "comments", label: "Comentários" }, { id: "files", label: "Anexos" }, { id: "agenda", label: "Agenda" },
+        ]} />}
+        <div className="cs-drawer-body">
+          {(isNew || tab === "details") && <ActivityForm key={isNew ? `new:${defaultProjectId ?? ""}:${defaultClientId ?? ""}` : `${fullActivity!.id}:${fullActivity!.updated_at}`} activity={isNew ? null : fullActivity} options={options} canEdit={isNew ? canCreate : canEdit} pending={pending} defaultProjectId={defaultProjectId} defaultClientId={defaultClientId} onSave={(changes) => void onSave(isNew ? null : fullActivity!.id, changes)} onStatus={(value) => void status(value)} />}
+          {!isNew && fullActivity && tab === "subactivities" && <SubactivityList activity={fullActivity} options={options} canCreate={canCreate} canEdit={canEdit} onCreate={async (input) => { await onSave(null, { ...input, project_id: fullActivity.project_id, client_id: fullActivity.client_id }); await onReload(); }} onOpen={onOpen} onStatus={(id, value) => void onStatus(id, value)} onMove={(id, parent) => void onMove(id, parent)} onReorder={(id, position) => void onMove(id, fullActivity.id, position)} />}
+          {!isNew && fullActivity && tab === "notes" && <ActivityNotesEditor key={`${fullActivity.id}:${fullActivity.updated_at}`} value={fullActivity.notes_document} canEdit={canEdit} pending={pending} onSave={(value) => void onSave(fullActivity.id, { notes_document: value })} />}
+          {!isNew && fullActivity && tab === "comments" && <ActivityCommentsPanel activityId={fullActivity.id} options={options} canCreate={canComments} canInternal={canInternal} canDeleteAny={canDelete} />}
+          {!isNew && fullActivity && tab === "files" && <ActivityFilesPanel activityId={fullActivity.id} canAdd={canFiles} canArchive={canArchive} />}
+          {!isNew && fullActivity && tab === "agenda" && <ActivityAgendaPanel activity={fullActivity} canCreate={canEdit} />}
+        </div>
+        {!isNew && fullActivity && <footer className="cs-drawer-footer">
+          <Button onClick={() => onDuplicate(fullActivity.id)}>Duplicar</Button>
+          {fullActivity.parent_id && canEdit && <Button onClick={() => void onMove(fullActivity.id, null)}>Tornar principal</Button>}
+          {canArchive && (fullActivity.archived_at ? <Button onClick={() => onReactivate(fullActivity.id)}>Reativar</Button> : <Button onClick={() => onArchive(fullActivity.id)}>Arquivar</Button>)}
+          {canDelete && <Button variant="danger" onClick={() => setConfirmDelete(true)}>Excluir</Button>}
+        </footer>}
+        {confirmDelete && fullActivity && <ConfirmDialog title="Excluir atividade" message="A atividade será excluída logicamente. Subatividades serão preservadas e promovidas quando necessário." confirmLabel="Excluir" danger pending={pending} onClose={() => setConfirmDelete(false)} onConfirm={() => { setConfirmDelete(false); onDelete(fullActivity.id); }} />}
+      </aside>
+    </div>
+  );
 }

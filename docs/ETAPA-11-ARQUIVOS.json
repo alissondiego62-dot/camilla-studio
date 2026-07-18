@@ -1,0 +1,48 @@
+{
+  "created": [
+    "camilla-studio-etapa-11-fluxos-checklists.sql",
+    "docs/ETAPA-11-APLICACAO-SQL.md",
+    "docs/ETAPA-11-CHECKLIST.md",
+    "docs/ETAPA-11-RELATORIO.md",
+    "docs/ETAPA-11-REVERSAO.md",
+    "docs/ETAPA-11-TESTES.md",
+    "supabase/migrations/20260717090000_camilla_stage11_workflows_checklists.sql",
+    "supabase/rollback/camilla-stage11-workflows-checklists-rollback.sql",
+    "supabase/validation/etapa-11-data-integrity.sql",
+    "supabase/validation/etapa-11-postflight.sql",
+    "supabase/validation/etapa-11-preflight.sql",
+    "supabase/validation/etapa-11-rls-tests.sql",
+    "tests/stage11-workflows-checklists.test.mjs"
+  ],
+  "modified": [
+    "README.md",
+    "app/config/quality.ts",
+    "app/config/version.ts",
+    "app/features/checklists/checklists.service.ts",
+    "app/features/checklists/types.ts",
+    "app/features/kanban/KanbanBoard.tsx",
+    "app/features/kanban/KanbanCardActions.tsx",
+    "app/features/kanban/KanbanColumn.tsx",
+    "app/features/kanban/KanbanPage.tsx",
+    "app/features/kanban/ProjectKanbanCard.tsx",
+    "app/features/kanban/kanban.service.ts",
+    "app/features/kanban/types.ts",
+    "app/features/project-detail/ProjectGeneralPanel.tsx",
+    "app/features/projects/ProjectsPage.tsx",
+    "app/features/settings/ChecklistSettingsPage.tsx",
+    "app/features/settings/WorkflowSettingsPage.tsx",
+    "app/features/settings/settings.service.ts",
+    "app/features/settings/types.ts",
+    "package.json",
+    "tests/stage03-structure.test.mjs",
+    "tests/stage09-structure.test.mjs",
+    "tests/stage10-structure.test.mjs"
+  ],
+  "removed": [],
+  "totals": {
+    "created": 13,
+    "modified": 22,
+    "removed": 0,
+    "files": 672
+  }
+}

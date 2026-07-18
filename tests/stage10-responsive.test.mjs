@@ -1,0 +1,4 @@
+import assert from "node:assert/strict";import {readFile} from "node:fs/promises";import test from "node:test";const root=new URL("..",import.meta.url);const content=(path)=>readFile(new URL(path,root),"utf8");
+test("baseline cobre celular pequeno a monitor grande",async()=>{const quality=await content("app/config/quality.ts");for(const width of[320,375,430,768,1024,1366,1920,2560])assert.match(quality,new RegExp(String(width)))});
+test("drawers e modais respeitam viewport dinâmico",async()=>{const css=(await content("app/styles/components.css"))+(await content("app/styles/responsive.css"));assert.match(css,/100dvh/);assert.match(css,/94dvh/);assert.match(css,/max-width:100vw/)});
+test("tabelas e ações têm adaptação móvel",async()=>{const css=await content("app/styles/responsive.css");assert.match(css,/\.cs-table thead\{display:none\}/);assert.match(css,/min-height:44px/);assert.match(css,/max-width:640px/)});

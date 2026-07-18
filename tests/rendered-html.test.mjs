@@ -86,6 +86,8 @@ for (const [route, title] of routes) {
     const html = await response.text();
     assert.match(html, /<html lang="pt-BR">/i);
     assert.match(html, /Camilla Studio/i);
+    assert.match(html, /Pular para o conteúdo principal/i);
+    assert.match(html, /id="main-content"/i);
     assert.match(html, new RegExp(title, "i"));
   });
 }

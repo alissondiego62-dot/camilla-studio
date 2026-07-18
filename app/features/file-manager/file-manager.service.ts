@@ -13,7 +13,7 @@ function relationPath(input: { project_id?: string | null; client_id?: string | 
 }
 
 export async function listLinkedFiles(filters: { projectId?: string; clientId?: string; activityId?: string; financialId?: string; includeArchived?: boolean } = {}) {
-  let query = supabase.from("project_files").select("*").order("created_at", { ascending: false });
+  let query = supabase.from("project_files").select("id,project_id,client_id,activity_id,financial_entry_id,name,category,drive_url,drive_file_id,drive_folder_id,drive_parent_folder_id,drive_connection_id,drive_web_view_link,drive_web_content_link,drive_revision_id,drive_checksum,drive_last_synced_at,drive_sync_error,drive_uploaded_at,drive_modified_at,mime_type,file_size,origin,storage_bucket,storage_path,version,version_group_id,replaces_file_id,notes,download_allowed,archived_at,created_by,created_at,updated_at").order("created_at", { ascending: false });
   if (!filters.includeArchived) query = query.is("archived_at", null);
   if (filters.projectId) query = query.eq("project_id", filters.projectId);
   if (filters.clientId) query = query.eq("client_id", filters.clientId);
@@ -66,7 +66,7 @@ export async function updateLinkedFileMetadata(id: string, input: { name: string
 }
 
 export async function listFileVersions(file: LinkedFile) {
-  const result = await supabase.from("project_files").select("*").eq("version_group_id", file.version_group_id || file.id).order("version", { ascending: false });
+  const result = await supabase.from("project_files").select("id,project_id,client_id,activity_id,financial_entry_id,name,category,drive_url,drive_file_id,drive_folder_id,drive_parent_folder_id,drive_connection_id,drive_web_view_link,drive_web_content_link,drive_revision_id,drive_checksum,drive_last_synced_at,drive_sync_error,drive_uploaded_at,drive_modified_at,mime_type,file_size,origin,storage_bucket,storage_path,version,version_group_id,replaces_file_id,notes,download_allowed,archived_at,created_by,created_at,updated_at").eq("version_group_id", file.version_group_id || file.id).order("version", { ascending: false });
   assertNoError(result); return (result.data ?? []) as LinkedFile[];
 }
 

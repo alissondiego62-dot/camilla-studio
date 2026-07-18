@@ -1,15 +1,24 @@
 "use client";
 
+import { useCallback } from "react";
 import type { FormEvent } from "react";
-import { activeStages, priorityLabels, projectStageLabel, statusLabels } from "@/app/domain/architecture-config";
+import { priorityLabels } from "@/app/domain/architecture-config";
 import { Button } from "@/app/components/ui/Button";
 import { FormField } from "@/app/components/ui/FormField";
 import type { Project } from "@/app/domain/architecture-types";
 import type { ProjectOption } from "./types";
+import { useModuleData } from "@/app/hooks/useModuleData";
+import { listWorkflow } from "@/app/features/settings/settings.service";
 
 export function ProjectGeneralPanel({ project, clients, users, canEdit, pending, onSave }: {
   project: Project; clients: ProjectOption[]; users: ProjectOption[]; canEdit: boolean; pending: boolean; onSave: (payload: Record<string, unknown>) => void;
 }) {
+  const stageLoader = useCallback(() => listWorkflow("project_stages"), []);
+  const statusLoader = useCallback(() => listWorkflow("project_statuses"), []);
+  const { data: stages } = useModuleData(stageLoader, []);
+  const { data: statuses } = useModuleData(statusLoader, []);
+  const stageOptions = stages.filter((row) => (row.active && !row.archived_at) || row.code === project.stage);
+  const statusOptions = statuses.filter((row) => (row.active && !row.archived_at) || row.code === project.status);
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -39,8 +48,8 @@ export function ProjectGeneralPanel({ project, clients, users, canEdit, pending,
         <label><span>Responsável</span><select name="responsible_user_id" defaultValue={project.responsible_user_id ?? ""} disabled={!canEdit}><option value="">Não atribuído</option>{users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</select></label>
         <FormField label="Tipo" name="project_type" defaultValue={project.project_type} disabled={!canEdit} />
         <FormField label="Subtipo" name="subtype" defaultValue={project.subtype ?? ""} disabled={!canEdit} />
-        <label><span>Etapa</span><select name="stage" defaultValue={project.stage === "construction" ? "revision" : project.stage} disabled={!canEdit}>{activeStages.map((stage) => <option key={stage} value={stage}>{projectStageLabel(stage)}</option>)}</select></label>
-        <label><span>Status</span><select name="status" defaultValue={project.status} disabled={!canEdit}>{Object.entries(statusLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</select></label>
+        <label><span>Etapa</span><select name="stage" defaultValue={project.stage === "construction" ? "revision" : project.stage} disabled={!canEdit}>{stageOptions.map((stage) => <option key={stage.code} value={stage.code}>{stage.name}{!stage.active ? " (inativa)" : ""}</option>)}</select></label>
+        <label><span>Status</span><select name="status" defaultValue={project.status} disabled={!canEdit}>{statusOptions.map((status) => <option key={status.code} value={status.code}>{status.name}{!status.active ? " (inativo)" : ""}</option>)}</select></label>
         <label><span>Prioridade</span><select name="priority" defaultValue={project.priority} disabled={!canEdit}>{Object.entries(priorityLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</select></label>
         <label className="cs-span-2"><span>Observações</span><textarea name="notes" rows={4} defaultValue={project.notes ?? ""} disabled={!canEdit} /></label>
         {canEdit && <div className="cs-form-actions"><span /><Button variant="primary" loading={pending}>Salvar alterações</Button></div>}

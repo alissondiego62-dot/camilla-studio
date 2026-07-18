@@ -1,0 +1,34 @@
+-- Etapa 10 — reversão conservadora. Não reabre execução anônima de funções.
+begin;
+drop index if exists public.idx_stage10_projects_deadline_active;
+drop index if exists public.idx_stage10_projects_responsible_active;
+drop index if exists public.idx_stage10_projects_client_active;
+drop index if exists public.idx_stage10_activities_project_active;
+drop index if exists public.idx_stage10_activities_client_active;
+drop index if exists public.idx_stage10_activities_responsible_active;
+drop index if exists public.idx_stage10_activities_due_at_active;
+drop index if exists public.idx_stage10_activities_due_date_active;
+drop index if exists public.idx_stage10_calendar_starts_active;
+drop index if exists public.idx_stage10_calendar_project_active;
+drop index if exists public.idx_stage10_calendar_client_active;
+drop index if exists public.idx_stage10_calendar_responsible_active;
+drop index if exists public.idx_stage10_notifications_unread;
+drop index if exists public.idx_stage10_history_module_created;
+drop index if exists public.idx_stage10_history_record_created;
+drop index if exists public.idx_stage10_files_project_active;
+drop index if exists public.idx_stage10_files_client_active;
+drop index if exists public.idx_stage10_files_activity_active;
+drop index if exists public.idx_stage10_files_financial_active;
+drop index if exists public.idx_stage10_finance_environment_due;
+drop index if exists public.idx_stage10_finance_project;
+drop index if exists public.idx_stage10_finance_client;
+drop index if exists public.idx_stage10_finance_account;
+drop index if exists public.idx_stage10_finance_category;
+drop index if exists public.idx_stage10_drive_operations_status;
+drop index if exists public.idx_stage10_comments_project_created;
+drop index if exists public.idx_stage10_comments_activity_created;
+drop index if exists public.idx_stage10_record_views_lookup;
+delete from public.system_versions where version='3.0.11';
+delete from public.system_settings where key in('app_minimum_viewport_width','app_accessibility_baseline','app_quality_timezone','app_quality_locale');
+commit;
+-- Os REVOKEs de PUBLIC/anon não são revertidos automaticamente por segurança.

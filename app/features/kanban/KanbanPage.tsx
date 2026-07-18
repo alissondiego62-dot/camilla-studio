@@ -9,14 +9,16 @@ import { useModuleData } from "@/app/hooks/useModuleData";
 import { useAsyncAction } from "@/app/hooks/useAsyncAction";
 import { usePermissions } from "@/app/hooks/usePermissions";
 import { KanbanBoard } from "./KanbanBoard";
-import { getKanbanProject, listAssignableUsers, listKanbanProjects, updateProjectWorkflow } from "./kanban.service";
+import { getKanbanProject, listAssignableUsers, listKanbanProjects, listKanbanWorkflowOptions, updateProjectWorkflow } from "./kanban.service";
 import type { KanbanProject, WorkflowPatch } from "./types";
 
 export function KanbanPage() {
   const loader = useCallback(() => listKanbanProjects(), []);
   const usersLoader = useCallback(() => listAssignableUsers(), []);
+  const workflowLoader = useCallback(() => listKanbanWorkflowOptions(), []);
   const { data: projects, setData: setProjects, loading, error, reload } = useModuleData(loader, []);
   const { data: users } = useModuleData(usersLoader, []);
+  const { data: workflow } = useModuleData(workflowLoader, { stages: [], statuses: [] });
   const action = useAsyncAction();
   const { can } = usePermissions();
   const [dragId, setDragId] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export function KanbanPage() {
       <FeedbackMessage error={action.error} success={action.success} />
       {error && <ErrorState message={error} onRetry={() => void reload()} />}
       {loading ? <LoadingState /> : sorted.length === 0 ? <EmptyState title="Nenhum projeto no Kanban" description="Os projetos cadastrados aparecerão organizados por etapa." /> : (
-        <KanbanBoard projects={sorted} users={users} canStage={canStage} canStatus={canStatus} canResponsible={canResponsible} pendingIds={pendingIds} dropStage={dropStage} onDropStage={dropProject} onDropTarget={setDropStage} onPatch={(project, patch) => void patchProject(project, patch)} onDragStart={setDragId} onDragEnd={() => { setDragId(null); setDropStage(null); }} />
+        <KanbanBoard projects={sorted} users={users} stages={workflow.stages} statuses={workflow.statuses} canStage={canStage} canStatus={canStatus} canResponsible={canResponsible} pendingIds={pendingIds} dropStage={dropStage} onDropStage={dropProject} onDropTarget={setDropStage} onPatch={(project, patch) => void patchProject(project, patch)} onDragStart={setDragId} onDragEnd={() => { setDragId(null); setDropStage(null); }} />
       )}
       {dragId && <div className="cs-drag-announcement" role="status">Arraste para a etapa desejada ou use o seletor de etapa no card.</div>}
     </ModuleFrame>

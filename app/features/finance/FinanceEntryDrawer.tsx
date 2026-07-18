@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Button } from "@/app/components/ui/Button";
+import { useBodyScrollLock } from "@/app/hooks/useBodyScrollLock";
+import { useFocusTrap } from "@/app/components/a11y/FocusTrap";
 import { Modal } from "@/app/components/ui/Modal";
 import { dateOnly } from "@/app/config/regions";
 import { formatMoney } from "./finance.money";
@@ -39,6 +41,10 @@ export function FinanceEntryDrawer({
   onInstallment, onChangeEnvironment, onArchive, onReactivate, onCancel,
 }: Props) {
   const [editing, setEditing] = useState(isNew);
+  const dialogRef = useRef<HTMLElement>(null);
+  const titleId = useId();
+  useBodyScrollLock(true);
+  useFocusTrap(dialogRef, onClose);
   const [confirm, setConfirm] = useState<"archive" | "cancel" | "environment" | null>(null);
   const [reason, setReason] = useState("");
 
@@ -53,11 +59,11 @@ export function FinanceEntryDrawer({
 
   return (
     <div className="cs-drawer-backdrop" role="presentation" onMouseDown={onClose}>
-      <aside className="cs-finance-drawer" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}>
+      <aside ref={dialogRef} className="cs-finance-drawer" role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} onMouseDown={(event) => event.stopPropagation()}>
         <header className="cs-drawer-header">
           <div>
             <small>{environment === "personal" ? "Financeiro pessoal" : "Financeiro profissional"}</small>
-            <h2>{isNew ? "Novo lançamento" : entry?.description}</h2>
+            <h2 id={titleId}>{isNew ? "Novo lançamento" : entry?.description}</h2>
           </div>
           <button type="button" aria-label="Fechar" onClick={onClose}>×</button>
         </header>
