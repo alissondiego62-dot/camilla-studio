@@ -58,3 +58,12 @@ Execute a migration da Etapa 19 após a Etapa 18. O arquivo SQL avulso contém o
 - Número da parcela digitado — deve ser gerado pelo parcelamento.
 - Conta e forma de pagamento em previsões ainda não liquidadas.
 - Fornecedor e cartão em receitas.
+## Hotfix SQL definitivo — 18/07/2026
+
+- A recriação de `financial_entry_balance_view` deixou de depender de uma ordem fixa de colunas.
+- A migration consulta `pg_attribute` para ler a sequência existente no banco e preserva cada coluna na mesma posição.
+- Somente `adjustment_amount`, `paid_amount`, `open_amount` e `effective_status` têm suas expressões recalculadas.
+- `deletion_reason`, `deleted_at` e `deleted_by` são anexados ao final apenas quando ainda não fazem parte da view.
+- Isso atende bancos criados por versões anteriores, inclusive instalações com colunas adicionais ou ordem histórica diferente, sem `DROP VIEW`, sem `CASCADE` e sem alterar dependências.
+- O erro `42P16: cannot change name of view column "adjustment_amount" to "deletion_reason"` deixa de ocorrer porque nenhum nome de coluna existente é reposicionado.
+

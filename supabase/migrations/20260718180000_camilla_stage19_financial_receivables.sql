@@ -33,20 +33,198 @@ where entry.environment='professional' and entry.entry_type in('income','expense
   and not exists(select 1 from public.financial_entry_payments payment where payment.financial_entry_id=entry.id and payment.archived_at is null);
 
 -- Receitas previstas vencidas passam a ser tratadas como vencidas quando ainda abertas.
-create or replace view public.financial_entry_balance_view with(security_invoker=true) as
-select f.*,
-  coalesce((select sum(case when a.adjustment_type in('interest','fine','correction') then a.amount else -a.amount end) from public.financial_entry_adjustments a where a.financial_entry_id=f.id and a.archived_at is null),0)::numeric(18,2) as adjustment_amount,
-  case when f.status in('paid','received') and not exists(select 1 from public.financial_entry_payments p where p.financial_entry_id=f.id and p.archived_at is null) then f.amount else coalesce((select sum(p.net_amount) from public.financial_entry_payments p where p.financial_entry_id=f.id and p.archived_at is null),0) end::numeric(18,2) as paid_amount,
-  greatest(f.amount + coalesce((select sum(case when a.adjustment_type in('interest','fine','correction') then a.amount else -a.amount end) from public.financial_entry_adjustments a where a.financial_entry_id=f.id and a.archived_at is null),0) - case when f.status in('paid','received') and not exists(select 1 from public.financial_entry_payments p where p.financial_entry_id=f.id and p.archived_at is null) then f.amount else coalesce((select sum(p.net_amount) from public.financial_entry_payments p where p.financial_entry_id=f.id and p.archived_at is null),0) end,0)::numeric(18,2) as open_amount,
-  case
-    when f.status='cancelled' then 'cancelled'
-    when f.archived_at is not null then f.status
-    when greatest(f.amount + coalesce((select sum(case when a.adjustment_type in('interest','fine','correction') then a.amount else -a.amount end) from public.financial_entry_adjustments a where a.financial_entry_id=f.id and a.archived_at is null),0) - case when f.status in('paid','received') and not exists(select 1 from public.financial_entry_payments p where p.financial_entry_id=f.id and p.archived_at is null) then f.amount else coalesce((select sum(p.net_amount) from public.financial_entry_payments p where p.financial_entry_id=f.id and p.archived_at is null),0) end,0)=0 then case when f.entry_type='income' then 'received' else 'paid' end
-    when coalesce((select sum(p.net_amount) from public.financial_entry_payments p where p.financial_entry_id=f.id and p.archived_at is null),0)>0 then case when f.entry_type='income' then 'partially_received' else 'partially_paid' end
-    when f.due_date is not null and f.due_date<current_date and f.status not in('under_review','awaiting_approval') then 'overdue'
-    else f.status
-  end as effective_status
-from public.financial_entries f;
+-- A ordem real das colunas da view pode variar entre instalações antigas. Por isso,
+-- a migration lê o catálogo do PostgreSQL e recria a view preservando exatamente
+-- os nomes e a posição das colunas já existentes. Novos campos são anexados no fim.
+do $stage19_rebuild_financial_balance_view$
+declare
+  v_view_oid regclass := to_regclass('public.financial_entry_balance_view');
+  v_select_list text;
+  v_sql text;
+  v_unknown_column text;
+  v_new_column text;
+begin
+  if v_view_oid is null then
+    execute $create_view$
+      create view public.financial_entry_balance_view with (security_invoker=true) as
+      select
+        balance_source.*,
+        greatest(
+          balance_source.amount + balance_source.adjustment_amount - balance_source.paid_amount,
+          0
+        )::numeric(18,2) as open_amount,
+        case
+          when balance_source.status='cancelled' then 'cancelled'
+          when balance_source.archived_at is not null then balance_source.status
+          when greatest(balance_source.amount + balance_source.adjustment_amount - balance_source.paid_amount,0)=0
+            then case when balance_source.entry_type='income' then 'received' else 'paid' end
+          when balance_source.paid_amount>0
+            then case when balance_source.entry_type='income' then 'partially_received' else 'partially_paid' end
+          when balance_source.due_date is not null
+            and balance_source.due_date<current_date
+            and balance_source.status not in('under_review','awaiting_approval')
+            then 'overdue'
+          else balance_source.status
+        end as effective_status
+      from (
+        select
+          f.*,
+          coalesce((
+            select sum(
+              case
+                when adjustment.adjustment_type in('interest','fine','correction') then adjustment.amount
+                else -adjustment.amount
+              end
+            )
+            from public.financial_entry_adjustments adjustment
+            where adjustment.financial_entry_id=f.id
+              and adjustment.archived_at is null
+          ),0)::numeric(18,2) as adjustment_amount,
+          case
+            when f.status in('paid','received')
+              and not exists(
+                select 1
+                from public.financial_entry_payments payment
+                where payment.financial_entry_id=f.id
+                  and payment.archived_at is null
+              )
+              then f.amount
+            else coalesce((
+              select sum(payment.net_amount)
+              from public.financial_entry_payments payment
+              where payment.financial_entry_id=f.id
+                and payment.archived_at is null
+            ),0)
+          end::numeric(18,2) as paid_amount
+        from public.financial_entries f
+      ) balance_source
+    $create_view$;
+    return;
+  end if;
+
+  -- Interrompe com uma mensagem objetiva caso uma instalação possua alguma
+  -- coluna calculada personalizada que esta migration não saiba reconstruir.
+  select view_column.attname
+    into v_unknown_column
+  from pg_attribute view_column
+  where view_column.attrelid=v_view_oid
+    and view_column.attnum>0
+    and not view_column.attisdropped
+    and view_column.attname not in('adjustment_amount','paid_amount','open_amount','effective_status')
+    and not exists(
+      select 1
+      from pg_attribute table_column
+      where table_column.attrelid='public.financial_entries'::regclass
+        and table_column.attnum>0
+        and not table_column.attisdropped
+        and table_column.attname=view_column.attname
+    )
+  order by view_column.attnum
+  limit 1;
+
+  if v_unknown_column is not null then
+    raise exception 'A view financial_entry_balance_view possui a coluna personalizada "%". Revise essa coluna antes de executar a Etapa 19.',v_unknown_column;
+  end if;
+
+  select string_agg(
+    case
+      when view_column.attname='adjustment_amount'
+        then 'balance_source.adjustment_amount as adjustment_amount'
+      when view_column.attname='paid_amount'
+        then 'balance_source.paid_amount as paid_amount'
+      when view_column.attname='open_amount'
+        then 'greatest(balance_source.amount + balance_source.adjustment_amount - balance_source.paid_amount,0)::numeric(18,2) as open_amount'
+      when view_column.attname='effective_status'
+        then $expression$
+          case
+            when balance_source.status='cancelled' then 'cancelled'
+            when balance_source.archived_at is not null then balance_source.status
+            when greatest(balance_source.amount + balance_source.adjustment_amount - balance_source.paid_amount,0)=0
+              then case when balance_source.entry_type='income' then 'received' else 'paid' end
+            when balance_source.paid_amount>0
+              then case when balance_source.entry_type='income' then 'partially_received' else 'partially_paid' end
+            when balance_source.due_date is not null
+              and balance_source.due_date<current_date
+              and balance_source.status not in('under_review','awaiting_approval')
+              then 'overdue'
+            else balance_source.status
+          end as effective_status
+        $expression$
+      else format('balance_source.%I',view_column.attname)
+    end,
+    E',\n  '
+    order by view_column.attnum
+  )
+  into v_select_list
+  from pg_attribute view_column
+  where view_column.attrelid=v_view_oid
+    and view_column.attnum>0
+    and not view_column.attisdropped;
+
+  -- Os campos de auditoria foram adicionados após a criação original da view.
+  -- Eles só são anexados ao fim, evitando qualquer tentativa de renomear colunas.
+  foreach v_new_column in array array['deletion_reason','deleted_at','deleted_by']
+  loop
+    if exists(
+      select 1
+      from pg_attribute table_column
+      where table_column.attrelid='public.financial_entries'::regclass
+        and table_column.attnum>0
+        and not table_column.attisdropped
+        and table_column.attname=v_new_column
+    ) and not exists(
+      select 1
+      from pg_attribute view_column
+      where view_column.attrelid=v_view_oid
+        and view_column.attnum>0
+        and not view_column.attisdropped
+        and view_column.attname=v_new_column
+    ) then
+      v_select_list:=v_select_list||format(E',\n  balance_source.%I',v_new_column);
+    end if;
+  end loop;
+
+  v_sql:=format($replace_view$
+    create or replace view public.financial_entry_balance_view with (security_invoker=true) as
+    select
+      %s
+    from (
+      select
+        f.*,
+        coalesce((
+          select sum(
+            case
+              when adjustment.adjustment_type in('interest','fine','correction') then adjustment.amount
+              else -adjustment.amount
+            end
+          )
+          from public.financial_entry_adjustments adjustment
+          where adjustment.financial_entry_id=f.id
+            and adjustment.archived_at is null
+        ),0)::numeric(18,2) as adjustment_amount,
+        case
+          when f.status in('paid','received')
+            and not exists(
+              select 1
+              from public.financial_entry_payments payment
+              where payment.financial_entry_id=f.id
+                and payment.archived_at is null
+            )
+            then f.amount
+          else coalesce((
+            select sum(payment.net_amount)
+            from public.financial_entry_payments payment
+            where payment.financial_entry_id=f.id
+              and payment.archived_at is null
+          ),0)
+        end::numeric(18,2) as paid_amount
+      from public.financial_entries f
+    ) balance_source
+  $replace_view$,v_select_list);
+
+  execute v_sql;
+end
+$stage19_rebuild_financial_balance_view$;
 
 create or replace function public.refresh_financial_entry_status(p_entry_id uuid)
 returns void language plpgsql security definer set search_path=public,pg_temp as $$
