@@ -18,7 +18,6 @@ const modules: Array<[PermissionModule, string, PermissionAction[]]> = [
   ["files", "Arquivos", ["view", "add_file", "remove_file", "archive", "export", "download", "view_versions", "upload_drive", "share_drive", "revoke_drive_share", "refresh_drive_metadata"]],
   ["reports", "Relatórios", ["view", "export", "view_values", "view_history", "view_productivity"]],
   ["finance_professional", "Financeiro profissional", ["view", "create", "edit", "archive", "view_values", "settle_finance", "cancel_entry", "export", "view_consolidated", "manage_accounts", "manage_cards", "manage_categories", "manage_templates", "manage_suppliers", "manage_cost_centers", "manage_recurrence", "manage_installments", "manage_transfers", "approve_finance", "change_environment", "view_audit", "export_values"]],
-  ["finance_personal", "Financeiro pessoal", ["view", "create", "edit", "archive", "view_values", "settle_finance", "cancel_entry", "export", "view_consolidated", "manage_accounts", "manage_cards", "manage_categories", "manage_templates", "manage_suppliers", "manage_cost_centers", "manage_recurrence", "manage_installments", "manage_transfers", "approve_finance", "change_environment", "view_audit", "export_values"]],
   ["users", "Usuários", ["view", "create", "edit", "archive", "reactivate", "manage_users"]],
   ["teams", "Equipes", ["view", "create", "edit", "archive", "reactivate", "manage_users"]],
   ["settings", "Configurações", ["view", "manage_settings"]],

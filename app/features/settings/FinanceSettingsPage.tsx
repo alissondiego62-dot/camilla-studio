@@ -1,7 +1,7 @@
 import{AdministrativeSettingsPage,type AdminField}from"./AdministrativeSettingsPage";
 const fields:AdminField[]=[
  {key:"finance_currency",label:"Moeda",type:"select",defaultValue:"BRL",options:[{value:"BRL",label:"BRL — R$"}]},
- {key:"finance_default_environment",label:"Ambiente padrão",type:"select",defaultValue:"professional",options:[{value:"professional",label:"Profissional / CNPJ"},{value:"personal",label:"Pessoal"}]},
+ {key:"finance_default_environment",label:"Ambiente padrão",type:"select",defaultValue:"professional",options:[{value:"professional",label:"Profissional / CNPJ"}]},
  {key:"finance_require_approval",label:"Exigir aprovação de lançamentos",type:"checkbox",defaultValue:false},
  {key:"finance_require_environment_change_approval",label:"Exigir aprovação para mudança de ambiente",type:"checkbox",defaultValue:true},
  {key:"finance_allow_negative_balance",label:"Permitir saldo negativo",type:"checkbox",defaultValue:false},

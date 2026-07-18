@@ -10,7 +10,6 @@ function fallbackPermissions(role?: string | null): EffectivePermission[] {
     const modules: PermissionModule[] = ["dashboard","projects","kanban","activities","agenda","clients","files","reports","finance_professional","users","teams","settings","checklists","notifications","history","comments","integrations","versions","security"];
     const actions: PermissionAction[] = ["view","create","edit","delete","archive","reactivate","approve","export","change_status","change_stage","change_deadline","add_file","remove_file","view_values","settle_finance","cancel_entry","manage_users","manage_settings","download","view_versions","view_internal","create_internal"];
     const permissions = modules.flatMap((module) => all(module, actions));
-    if (code === "owner") permissions.push(...all("finance_personal", actions));
     return permissions;
   }
   if (code === "manager") return [

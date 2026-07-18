@@ -17,7 +17,7 @@ const scopeLabels:Record<PermissionScope,string>={none:"Nenhum",own:"Próprio",a
 export function UserPermissionOverridesModal({user,onClose}:{user:ProfileRow;onClose:()=>void}){
   const loader=useCallback(()=>listUserOverrides(user.id),[user.id]);
   const {data,loading,error,reload}=useModuleData(loader,[] as UserPermissionOverride[]);
-  const [permission,setPermission]=useState("finance_personal:view");const [allowed,setAllowed]=useState(true);const [scope,setScope]=useState<PermissionScope>("own");const [reason,setReason]=useState("");
+  const [permission,setPermission]=useState("finance_professional:view");const [allowed,setAllowed]=useState(true);const [scope,setScope]=useState<PermissionScope>("own");const [reason,setReason]=useState("");
   const {pending,error:actionError,success,run}=useAsyncAction();
   const selected=useMemo(()=>permissionCatalog.find(item=>`${item.module}:${item.action}`===permission),[permission]);
   async function save(event:React.FormEvent){event.preventDefault();const [module,action]=permission.split(":");const result=await run(()=>saveUserOverride({user_id:user.id,module,action,allowed,scope:allowed?(selected?.supportsScope?scope:"own"):"none",reason:reason.trim()||null,expires_at:null}),"Exceção individual salva.");if(result.ok)void reload()}

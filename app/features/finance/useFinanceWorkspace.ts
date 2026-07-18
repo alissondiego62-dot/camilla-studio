@@ -15,10 +15,10 @@ export function useFinanceWorkspace(initialEnvironment:FinanceEnvironment="profe
  const load=useCallback(async()=>{setLoading(true);setError("");try{setData(await loadFinanceWorkspace(environment,section,filters,page,pageSize))}catch(reason){setError(reason instanceof Error?reason.message:"Não foi possível carregar o Financeiro.")}finally{setLoading(false)}},[environment,filters,page,pageSize,section]);
  useEffect(()=>{const timer=window.setTimeout(()=>void load(),0);return()=>window.clearTimeout(timer)},[load]);
  const selectedEntry=entryId&&entryId!=="new"?data.entries.find((entry)=>entry.id===entryId)??null:null;
- const storedEnvironment=environment==="consolidated"?"professional":environment;
- const moduleName=storedEnvironment==="personal"?"finance_personal":"finance_professional";
- const canViewValues=environment==="consolidated"?permissions.can("finance_personal","view_values")&&permissions.can("finance_professional","view_values"):permissions.can(moduleName,"view_values");
- const currentAccess=environment==="consolidated"?null:data.access.find((item)=>item.environment===environment)??null;
+ const storedEnvironment: FinanceStoredEnvironment = "professional";
+ const moduleName = "finance_professional";
+ const canViewValues=permissions.can(moduleName,"view_values");
+ const currentAccess=data.access.find((item)=>item.environment==="professional")??null;
  const canCreate=permissions.can(moduleName,"create")&&(currentAccess?.can_create??true);const canEdit=permissions.can(moduleName,"edit")&&(currentAccess?.can_edit??true);const canSettle=permissions.can(moduleName,"settle_finance")&&(currentAccess?.can_settle??true);const canExport=permissions.can(moduleName,"export")&&(currentAccess?.can_export??true);
  const pageCount=Math.max(1,Math.ceil(data.total/pageSize));
  function changePeriod(period:FinanceFilters["period"]){const range=period==="custom"?{start_date:filters.start_date,end_date:filters.end_date}:periodRange(period);setFilters((current)=>({...current,period,...range}));setPage(0)}

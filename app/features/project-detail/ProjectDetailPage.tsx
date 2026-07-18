@@ -28,7 +28,7 @@ const allowedSections = new Set<ProjectSection>(["overview", "dates", "activitie
 
 export function ProjectDetailPage({ projectId }: { projectId: string }) {
   const { can } = usePermissions();
-  const showFinance = can("finance_professional", "view") || can("finance_personal", "view");
+  const showFinance = can("finance_professional", "view");
   const loader = useCallback(() => loadProjectWorkspace(projectId, showFinance), [projectId, showFinance]);
   const { data, loading, error, reload } = useModuleData<ProjectWorkspace | null>(loader, emptyWorkspace);
   const action = useAsyncAction();
