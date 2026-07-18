@@ -2,6 +2,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Modal } from "@/app/components/ui/Modal";
 import { priorityLabels, statusLabels } from "@/app/domain/architecture-config";
 import { DeadlineBadge } from "@/app/components/ui/DeadlineBadge";
 import { KanbanCardActions } from "./KanbanCardActions";
@@ -45,6 +48,9 @@ export function ProjectKanbanCard({ project, users, stages, statuses, canStage, 
   onDragStart: () => void;
   onDragEnd: () => void;
 }) {
+  const router = useRouter();
+  const [imageOpen, setImageOpen] = useState(false);
+  const projectHref = `/projects/${project.id}`;
   const image = project.thumbnail_url || (project.cover_url?.startsWith("http") ? project.cover_url : null);
   const deadlines = collectDeadlines(project);
   const statusName = statuses.find((item) => item.code === project.status)?.name
@@ -62,12 +68,32 @@ export function ProjectKanbanCard({ project, users, stages, statuses, canStage, 
       }}
       onDragEnd={onDragEnd}
       data-priority={project.priority}
+      role="link"
+      tabIndex={0}
+      aria-label={`Abrir projeto ${project.name}`}
+      onClick={(event) => {
+        const target = event.target as HTMLElement;
+        if (target.closest("a,button,select,input,textarea,label,.cs-modal-backdrop")) return;
+        router.push(projectHref);
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          router.push(projectHref);
+        }
+      }}
     >
-      <div className="cs-project-card-image">
+      <button
+        type="button"
+        className="cs-project-card-image"
+        aria-label={image ? `Ampliar miniatura do projeto ${project.name}` : `Projeto ${project.name} sem miniatura`}
+        onClick={(event) => { event.stopPropagation(); if (image) setImageOpen(true); }}
+        disabled={!image}
+      >
         {image
           ? <img src={image} alt={`Miniatura do projeto ${project.name}`} loading="lazy" />
           : <span aria-label="Projeto sem miniatura">{project.code.slice(0, 2).toUpperCase()}</span>}
-      </div>
+      </button>
 
       <div className="cs-project-card-body">
         <header>
@@ -111,6 +137,8 @@ export function ProjectKanbanCard({ project, users, stages, statuses, canStage, 
           comments={project.comments_count}
           unreadFiles={project.unread_files_count}
           unreadComments={project.unread_comments_count}
+          history={project.history_count}
+          unreadHistory={project.unread_history_count}
         />
 
         <KanbanCardActions
@@ -125,6 +153,13 @@ export function ProjectKanbanCard({ project, users, stages, statuses, canStage, 
           onPatch={onPatch}
         />
       </div>
+      {imageOpen && image && (
+        <Modal title={`Miniatura — ${project.name}`} onClose={() => setImageOpen(false)}>
+          <div className="cs-kanban-image-lightbox">
+            <img src={image} alt={`Miniatura ampliada do projeto ${project.name}`} />
+          </div>
+        </Modal>
+      )}
     </article>
   );
 }

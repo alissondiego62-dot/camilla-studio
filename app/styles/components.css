@@ -96,3 +96,15 @@
 .cs-kanban-v3 .cs-project-card-body h3,.cs-kanban-v3 .cs-project-client,.cs-kanban-v3 .cs-project-status-line span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .cs-kanban-deadlines{min-width:0;overflow:hidden}.cs-kanban-deadlines>div{max-height:122px;overflow:auto;overflow-x:hidden;padding-right:2px}.cs-kanban-deadlines .cs-deadline{max-width:100%;overflow:hidden}.cs-kanban-deadlines .cs-deadline>*{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cs-kanban-quick-action{min-width:0;overflow:hidden}.cs-kanban-quick-action select{width:100%;max-width:100%;}
+
+/* Etapa 14 — interação e miniatura integral do Kanban */
+.cs-kanban-v3 .cs-project-card-v3{cursor:pointer}
+.cs-kanban-v3 .cs-project-card-v3:focus-visible{outline:3px solid color-mix(in srgb,var(--cs-focus) 48%,transparent);outline-offset:3px}
+.cs-kanban-v3 .cs-project-card-image{appearance:none;padding:0;border:0;cursor:zoom-in;display:grid;place-items:center;aspect-ratio:16/9!important;background:var(--cs-background-secondary)!important}
+.cs-kanban-v3 .cs-project-card-image:disabled{cursor:default}
+.cs-kanban-v3 .cs-project-card-image img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important}
+.cs-kanban-card-footer-row{grid-template-columns:minmax(0,1fr) 30px}
+.cs-kanban-card-footer-row .cs-kanban-shortcuts{grid-template-columns:repeat(4,minmax(0,1fr))}
+.cs-kanban-image-lightbox{display:grid;place-items:center;width:100%;min-height:240px;max-height:78dvh;overflow:auto;background:var(--cs-background-secondary);border-radius:12px;padding:10px}
+.cs-kanban-image-lightbox img{display:block;max-width:100%;max-height:74dvh;width:auto;height:auto;object-fit:contain}
+@media(max-width:520px){.cs-kanban-image-lightbox{min-height:180px;padding:6px}.cs-kanban-card-footer-row .cs-kanban-shortcuts a{min-height:34px}}

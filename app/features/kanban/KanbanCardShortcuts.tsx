@@ -9,7 +9,7 @@ function initials(name: string | null) {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
-export function KanbanCardShortcuts({ projectId, responsibleName, checklistCompleted, checklistTotal, files, comments, unreadFiles, unreadComments }: {
+export function KanbanCardShortcuts({ projectId, responsibleName, checklistCompleted, checklistTotal, files, comments, unreadFiles, unreadComments, history, unreadHistory }: {
   projectId: string;
   responsibleName: string | null;
   checklistCompleted: number;
@@ -18,11 +18,14 @@ export function KanbanCardShortcuts({ projectId, responsibleName, checklistCompl
   comments: number;
   unreadFiles: number;
   unreadComments: number;
+  history: number;
+  unreadHistory: number;
 }) {
   const items = [
     { section: "checklist", icon: "✓", label: "Checklist", count: checklistTotal > 0 ? `${checklistCompleted}/${checklistTotal}` : "0", unread: 0 },
     { section: "comments", icon: "◌", label: "Comentários", count: String(comments), unread: unreadComments },
     { section: "files", icon: "↗", label: "Arquivos", count: String(files), unread: unreadFiles },
+    { section: "history", icon: "↺", label: "Histórico", count: String(history), unread: unreadHistory },
   ];
 
   return (
